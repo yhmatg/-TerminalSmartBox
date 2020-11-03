@@ -1,0 +1,111 @@
+<?xml version="1.0" encoding="utf-8"?>
+<RelativeLayout xmlns:android="http://schemas.android.com/apk/res/android"
+    android:layout_width="match_parent"
+    android:layout_height="match_parent">
+
+    <View
+        android:id="@+id/gl_v"
+        android:layout_width="0.5dp"
+        android:layout_height="match_parent"
+        android:layout_toStartOf="@+id/img_face"
+        android:orientation="vertical"
+        android:visibility="visible" />
+
+    <TextView
+        android:id="@+id/tv_total"
+        android:layout_width="wrap_content"
+        android:layout_height="wrap_content"
+        android:layout_marginStart="16dp"
+        android:layout_marginTop="16dp"
+        android:text="标签总计:"
+        android:textColor="@color/blue"
+        android:textSize="20dp" />
+
+    <TextView
+        android:id="@+id/tv_total_show"
+        android:layout_width="wrap_content"
+        android:layout_height="wrap_content"
+        android:layout_marginTop="16dp"
+        android:layout_toEndOf="@+id/tv_total"
+        android:text="0"
+        android:textColor="@color/green"
+        android:textSize="20sp" />
+
+    <TextView
+        android:id="@+id/tv_key_status"
+        android:layout_width="wrap_content"
+        android:layout_height="wrap_content"
+        android:layout_marginTop="16dp"
+        android:layout_marginRight="16dp"
+        android:text="锁状态:关闭"
+        android:textColor="@color/blue"
+        android:layout_toStartOf="@+id/gl_v"
+        android:textSize="20dp" />
+
+    <android.support.v7.widget.RecyclerView
+        android:id="@+id/rv_list"
+        android:layout_width="match_parent"
+        android:layout_height="match_parent"
+        android:layout_marginStart="16dp"
+        android:layout_marginTop="16dp"
+        android:layout_marginEnd="16dp"
+        android:layout_marginBottom="16dp"
+        android:layout_below="@+id/tv_total"
+        android:layout_toStartOf="@+id/gl_v"/>
+
+    <ImageView
+        android:id="@+id/img_face"
+        android:layout_width="@dimen/dp_75"
+        android:layout_height="@dimen/dp_90"
+        android:layout_marginLeft="16dp"
+        android:layout_marginTop="16dp"
+        android:layout_marginRight="16dp"
+        android:layout_alignParentEnd="true"
+        android:src="@drawable/user_icon"/>
+
+    <TextView
+        android:id="@+id/tv_name"
+        android:layout_width="wrap_content"
+        android:layout_height="wrap_content"
+        android:layout_marginTop="16dp"
+        android:text="姓    名:"
+        android:textSize="20sp"
+        android:layout_below="@+id/img_face"
+        android:layout_alignStart="@+id/img_face"/>
+
+    <TextView
+        android:id="@+id/tv_name_show"
+        android:layout_width="wrap_content"
+        android:layout_height="wrap_content"
+        android:layout_marginStart="0dp"
+        android:layout_marginTop="32dp"
+        android:textSize="20sp" />
+
+    <Button
+        android:id="@+id/btn_inv_again"
+        android:layout_width="wrap_content"
+        android:layout_height="wrap_content"
+        android:layout_marginLeft="16dp"
+        android:layout_marginRight="16dp"
+        android:layout_marginBottom="16dp"
+        android:background="@drawable/btn_selector"
+        android:text="刷新"
+        android:textColor="@android:color/white"
+        android:textSize="15sp"
+        android:layout_above="@+id/btn_exit"
+        android:layout_alignParentEnd="true"/>
+
+    <Button
+        android:id="@+id/btn_exit"
+        android:layout_width="wrap_content"
+        android:layout_height="wrap_content"
+        android:layout_marginLeft="16dp"
+        android:layout_marginRight="16dp"
+        android:layout_marginBottom="16dp"
+        android:background="@drawable/btn_selector"
+        android:text="@string/btn_exit"
+        android:textColor="@android:color/white"
+        android:textSize="15sp"
+        android:layout_alignParentEnd="true"
+        android:layout_alignParentBottom="true"/>
+</RelativeLayout>

@@ -87,4 +87,5 @@ dependencies {
     implementation files('libs/ModuleAPI_J.jar')
     implementation 'com.annimon:stream:1.2.1'
     implementation 'cn.shorr:ez-serialport:0.1.0'
+    implementation 'org.xutils:xutils:3.9.0'
 }

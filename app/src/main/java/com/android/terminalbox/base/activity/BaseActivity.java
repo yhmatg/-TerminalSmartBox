@@ -1,8 +1,11 @@
 package com.android.terminalbox.base.activity;
 
 import android.content.DialogInterface;
+import android.content.Intent;
+import android.content.pm.PackageManager;
 import android.os.Bundle;
 import android.support.annotation.Nullable;
+import android.support.v4.content.ContextCompat;
 import android.support.v7.app.AppCompatDelegate;
 import android.view.KeyEvent;
 import com.afollestad.materialdialogs.MaterialDialog;
@@ -161,6 +164,28 @@ public abstract class BaseActivity<T extends AbstractPresenter> extends Abstract
     public void startLoginActivity(){
     }
 
+    public void JumpToActivity(Class activityClass, Bundle bundle) {
+        Intent intent = new Intent(this, activityClass);
+        intent.putExtra("bundle",bundle);
+        startActivity(intent);
+    }
 
+    public void JumpToActivity(Class activityClass) {
+        startActivity(new Intent(this, activityClass));
+    }
 
+    protected boolean checkPermissions(String[] neededPermissions) {
+        if (neededPermissions == null || neededPermissions.length == 0) {
+            return true;
+        }
+        boolean allGranted = true;
+        for (String neededPermission : neededPermissions) {
+            allGranted &= ContextCompat.checkSelfPermission(this, neededPermission) == PackageManager.PERMISSION_GRANTED;
+        }
+        return allGranted;
+    }
+
+    public void afterRequestPermission(int requestCode, boolean isAllGranted){
+
+     };
 }
