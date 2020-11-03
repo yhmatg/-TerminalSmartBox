@@ -6,12 +6,18 @@ import android.arch.persistence.room.Room;
 import android.arch.persistence.room.RoomDatabase;
 import android.arch.persistence.room.TypeConverters;
 import android.support.annotation.NonNull;
+
 import com.android.terminalbox.app.BaseApplication;
+import com.android.terminalbox.core.bean.box.Oprecord;
+import com.android.terminalbox.core.bean.box.Tag;
 import com.android.terminalbox.core.bean.user.DbUser;
+import com.android.terminalbox.core.dao.OprecordDao;
+import com.android.terminalbox.core.dao.TagDao;
 
 @Database(entities = {
-        DbUser.class
-        }
+        Oprecord.class,
+        Tag.class
+}
         , version = 1)
 @TypeConverters(DateConverter.class)
 public abstract class BaseDb extends RoomDatabase {
@@ -44,5 +50,9 @@ public abstract class BaseDb extends RoomDatabase {
         }).allowMainThreadQueries().build();
         return build;
     }
+
+    public abstract OprecordDao getOprecordDao();
+
+    public abstract TagDao getTagDao();
 
 }
