@@ -1,12 +1,17 @@
 package com.android.terminalbox.core.http.api;
 
 import com.android.terminalbox.core.bean.BaseResponse;
+import com.android.terminalbox.core.bean.user.FaceFeatureBody;
 import com.android.terminalbox.core.bean.user.UserInfo;
 import com.android.terminalbox.core.bean.user.UserLoginResponse;
 
+import java.util.List;
+
 import io.reactivex.Observable;
 import retrofit2.http.Body;
+import retrofit2.http.GET;
 import retrofit2.http.POST;
+import retrofit2.http.Query;
 
 /**
  * @author yhm
@@ -15,9 +20,15 @@ import retrofit2.http.POST;
 
 public interface GeeksApis {
 
-    String HOST = "http://172.16.63.25:12000"; //佳航25，言娇35，梦伟32
-
     //登录
     @POST("user-server/userauth/loginwithinfo")
     Observable<BaseResponse<UserLoginResponse>> login(@Body UserInfo userInfo);
+
+    //获取所有用户信息
+    @GET("/api/v1/users/{userId}")
+    Observable<BaseResponse<List<UserInfo>>> getAllUserInfo();
+
+    //人脸头像特征值更新
+    @POST("/api/v1/users/updateFeature")
+    Observable<BaseResponse<UserInfo>> updateFeature(@Body FaceFeatureBody faceFeatureBody);
 }

@@ -139,8 +139,12 @@ public class MqttServer {
         @Override
         public void connectComplete(boolean reconnect, String serverURI) {
             try {
+                String openTopic = "app/devices/15aa68f3183311ebb7260242ac120004_uniqueCode002/insts";
+                String updateFaceTopic = "app/userface/update";
+                String[] topicFilter=new String[]{openTopic,updateFaceTopic };
+                int[] qos={0,0};
                 //mqttAndroidClient.subscribe("app/devices/15aa68f3183311ebb7260242ac120004_uniqueCode002/insts", 0);
-                mqttAndroidClient.subscribe("app/userface/update", 0);
+                mqttAndroidClient.subscribe(topicFilter, qos);
             } catch (MqttException e) {
                 e.printStackTrace();
             }
@@ -188,5 +192,9 @@ public class MqttServer {
             } );
         } catch (MqttException e) {
         }
+    }
+
+    public RylaiMqttCallback getmRylaiMqttCallback() {
+        return mRylaiMqttCallback;
     }
 }

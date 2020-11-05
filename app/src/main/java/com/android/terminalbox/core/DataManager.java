@@ -1,11 +1,14 @@
 package com.android.terminalbox.core;
 import com.android.terminalbox.core.bean.BaseResponse;
+import com.android.terminalbox.core.bean.user.FaceFeatureBody;
 import com.android.terminalbox.core.bean.user.UserInfo;
 import com.android.terminalbox.core.bean.user.UserLoginResponse;
 import com.android.terminalbox.core.http.HttpHelper;
 import com.android.terminalbox.core.http.HttpHelperImpl;
 import com.android.terminalbox.core.prefs.PreferenceHelper;
 import com.android.terminalbox.core.prefs.PreferenceHelperImpl;
+
+import java.util.List;
 
 import io.reactivex.Observable;
 
@@ -65,6 +68,15 @@ public class DataManager implements HttpHelper, PreferenceHelper {
         return mHttpHelper.login(userInfo);
     }
 
+    @Override
+    public Observable<BaseResponse<List<UserInfo>>> getAllUserInfo() {
+        return mHttpHelper.getAllUserInfo();
+    }
+
+    @Override
+    public Observable<BaseResponse<UserInfo>> updateFeature(FaceFeatureBody faceFeatureBody) {
+        return mHttpHelper.updateFeature(faceFeatureBody);
+    }
 
 
 }

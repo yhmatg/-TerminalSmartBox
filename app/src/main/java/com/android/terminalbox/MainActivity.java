@@ -2,13 +2,23 @@ package com.android.terminalbox;
 
 import android.os.Bundle;
 import android.support.v7.app.AppCompatActivity;
+import android.util.Log;
 import android.view.View;
 
 import com.android.terminalbox.base.activity.BaseActivity;
 import com.android.terminalbox.base.presenter.AbstractPresenter;
 import com.android.terminalbox.common.ConstFromSrc;
+import com.android.terminalbox.core.bean.box.IotDevice;
+import com.android.terminalbox.mqtt.MqttServer;
+import com.android.terminalbox.mqtt.RylaiMqttCallback;
+import com.android.terminalbox.ui.MqttActivity;
 import com.android.terminalbox.ui.face.RecognizeActivity;
 import com.android.terminalbox.ui.rfid.SmartBoxInvActivity;
+
+import org.eclipse.paho.client.mqttv3.IMqttDeliveryToken;
+import org.eclipse.paho.client.mqttv3.IMqttToken;
+import org.eclipse.paho.client.mqttv3.MqttMessage;
+import org.eclipse.paho.client.mqttv3.internal.wire.MqttConnect;
 
 import butterknife.OnClick;
 
@@ -31,7 +41,6 @@ public class MainActivity extends BaseActivity {
 
     @Override
     protected void initEventAndData() {
-
     }
 
     @OnClick({R.id.btn_inv, R.id.btn_fetch, R.id.btn_back})
@@ -51,4 +60,5 @@ public class MainActivity extends BaseActivity {
                 break;
         }
     }
+
 }

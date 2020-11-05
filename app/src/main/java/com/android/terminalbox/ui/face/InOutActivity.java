@@ -140,7 +140,7 @@ public class InOutActivity extends BaseActivity {
 
         esimUhfParams = new EsimUhfParams.Builder().antIndex(1,2,3,4).build();
 
-        imageOptions = new ImageOptions.Builder()
+        /*imageOptions = new ImageOptions.Builder()
                 .setSize(DensityUtil.dip2px(240), DensityUtil.dip2px(240))
                 .setRadius(DensityUtil.dip2px(30))
                 .setImageScaleType(ImageView.ScaleType.CENTER_CROP)
@@ -155,12 +155,12 @@ public class InOutActivity extends BaseActivity {
 
             }
 
-        }
+        }*/
         tvNameShow.setText(userName);
         ekeyServer = EkeyServer.getInstance();
         ekeyServer.addStatusChangeListenner(ekeyStatusChangeListener);
 
-        new Thread(() -> {
+        /*new Thread(() -> {
             try {
                 Looper.prepare();
                 if(oprecordDao==null) {
@@ -185,7 +185,7 @@ public class InOutActivity extends BaseActivity {
             } catch (Exception e) {
                 e.printStackTrace();
             }
-        }).start();
+        }).start();*/
 
     }
     EkeyStatusChangeListener ekeyStatusChangeListener = ekeyStatus -> {

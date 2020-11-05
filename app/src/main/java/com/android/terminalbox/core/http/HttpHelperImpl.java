@@ -1,10 +1,13 @@
 package com.android.terminalbox.core.http;
 
 import com.android.terminalbox.core.bean.BaseResponse;
+import com.android.terminalbox.core.bean.user.FaceFeatureBody;
 import com.android.terminalbox.core.bean.user.UserInfo;
 import com.android.terminalbox.core.bean.user.UserLoginResponse;
 import com.android.terminalbox.core.http.api.GeeksApis;
 import com.android.terminalbox.core.http.client.RetrofitClient;
+
+import java.util.List;
 
 import io.reactivex.Observable;
 
@@ -44,6 +47,16 @@ public class HttpHelperImpl implements HttpHelper {
     @Override
     public Observable<BaseResponse<UserLoginResponse>> login(UserInfo userInfo) {
         return mGeeksApis.login(userInfo);
+    }
+
+    @Override
+    public Observable<BaseResponse<List<UserInfo>>> getAllUserInfo() {
+        return mGeeksApis.getAllUserInfo();
+    }
+
+    @Override
+    public Observable<BaseResponse<UserInfo>> updateFeature(FaceFeatureBody faceFeatureBody) {
+        return mGeeksApis.updateFeature(faceFeatureBody);
     }
 
 }

@@ -1,11 +1,19 @@
 package com.android.terminalbox.ui.face;
 
 import android.Manifest;
+import android.annotation.SuppressLint;
+import android.app.Activity;
 import android.content.Intent;
 import android.content.pm.ActivityInfo;
 import android.content.pm.ApplicationInfo;
+import android.graphics.Bitmap;
+import android.graphics.BitmapFactory;
+import android.graphics.Canvas;
+import android.graphics.Color;
+import android.graphics.Paint;
 import android.graphics.Point;
 import android.hardware.Camera;
+import android.os.AsyncTask;
 import android.os.Build;
 import android.os.Bundle;
 import android.support.v4.app.ActivityCompat;
@@ -22,15 +30,24 @@ import android.view.ViewTreeObserver;
 import android.view.WindowManager;
 import android.widget.CompoundButton;
 import android.widget.Switch;
+
 import com.android.terminalbox.MainActivity;
 import com.android.terminalbox.R;
 import com.android.terminalbox.base.activity.BaseActivity;
-import com.android.terminalbox.base.presenter.AbstractPresenter;
 import com.android.terminalbox.common.ConstFromSrc;
+import com.android.terminalbox.contract.RecognizeContract;
+import com.android.terminalbox.core.bean.BaseResponse;
+import com.android.terminalbox.core.bean.box.IotDevice;
+import com.android.terminalbox.core.bean.user.UserInfo;
 import com.android.terminalbox.faceserver.CompareResult;
 import com.android.terminalbox.faceserver.FaceServer;
 import com.android.terminalbox.model.DrawInfo;
 import com.android.terminalbox.model.FacePreviewInfo;
+import com.android.terminalbox.model.ItemShowInfo;
+import com.android.terminalbox.mqtt.MqttServer;
+import com.android.terminalbox.mqtt.RylaiMqttCallback;
+import com.android.terminalbox.presenter.RecognizePresenter;
+import com.android.terminalbox.utils.ToastUtils;
 import com.android.terminalbox.utils.box.ConfigUtil;
 import com.android.terminalbox.utils.box.DrawHelper;
 import com.android.terminalbox.utils.camera.CameraHelper;
@@ -43,21 +60,39 @@ import com.android.terminalbox.utils.face.RequestFeatureStatus;
 import com.android.terminalbox.utils.face.RequestLivenessStatus;
 import com.android.terminalbox.widget.FaceRectView;
 import com.android.terminalbox.widget.FaceSearchResultAdapter;
+import com.android.terminalbox.widget.ProgressDialog;
 import com.arcsoft.face.AgeInfo;
 import com.arcsoft.face.ErrorInfo;
+import com.arcsoft.face.Face3DAngle;
 import com.arcsoft.face.FaceEngine;
 import com.arcsoft.face.FaceFeature;
+import com.arcsoft.face.FaceInfo;
+import com.arcsoft.face.FaceSimilar;
 import com.arcsoft.face.GenderInfo;
 import com.arcsoft.face.LivenessInfo;
 import com.arcsoft.face.VersionInfo;
 import com.arcsoft.face.enums.DetectFaceOrientPriority;
 import com.arcsoft.face.enums.DetectMode;
+import com.arcsoft.imageutil.ArcSoftImageFormat;
+import com.arcsoft.imageutil.ArcSoftImageUtil;
+import com.arcsoft.imageutil.ArcSoftImageUtilError;
+import com.bumptech.glide.Glide;
+
+import org.eclipse.paho.client.mqttv3.IMqttDeliveryToken;
+import org.eclipse.paho.client.mqttv3.IMqttToken;
+import org.eclipse.paho.client.mqttv3.MqttMessage;
+import org.eclipse.paho.client.mqttv3.internal.wire.MqttConnect;
+
 import java.io.File;
+import java.io.FilenameFilter;
 import java.util.ArrayList;
 import java.util.Enumeration;
 import java.util.List;
 import java.util.Map;
 import java.util.concurrent.ConcurrentHashMap;
+import java.util.concurrent.ExecutionException;
+import java.util.concurrent.ExecutorService;
+import java.util.concurrent.Executors;
 import java.util.concurrent.TimeUnit;
 
 import cn.shorr.serialport.SerialPortUtil;
@@ -71,7 +106,7 @@ import io.reactivex.disposables.CompositeDisposable;
 import io.reactivex.disposables.Disposable;
 import io.reactivex.schedulers.Schedulers;
 
-public class RecognizeActivity extends BaseActivity implements ViewTreeObserver.OnGlobalLayoutListener {
+public class RecognizeActivity extends BaseActivity<RecognizePresenter> implements ViewTreeObserver.OnGlobalLayoutListener, RecognizeContract.View {
     private static final String TAG = "RegisterAndRecognize";
     private static final int MAX_DETECT_NUM = 10;
     /**
@@ -179,8 +214,54 @@ public class RecognizeActivity extends BaseActivity implements ViewTreeObserver.
 
     private String fromSrc;
 
+    //yhm start 1105
+    private IotDevice iotDevice;
+    private RylaiMqttCallback rylaiMqttCallback = new RylaiMqttCallback() {
+        @Override
+        public void onSuccess(IMqttToken asyncActionToken) {
+            Log.e(TAG, "Mqtt Message onSuccess");
+        }
+
+        @Override
+        public void onFailure(IMqttToken asyncActionToken, Throwable exception) {
+            Log.e(TAG, "Mqtt Message onFailure");
+            Log.d(TAG, "Mqtt Message Action==============失败");
+        }
+
+        @Override
+        public void connectComplete(boolean reconnect, String serverURI) {
+            Log.e(TAG, "Mqtt Message connectComplete");
+        }
+
+        @Override
+        public void connectionLost(Throwable cause) {
+            Log.e(TAG, "Mqtt Message connectionLost");
+        }
+
+
+        @Override
+        public void deliveryComplete(IMqttDeliveryToken token) {
+            Log.e(TAG, "Mqtt Message deliveryComplete");
+            Log.d(TAG, "Mqtt Message==============消息上传完成");
+
+        }
+
+        @Override
+        public void messageArrived(String topic, MqttMessage message) throws Exception {
+            Log.e(TAG, "Mqtt Message messageArrived");
+            if ("app/devices/15aa68f3183311ebb7260242ac120004_uniqueCode002/insts".equals(topic)) {
+                Bundle bundle = new Bundle();
+                bundle.putString("userName", "manager01");
+                bundle.putString(ConstFromSrc.activityFrom, fromSrc);
+                JumpToActivity(InOutActivity.class, bundle);
+            }
+        }
+
+    };
+
+    //yhm end 1105
     @Override
-    public AbstractPresenter initPresenter() {
+    public RecognizePresenter initPresenter() {
         return null;
     }
 
@@ -207,20 +288,7 @@ public class RecognizeActivity extends BaseActivity implements ViewTreeObserver.
         recyclerShowFaceInfo.setLayoutManager(new GridLayoutManager(this, spanCount));
         recyclerShowFaceInfo.setItemAnimator(new DefaultItemAnimator());
         activeEngine(null);
-//        timer.start();
     }
-
-//    private CountDownTimer timer = new CountDownTimer(30000, 1000) {
-//
-//        @Override
-//        public void onTick(long millisUntilFinished) {
-//        }
-//
-//        @Override
-//        public void onFinish() {
-//            JumpToActivity(MainActivity.class);
-//        }
-//    };
 
     /**
      * 初始化引擎
@@ -319,9 +387,9 @@ public class RecognizeActivity extends BaseActivity implements ViewTreeObserver.
 
     @Override
     protected void initEventAndData() {
-        Intent intent=getIntent();
-        Bundle bundle=intent.getBundleExtra("bundle");
-        if(bundle!=null) {
+        Intent intent = getIntent();
+        Bundle bundle = intent.getBundleExtra("bundle");
+        if (bundle != null) {
             fromSrc = bundle.getString(ConstFromSrc.activityFrom);
         }
         //保持亮屏
@@ -344,12 +412,14 @@ public class RecognizeActivity extends BaseActivity implements ViewTreeObserver.
         Log.i(TAG, "onCreate: " + applicationInfo.nativeLibraryDir);
         if (!libraryExists) {
             showToast(getString(R.string.library_not_found));
-        }else {
+        } else {
             VersionInfo versionInfo = new VersionInfo();
             int code = FaceEngine.getVersion(versionInfo);
             Log.i(TAG, "onCreate: getVersion, code is: " + code + ", versionInfo is: " + versionInfo);
         }
         mDetector = new GestureDetectorCompat(this, new MyGestureListener());
+        MqttConnect mqttConnect = new MqttConnect();
+        mqttConnect.start();
     }
 
     private void initCamera() {
@@ -364,7 +434,7 @@ public class RecognizeActivity extends BaseActivity implements ViewTreeObserver.
 
             //请求FR的回调
             @Override
-            public void onFaceFeatureInfoGet( final FaceFeature faceFeature, final Integer requestId, final Integer errorCode) {
+            public void onFaceFeatureInfoGet(final FaceFeature faceFeature, final Integer requestId, final Integer errorCode) {
                 //FR成功
                 if (faceFeature != null) {
 //                    Log.i(TAG, "onPreview: fr end = " + System.currentTimeMillis() + " trackId = " + requestId);
@@ -432,7 +502,7 @@ public class RecognizeActivity extends BaseActivity implements ViewTreeObserver.
             }
 
             @Override
-            public void onFaceLivenessInfoGet( LivenessInfo livenessInfo, final Integer requestId, Integer errorCode) {
+            public void onFaceLivenessInfoGet(LivenessInfo livenessInfo, final Integer requestId, Integer errorCode) {
                 if (livenessInfo != null) {
                     int liveness = livenessInfo.getLiveness();
                     livenessMap.put(requestId, liveness);
@@ -469,9 +539,9 @@ public class RecognizeActivity extends BaseActivity implements ViewTreeObserver.
             public void onCameraOpened(Camera camera, int cameraId, int displayOrientation, boolean isMirror) {
                 Camera.Size lastPreviewSize = previewSize;
                 previewSize = camera.getParameters().getPreviewSize();
-                Log.d(TAG, "onCameraOpened: previewSize w"+previewSize.width+":h"+previewSize.height);
-                Log.d(TAG, "onCameraOpened: previewView w"+previewView.getWidth()+":h"+previewView.getHeight());
-                Log.d(TAG, "onCameraOpened: displayOrientation "+displayOrientation);
+                Log.d(TAG, "onCameraOpened: previewSize w" + previewSize.width + ":h" + previewSize.height);
+                Log.d(TAG, "onCameraOpened: previewView w" + previewView.getWidth() + ":h" + previewView.getHeight());
+                Log.d(TAG, "onCameraOpened: displayOrientation " + displayOrientation);
                 drawHelper = new DrawHelper(previewSize.width, previewSize.height, previewView.getWidth(), previewView.getHeight(), displayOrientation
                         , cameraId, isMirror, false, false);
                 Log.i(TAG, "onCameraOpened: " + drawHelper.toString());
@@ -556,7 +626,7 @@ public class RecognizeActivity extends BaseActivity implements ViewTreeObserver.
                 Log.i(TAG, "onCameraConfigurationChanged: " + cameraID + "  " + displayOrientation);
             }
         };
-        Point point=new Point(previewView.getMeasuredWidth(), previewView.getMeasuredHeight());
+        Point point = new Point(previewView.getMeasuredWidth(), previewView.getMeasuredHeight());
         cameraHelper = new CameraHelper.Builder()
                 .previewViewSize(point)
                 .rotation(getWindowManager().getDefaultDisplay().getRotation())
@@ -596,7 +666,6 @@ public class RecognizeActivity extends BaseActivity implements ViewTreeObserver.
         }
         drawHelper.draw(faceRectView, drawInfoList);
     }
-
 
 
     /**
@@ -698,11 +767,11 @@ public class RecognizeActivity extends BaseActivity implements ViewTreeObserver.
                             requestFeatureStatusMap.put(requestId, RequestFeatureStatus.SUCCEED);
                             //faceHelper.setName(requestId, getString(R.string.recognize_success_notice, compareResult.getUserName()));
                             faceHelper.setName(requestId, compareResult.getUserName());
-                            Bundle bundle=new Bundle();
-                            bundle.putString("userName",compareResult.getUserName());
-                            bundle.putString(ConstFromSrc.activityFrom,fromSrc);
-                            JumpToActivity(InOutActivity.class,bundle);
-                            Log.d(TAG, "onNext: sedSerialCmd"+"haha");
+                            Bundle bundle = new Bundle();
+                            bundle.putString("userName", compareResult.getUserName());
+                            bundle.putString(ConstFromSrc.activityFrom, fromSrc);
+                            JumpToActivity(InOutActivity.class, bundle);
+                            Log.d(TAG, "onNext: sedSerialCmd" + "haha");
                         } else {
                             faceHelper.setName(requestId, "人员未识别");
                             retryRecognizeDelayed(requestId);
@@ -829,6 +898,7 @@ public class RecognizeActivity extends BaseActivity implements ViewTreeObserver.
                     }
                 });
     }
+
     /**
      * 检查能否找到动态链接库，如果找不到，请修改工程配置
      *
@@ -851,6 +921,7 @@ public class RecognizeActivity extends BaseActivity implements ViewTreeObserver.
         }
         return exists;
     }
+
     /**
      * 激活引擎
      *
@@ -926,9 +997,29 @@ public class RecognizeActivity extends BaseActivity implements ViewTreeObserver.
     }
 
     @Override
-    public boolean onTouchEvent(MotionEvent event){
+    public boolean onTouchEvent(MotionEvent event) {
         this.mDetector.onTouchEvent(event);
         return super.onTouchEvent(event);
+    }
+
+    @Override
+    public void handelAllUserInfo(BaseResponse<List<UserInfo>> userInfos) {
+        //获取所有的用户信息，更新人脸特征值
+        if (userInfos.getCode() == 200000) {
+            List<UserInfo> data = userInfos.getData();
+            for (UserInfo user : data) {
+                if ("0".equals(user.getFaceStatus())) {
+                    //todo 通过图像路径更新人脸特征值
+
+                }
+
+            }
+        }
+    }
+
+    @Override
+    public void handleUpdateFeature(BaseResponse<UserInfo> userInfo) {
+
     }
 
 
@@ -936,7 +1027,7 @@ public class RecognizeActivity extends BaseActivity implements ViewTreeObserver.
         @Override
         public boolean onFling(MotionEvent e1, MotionEvent e2, float velocityX,
                                float velocityY) {
-            if(e2.getX()-e1.getX() > 120){
+            if (e2.getX() - e1.getX() > 120) {
                 JumpToActivity(MainActivity.class);
                 return true;
             }
@@ -945,15 +1036,174 @@ public class RecognizeActivity extends BaseActivity implements ViewTreeObserver.
     }
 
     @Override
-    public  void afterRequestPermission(int requestCode, boolean isAllGranted) {
+    public void afterRequestPermission(int requestCode, boolean isAllGranted) {
         if (requestCode == ACTION_REQUEST_PERMISSIONS) {
             if (isAllGranted) {
 //                activeEngine(null);
-
             } else {
                 showToast(getString(R.string.permission_denied));
             }
         }
     }
+
+    //yhm start 1105
+    class MqttConnect extends Thread {
+        @Override
+        public void run() {
+            super.run();
+            if (iotDevice == null) {
+                iotDevice = new IotDevice();
+                iotDevice.setIotHost("172.16.61.101");
+                iotDevice.setMqttPort("1883");
+                iotDevice.setDevId("smartbox");
+                iotDevice.setDevPassword("smartbox");
+            }
+            /*try {
+                Thread.sleep(5000);
+            } catch (InterruptedException e) {
+                e.printStackTrace();
+            }*/
+            MqttServer.getInstance().init(RecognizeActivity.this, iotDevice, rylaiMqttCallback);
+        }
+    }
+    //yhm end 1105
+
+    //批量注册人脸
+
+    //提取人脸特征值和注册人脸
+
+    public void registerFaceAndGetFeature(final List<UserInfo> userInfos, final Activity context) {
+        new AsyncTask<Void, Void, List<UserInfo>>() {
+            @Override
+            protected List<UserInfo> doInBackground(Void... params) {
+                ArrayList<File> files = new ArrayList<>();
+                try {
+                    //要在子线程中使用，否则会报错
+                    for (UserInfo userInfo : userInfos) {
+                        processImage(userInfo);
+                    }
+
+                } catch (Exception e) {
+                    e.printStackTrace();
+                }
+                return userInfos;
+            }
+
+            @Override
+            protected void onPostExecute(List<UserInfo> files) {
+
+            }
+        }.execute();
+    }
+
+    public void processImage(UserInfo userInfo) {
+        if(userInfo.getFaceImg() == null){
+            return;
+        }
+        File file = null;
+        try {
+            file = Glide.with(RecognizeActivity.this).downloadOnly().load(userInfo.getFaceImg()).submit().get();
+        } catch (ExecutionException e) {
+            e.printStackTrace();
+        } catch (InterruptedException e) {
+            e.printStackTrace();
+        }
+        Bitmap bitmap = BitmapFactory.decodeFile(file.getAbsolutePath());
+        if (bitmap == null) {
+            return;
+        }
+        if (frEngine == null) {
+            return;
+        }
+
+        // 接口需要的bgr24宽度必须为4的倍数
+        bitmap = ArcSoftImageUtil.getAlignedBitmap(bitmap, true);
+
+        if (bitmap == null) {
+            return;
+        }
+        int width = bitmap.getWidth();
+        int height = bitmap.getHeight();
+        // bitmap转bgr24
+        long start = System.currentTimeMillis();
+        byte[] bgr24 = ArcSoftImageUtil.createImageData(bitmap.getWidth(), bitmap.getHeight(), ArcSoftImageFormat.BGR24);
+        int transformCode = ArcSoftImageUtil.bitmapToImageData(bitmap, bgr24, ArcSoftImageFormat.BGR24);
+        if (transformCode != ArcSoftImageUtilError.CODE_SUCCESS) {
+            showToast("failed to transform bitmap to imageData, code is " + transformCode);
+            return;
+        }
+//        Log.i(TAG, "processImage:bitmapToBgr24 cost =  " + (System.currentTimeMillis() - start));
+
+        if (bgr24 != null) {
+
+            List<FaceInfo> faceInfoList = new ArrayList<>();
+            //人脸检测
+            int detectCode = frEngine.detectFaces(bgr24, width, height, FaceEngine.CP_PAF_BGR24, faceInfoList);
+            if (detectCode != 0 || faceInfoList.size() == 0) {
+                showToast("face detection finished, code is " + detectCode + ", face num is " + faceInfoList.size());
+                return;
+            }
+            //绘制bitmap
+            bitmap = bitmap.copy(Bitmap.Config.RGB_565, true);
+            Canvas canvas = new Canvas(bitmap);
+            Paint paint = new Paint();
+            paint.setAntiAlias(true);
+            paint.setStrokeWidth(10);
+            paint.setColor(Color.YELLOW);
+
+            if (faceInfoList.size() > 0) {
+
+                for (int i = 0; i < faceInfoList.size(); i++) {
+                    //绘制人脸框
+                    paint.setStyle(Paint.Style.STROKE);
+                    canvas.drawRect(faceInfoList.get(i).getRect(), paint);
+                    //绘制人脸序号
+                    paint.setStyle(Paint.Style.FILL_AND_STROKE);
+                    paint.setTextSize(faceInfoList.get(i).getRect().width() / 2);
+                    canvas.drawText("" + i, faceInfoList.get(i).getRect().left, faceInfoList.get(i).getRect().top, paint);
+
+                }
+            }
+
+            int faceProcessCode = frEngine.process(bgr24, width, height, FaceEngine.CP_PAF_BGR24, faceInfoList, FaceEngine.ASF_AGE | FaceEngine.ASF_GENDER | FaceEngine.ASF_FACE3DANGLE);
+            Log.i(TAG, "processImage: " + faceProcessCode);
+            if (faceProcessCode != ErrorInfo.MOK) {
+                showToast("face process finished, code is " + faceProcessCode);
+                return;
+            }
+            //年龄信息结果
+            List<AgeInfo> ageInfoList = new ArrayList<>();
+            //性别信息结果
+            List<GenderInfo> genderInfoList = new ArrayList<>();
+            //三维角度结果
+            List<Face3DAngle> face3DAngleList = new ArrayList<>();
+            //获取年龄、性别、三维角度
+            int ageCode = frEngine.getAge(ageInfoList);
+            int genderCode = frEngine.getGender(genderInfoList);
+            int face3DAngleCode = frEngine.getFace3DAngle(face3DAngleList);
+
+            if ((ageCode | genderCode | face3DAngleCode) != ErrorInfo.MOK) {
+                showToast("at lease one of age、gender、face3DAngle detect failed! codes are: " + ageCode
+                        + " ," + genderCode + " ," + face3DAngleCode);
+                return;
+            }
+            FaceFeature mainFeature = new FaceFeature();
+            int res = frEngine.extractFaceFeature(bgr24, width, height, FaceEngine.CP_PAF_BGR24, faceInfoList.get(0), mainFeature);
+            if (res != ErrorInfo.MOK) {
+                mainFeature = null;
+            }
+            if(mainFeature != null){
+                userInfo.setFaceImg(new String(mainFeature.getFeatureData()));
+                ToastUtils.showShort(userInfo.getUsername() + "====人脸特征值提取成功");
+            }
+
+            boolean success = FaceServer.getInstance().registerBgr24(RecognizeActivity.this, bgr24, bitmap.getWidth(), bitmap.getHeight(),
+                    userInfo.getUsername());
+
+        } else {
+
+        }
+    }
+
 
 }
