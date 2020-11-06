@@ -33,11 +33,14 @@ import android.widget.Switch;
 
 import com.android.terminalbox.MainActivity;
 import com.android.terminalbox.R;
+import com.android.terminalbox.app.BaseApplication;
 import com.android.terminalbox.base.activity.BaseActivity;
 import com.android.terminalbox.common.ConstFromSrc;
+import com.android.terminalbox.common.Constants;
 import com.android.terminalbox.contract.RecognizeContract;
 import com.android.terminalbox.core.bean.BaseResponse;
 import com.android.terminalbox.core.bean.box.IotDevice;
+import com.android.terminalbox.core.bean.user.OrderBody;
 import com.android.terminalbox.core.bean.user.UserInfo;
 import com.android.terminalbox.faceserver.CompareResult;
 import com.android.terminalbox.faceserver.FaceServer;
@@ -61,6 +64,7 @@ import com.android.terminalbox.utils.face.RequestLivenessStatus;
 import com.android.terminalbox.widget.FaceRectView;
 import com.android.terminalbox.widget.FaceSearchResultAdapter;
 import com.android.terminalbox.widget.ProgressDialog;
+import com.arcsoft.face.ActiveFileInfo;
 import com.arcsoft.face.AgeInfo;
 import com.arcsoft.face.ErrorInfo;
 import com.arcsoft.face.Face3DAngle;
@@ -73,10 +77,12 @@ import com.arcsoft.face.LivenessInfo;
 import com.arcsoft.face.VersionInfo;
 import com.arcsoft.face.enums.DetectFaceOrientPriority;
 import com.arcsoft.face.enums.DetectMode;
+import com.arcsoft.face.enums.RuntimeABI;
 import com.arcsoft.imageutil.ArcSoftImageFormat;
 import com.arcsoft.imageutil.ArcSoftImageUtil;
 import com.arcsoft.imageutil.ArcSoftImageUtilError;
 import com.bumptech.glide.Glide;
+import com.google.gson.Gson;
 
 import org.eclipse.paho.client.mqttv3.IMqttDeliveryToken;
 import org.eclipse.paho.client.mqttv3.IMqttToken;
@@ -250,10 +256,16 @@ public class RecognizeActivity extends BaseActivity<RecognizePresenter> implemen
         public void messageArrived(String topic, MqttMessage message) throws Exception {
             Log.e(TAG, "Mqtt Message messageArrived");
             if ("app/devices/15aa68f3183311ebb7260242ac120004_uniqueCode002/insts".equals(topic)) {
+                OrderBody orderBody = new Gson().fromJson(new String(message.getPayload()), OrderBody.class);
+                String relevanceId = orderBody.getInstData().getRelevanceId();
+                BaseApplication.setRelevanceId(relevanceId);
                 Bundle bundle = new Bundle();
                 bundle.putString("userName", "manager01");
                 bundle.putString(ConstFromSrc.activityFrom, fromSrc);
                 JumpToActivity(InOutActivity.class, bundle);
+            }
+            if("app/userface/update".equals(topic)){
+                mPresenter.getAllUserInfo();
             }
         }
 
@@ -928,71 +940,71 @@ public class RecognizeActivity extends BaseActivity<RecognizePresenter> implemen
      * @param view
      */
     public void activeEngine(final View view) {
-//        if (!libraryExists) {
-//            showToast(getString(R.string.library_not_found));
-//            return;
-//        }
-//        if (!checkPermissions(NEEDED_PERMISSIONS)) {
-//            ActivityCompat.requestPermissions(this, NEEDED_PERMISSIONS, ACTION_REQUEST_PERMISSIONS);
-//            return;
-//        }
-//        if (view != null) {
-//            view.setClickable(false);
-//        }
-//        Observable.create(new ObservableOnSubscribe<Integer>() {
-//            @Override
-//            public void subscribe(ObservableEmitter<Integer> emitter) {
-//                RuntimeABI runtimeABI = FaceEngine.getRuntimeABI();
-//                Log.i(TAG, "subscribe: getRuntimeABI() " + runtimeABI);
-//
-//                long start = System.currentTimeMillis();
-//                int activeCode = FaceEngine.activeOnline(RecognizeActivity.this, Constants.APP_ID, Constants.SDK_KEY);
-//                Log.i(TAG, "subscribe cost: " + (System.currentTimeMillis() - start));
-//                emitter.onNext(activeCode);
-//            }
-//        })
-//                .subscribeOn(Schedulers.io())
-//                .observeOn(AndroidSchedulers.mainThread())
-//                .subscribe(new Observer<Integer>() {
-//                    @Override
-//                    public void onSubscribe(Disposable d) {
-//
-//                    }
-//
-//                    @Override
-//                    public void onNext(Integer activeCode) {
-//                        if (activeCode == ErrorInfo.MOK) {
-//                            showToast(getString(R.string.active_success));
-//                        } else if (activeCode == ErrorInfo.MERR_ASF_ALREADY_ACTIVATED) {
-//                            showToast(getString(R.string.already_activated));
-//                        } else {
-//                            showToast(getString(R.string.active_failed, activeCode));
-//                        }
-//
-//                        if (view != null) {
-//                            view.setClickable(true);
-//                        }
-//                        ActiveFileInfo activeFileInfo = new ActiveFileInfo();
-//                        int res = FaceEngine.getActiveFileInfo(RecognizeActivity.this, activeFileInfo);
-//                        if (res == ErrorInfo.MOK) {
-//                            Log.i(TAG, activeFileInfo.toString());
-//                        }
-//
-//                    }
-//
-//                    @Override
-//                    public void onError(Throwable e) {
-//                        showToast(e.getMessage());
-//                        if (view != null) {
-//                            view.setClickable(true);
-//                        }
-//                    }
-//
-//                    @Override
-//                    public void onComplete() {
-//
-//                    }
-//                });
+        if (!libraryExists) {
+            showToast(getString(R.string.library_not_found));
+            return;
+        }
+        if (!checkPermissions(NEEDED_PERMISSIONS)) {
+            ActivityCompat.requestPermissions(this, NEEDED_PERMISSIONS, ACTION_REQUEST_PERMISSIONS);
+            return;
+        }
+        if (view != null) {
+            view.setClickable(false);
+        }
+        Observable.create(new ObservableOnSubscribe<Integer>() {
+            @Override
+            public void subscribe(ObservableEmitter<Integer> emitter) {
+                RuntimeABI runtimeABI = FaceEngine.getRuntimeABI();
+                Log.i(TAG, "subscribe: getRuntimeABI() " + runtimeABI);
+
+                long start = System.currentTimeMillis();
+                int activeCode = FaceEngine.activeOnline(RecognizeActivity.this, Constants.APP_ID, Constants.SDK_KEY);
+                Log.i(TAG, "subscribe cost: " + (System.currentTimeMillis() - start));
+                emitter.onNext(activeCode);
+            }
+        })
+                .subscribeOn(Schedulers.io())
+                .observeOn(AndroidSchedulers.mainThread())
+                .subscribe(new Observer<Integer>() {
+                    @Override
+                    public void onSubscribe(Disposable d) {
+
+                    }
+
+                    @Override
+                    public void onNext(Integer activeCode) {
+                        if (activeCode == ErrorInfo.MOK) {
+                            showToast(getString(R.string.active_success));
+                        } else if (activeCode == ErrorInfo.MERR_ASF_ALREADY_ACTIVATED) {
+                            showToast(getString(R.string.already_activated));
+                        } else {
+                            showToast(getString(R.string.active_failed, activeCode));
+                        }
+
+                        if (view != null) {
+                            view.setClickable(true);
+                        }
+                        ActiveFileInfo activeFileInfo = new ActiveFileInfo();
+                        int res = FaceEngine.getActiveFileInfo(RecognizeActivity.this, activeFileInfo);
+                        if (res == ErrorInfo.MOK) {
+                            Log.i(TAG, activeFileInfo.toString());
+                        }
+
+                    }
+
+                    @Override
+                    public void onError(Throwable e) {
+                        showToast(e.getMessage());
+                        if (view != null) {
+                            view.setClickable(true);
+                        }
+                    }
+
+                    @Override
+                    public void onComplete() {
+
+                    }
+                });
 
     }
 
@@ -1007,13 +1019,7 @@ public class RecognizeActivity extends BaseActivity<RecognizePresenter> implemen
         //获取所有的用户信息，更新人脸特征值
         if (userInfos.getCode() == 200000) {
             List<UserInfo> data = userInfos.getData();
-            for (UserInfo user : data) {
-                if ("0".equals(user.getFaceStatus())) {
-                    //todo 通过图像路径更新人脸特征值
-
-                }
-
-            }
+            registerFaceAndGetFeature(data,this);
         }
     }
 

@@ -31,6 +31,7 @@ public class BaseApplication extends Application {
     public static synchronized BaseApplication getInstance() {
         return instance;
     }
+    public static String relevanceId;
 
     public static RefWatcher getRefWatcher(Context context) {
         BaseApplication application = (BaseApplication) context.getApplicationContext();
@@ -87,4 +88,11 @@ public class BaseApplication extends Application {
                 tag(getString(R.string.app_name)).build(getPackageName(), getString(R.string.app_name))));
     }
 
+    public static String getRelevanceId() {
+        return relevanceId;
+    }
+
+    public static void setRelevanceId(String relevanceId) {
+        BaseApplication.relevanceId = relevanceId;
+    }
 }

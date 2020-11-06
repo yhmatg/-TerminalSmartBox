@@ -20,6 +20,7 @@ import android.widget.Toast;
 
 import com.android.terminalbox.MainActivity;
 import com.android.terminalbox.R;
+import com.android.terminalbox.app.BaseApplication;
 import com.android.terminalbox.base.activity.BaseActivity;
 import com.android.terminalbox.base.presenter.AbstractPresenter;
 import com.android.terminalbox.common.ConstFromSrc;
@@ -30,13 +31,18 @@ import com.android.terminalbox.core.dao.TagDao;
 import com.android.terminalbox.core.room.BaseDb;
 import com.android.terminalbox.devservice.ekey.EkeyServer;
 import com.android.terminalbox.devservice.ekey.EkeyStatusChangeListener;
+import com.android.terminalbox.mqtt.MqttServer;
+import com.android.terminalbox.mqtt.own.Props;
+import com.android.terminalbox.mqtt.own.ResultProp;
 import com.android.terminalbox.uhf.EsimUhfHelper;
 import com.android.terminalbox.uhf.EsimUhfParams;
+import com.android.terminalbox.uhf.UhfTag;
 import com.android.terminalbox.ui.rfid.SimpleTagAdapter;
 import com.android.terminalbox.utils.StringUtils;
 import com.android.terminalbox.widget.LoadingDialog;
 import com.annimon.stream.Collectors;
 import com.annimon.stream.Stream;
+import com.google.gson.Gson;
 
 import org.xutils.common.util.DensityUtil;
 import org.xutils.image.ImageOptions;
@@ -160,7 +166,7 @@ public class InOutActivity extends BaseActivity {
         ekeyServer = EkeyServer.getInstance();
         ekeyServer.addStatusChangeListenner(ekeyStatusChangeListener);
 
-        /*new Thread(() -> {
+        new Thread(() -> {
             try {
                 Looper.prepare();
                 if(oprecordDao==null) {
@@ -185,17 +191,23 @@ public class InOutActivity extends BaseActivity {
             } catch (Exception e) {
                 e.printStackTrace();
             }
-        }).start();*/
+        }).start();
 
     }
     EkeyStatusChangeListener ekeyStatusChangeListener = ekeyStatus -> {
         switch (ekeyStatus) {
             case OPEN:
                 Log.d(TAG, "=========ekey open============: ");
+                if (!StringUtils.isEmpty(BaseApplication.getRelevanceId())){
+                    openReport(BaseApplication.getRelevanceId());
+                }
                 runOnUiThread(() -> tvKeyStatus.setText("锁状态：开启"));
                 break;
             case CLOSED:
                 Log.d(TAG, "=========ekey close============: ");
+                if (!StringUtils.isEmpty(BaseApplication.getRelevanceId())){
+                   closeReport(BaseApplication.getRelevanceId());
+                }
                 runOnUiThread(() -> {
                     tvKeyStatus.setText("锁状态：关闭");
                 });
@@ -248,34 +260,37 @@ public class InOutActivity extends BaseActivity {
         epcUnChangeTime = 0;
         loadingDialog=new LoadingDialog(InOutActivity.this,"统计中...");
         loadingDialog.show();
-        boolean isStartOk = EsimUhfHelper.getInstance().startReadTags(esimUhfParams, tags -> {
-            List<String> epcs = Stream.of(tags).map(uhfTags -> uhfTags.getEpc()).collect(Collectors.toList());//Log.d(TAG, "invTags: 本次盘点到标签" + epcs.size() + "    " + epcs.toString());
-            epcs.removeAll(currentBoxTags);// Log.d(TAG, "invTags: 其中以前未盘到" + epcs.size() + "    " + epcs.toString());
-            if (epcs.size() > 0) {//扫描到新标签
-                epcUnChangeTime = 0;
-                currentBoxTags.addAll(epcs);
-            } else {
-                epcUnChangeTime++;
-                if (epcUnChangeTime >= epcUnChangeMaxTime) {//多次扫描不到新标签，假定扫描完Log.d(TAG, "invTags: " + epcUnChangeTime + "次未找到新标签,假定扫描完");
-                    EsimUhfHelper.getInstance().stopRead();
-                    changeEpcs.clear();
-                    if(opType.equals(ConstFromSrc.tagsIn)){
-                        changeEpcs.addAll(Stream.of(currentBoxTags).filter(epc->!db_epcs.contains(epc)).distinct().collect(Collectors.toList()));
-                    }else {
-                        changeEpcs.addAll(Stream.of(db_epcs).filter(epc->!currentBoxTags.contains(epc)).distinct().collect(Collectors.toList()));
-                    }
-                    Log.d(TAG, "==========invTags: dbEpc"+db_epcs.toString()+"==========");
-                    Log.d(TAG, "==========invTags: currentEpc"+currentBoxTags.toString()+"==========");
-                    Log.d(TAG, "==========invTags: changeEpc"+changeEpcs.toString()+"==========");
-                    mainHandler.post(() -> {
-                        if(loadingDialog!=null) {
-                            loadingDialog.dismiss();
-                        }
-                        tvTotalShow.setText("" + changeEpcs.size());
-                        mTagAdapter.notifyDataSetChanged();
-                    });
+        boolean isStartOk = EsimUhfHelper.getInstance().startReadTags(esimUhfParams, new EsimUhfHelper.EsimUhfListener() {
+            @Override
+            public void onTagRead(List<UhfTag> tags) {
+                List<String> epcs = Stream.of(tags).map(uhfTags -> uhfTags.getEpc()).collect(Collectors.toList());//Log.d(TAG, "invTags: 本次盘点到标签" + epcs.size() + "    " + epcs.toString());
+                epcs.removeAll(currentBoxTags);// Log.d(TAG, "invTags: 其中以前未盘到" + epcs.size() + "    " + epcs.toString());
+                if (epcs.size() > 0) {//扫描到新标签
+                    epcUnChangeTime = 0;
+                    currentBoxTags.addAll(epcs);
                 } else {
-                    Log.d(TAG, "invTags: 第" + epcUnChangeTime + "次无新标签");
+                    epcUnChangeTime++;
+                    if (epcUnChangeTime >= epcUnChangeMaxTime) {//多次扫描不到新标签，假定扫描完Log.d(TAG, "invTags: " + epcUnChangeTime + "次未找到新标签,假定扫描完");
+                        EsimUhfHelper.getInstance().stopRead();
+                        changeEpcs.clear();
+                        if (opType.equals(ConstFromSrc.tagsIn)) {
+                            changeEpcs.addAll(Stream.of(currentBoxTags).filter(epc -> !db_epcs.contains(epc)).distinct().collect(Collectors.toList()));
+                        } else {
+                            changeEpcs.addAll(Stream.of(db_epcs).filter(epc -> !currentBoxTags.contains(epc)).distinct().collect(Collectors.toList()));
+                        }
+                        Log.d(TAG, "==========invTags: dbEpc" + db_epcs.toString() + "==========");
+                        Log.d(TAG, "==========invTags: currentEpc" + currentBoxTags.toString() + "==========");
+                        Log.d(TAG, "==========invTags: changeEpc" + changeEpcs.toString() + "==========");
+                        mainHandler.post(() -> {
+                            if (loadingDialog != null) {
+                                loadingDialog.dismiss();
+                            }
+                            tvTotalShow.setText("" + changeEpcs.size());
+                            mTagAdapter.notifyDataSetChanged();
+                        });
+                    } else {
+                        Log.d(TAG, "invTags: 第" + epcUnChangeTime + "次无新标签");
+                    }
                 }
             }
         });
@@ -308,5 +323,57 @@ public class InOutActivity extends BaseActivity {
             }
             return false;
         }
+    }
+
+    //发布开锁消息
+    public void openReport(String relevanceId) {
+        Props props = new Props();
+        ArrayList<ResultProp> resultProps = new ArrayList<>();
+        ResultProp resultProp = new ResultProp();
+        resultProp.setCap_id("id1");
+        resultProp.setRelevance_id(relevanceId);
+        resultProp.setData_event_time(System.currentTimeMillis());
+        ResultProp.Prop prop = new ResultProp.Prop();
+        prop.setOpenEkey(true);
+        prop.setOpenType("remote");
+        resultProp.setProp(prop);
+        resultProps.add(resultProp);
+        props.setProps(resultProps);
+        MqttServer.getInstance().reportProperties(new Gson().toJson(props));
+    }
+
+    public void closeReport(String relevanceId) {
+        Props props = new Props();
+        ArrayList<ResultProp> resultProps = new ArrayList<>();
+        ResultProp resultProp = new ResultProp();
+        resultProp.setCap_id("id2");
+        resultProp.setRelevance_id(relevanceId);
+        resultProp.setData_event_time(System.currentTimeMillis());
+        ResultProp.Prop prop = new ResultProp.Prop();
+        prop.setCloseEkey(true);
+        resultProp.setProp(prop);
+        resultProps.add(resultProp);
+        props.setProps(resultProps);
+        MqttServer.getInstance().reportProperties(new Gson().toJson(props));
+    }
+
+    public void nvReport(String relevanceId) {
+        Props props = new Props();
+        ArrayList<ResultProp> resultProps = new ArrayList<>();
+        ResultProp resultProp = new ResultProp();
+        resultProp.setCap_id("id3");
+        resultProp.setRelevance_id(relevanceId);
+        resultProp.setData_event_time(System.currentTimeMillis());
+        ResultProp.Prop prop = new ResultProp.Prop();
+        ArrayList<String> inList = new ArrayList<>();
+        inList.add("epc01");
+        ArrayList<String> outList = new ArrayList<>();
+        outList.add("epc02");
+        prop.setRfid_in(inList);
+        prop.setRfid_out(outList);
+        resultProp.setProp(prop);
+        resultProps.add(resultProp);
+        props.setProps(resultProps);
+        MqttServer.getInstance().reportProperties(new Gson().toJson(props));
     }
 }

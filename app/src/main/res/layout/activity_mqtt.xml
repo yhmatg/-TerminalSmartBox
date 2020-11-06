@@ -1,11 +1,35 @@
 <?xml version="1.0" encoding="utf-8"?>
 <LinearLayout xmlns:android="http://schemas.android.com/apk/res/android"
-    android:orientation="vertical"
     android:layout_width="match_parent"
-    android:layout_height="match_parent">
+    android:layout_height="match_parent"
+    android:orientation="vertical">
+
+
     <Button
-        android:id="@+id/bt_pulish"
+        android:id="@+id/open_pulish"
         android:layout_width="match_parent"
         android:layout_height="wrap_content"
-        android:text="发布消息"/>
+        android:layout_marginTop="@dimen/dp_20"
+        android:text="开锁消息" />
+
+    <Button
+        android:id="@+id/close_pulish"
+        android:layout_width="match_parent"
+        android:layout_height="wrap_content"
+        android:layout_marginTop="@dimen/dp_20"
+        android:text="关锁消息" />
+
+    <Button
+        android:id="@+id/inv_pulish"
+        android:layout_width="match_parent"
+        android:layout_height="wrap_content"
+        android:layout_marginTop="@dimen/dp_20"
+        android:text="盘点消息" />
+
+    <TextView
+        android:id="@+id/arrived_content"
+        android:layout_marginTop="@dimen/dp_20"
+        android:layout_width="match_parent"
+        android:layout_height="wrap_content"
+        android:text="开锁消息"/>
 </LinearLayout>
