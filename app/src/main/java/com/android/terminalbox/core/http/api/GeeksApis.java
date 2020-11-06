@@ -25,7 +25,7 @@ public interface GeeksApis {
     Observable<BaseResponse<UserLoginResponse>> login(@Body UserInfo userInfo);
 
     //获取所有用户信息
-    @GET("/api/v1/users/{userId}")
+    @GET("/api/v1/users")
     Observable<BaseResponse<List<UserInfo>>> getAllUserInfo();
 
     //人脸头像特征值更新

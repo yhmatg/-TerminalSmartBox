@@ -6,6 +6,7 @@ import android.support.multidex.MultiDex;
 
 import com.android.terminalbox.BuildConfig;
 import com.android.terminalbox.R;
+import com.android.terminalbox.utils.Utils;
 import com.android.terminalbox.utils.logger.MyCrashListener;
 import com.android.terminalbox.utils.logger.TxtFormatStrategy;
 import com.bumptech.glide.Glide;
@@ -57,6 +58,7 @@ public class BaseApplication extends Application {
         //崩溃日志保存到本地
         ///storage/emulated/0/Android/data/com.common.esimrfid/cache/crash_log
         XLog.init(this);
+        Utils.init(this);
         CrashHandler.getInstance().setOnCrashListener(new MyCrashListener());
 
     }

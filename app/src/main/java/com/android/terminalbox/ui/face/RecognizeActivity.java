@@ -265,7 +265,7 @@ public class RecognizeActivity extends BaseActivity<RecognizePresenter> implemen
                 JumpToActivity(InOutActivity.class, bundle);
             }
             if("app/userface/update".equals(topic)){
-                mPresenter.getAllUserInfo();
+               mPresenter.getAllUserInfo();
             }
         }
 
@@ -274,7 +274,7 @@ public class RecognizeActivity extends BaseActivity<RecognizePresenter> implemen
     //yhm end 1105
     @Override
     public RecognizePresenter initPresenter() {
-        return null;
+        return new RecognizePresenter();
     }
 
     private void initView() {
@@ -310,9 +310,13 @@ public class RecognizeActivity extends BaseActivity<RecognizePresenter> implemen
         ftInitCode = ftEngine.init(this, DetectMode.ASF_DETECT_MODE_VIDEO, ConfigUtil.getFtOrient(this),
                 16, MAX_DETECT_NUM, FaceEngine.ASF_FACE_DETECT);
 
-        frEngine = new FaceEngine();
+        /*frEngine = new FaceEngine();
         frInitCode = frEngine.init(this, DetectMode.ASF_DETECT_MODE_IMAGE, DetectFaceOrientPriority.ASF_OP_0_ONLY,
-                16, MAX_DETECT_NUM, FaceEngine.ASF_FACE_RECOGNITION);
+                16, MAX_DETECT_NUM, FaceEngine.ASF_FACE_RECOGNITION);*/
+
+        frEngine = new FaceEngine();
+        frEngine.init(this, DetectMode.ASF_DETECT_MODE_IMAGE, DetectFaceOrientPriority.ASF_OP_0_ONLY,
+                16, 6, FaceEngine.ASF_FACE_RECOGNITION | FaceEngine.ASF_AGE | FaceEngine.ASF_FACE_DETECT | FaceEngine.ASF_GENDER | FaceEngine.ASF_FACE3DANGLE);
 
         flEngine = new FaceEngine();
         flInitCode = flEngine.init(this, DetectMode.ASF_DETECT_MODE_IMAGE, DetectFaceOrientPriority.ASF_OP_0_ONLY,
@@ -1146,7 +1150,6 @@ public class RecognizeActivity extends BaseActivity<RecognizePresenter> implemen
             //人脸检测
             int detectCode = frEngine.detectFaces(bgr24, width, height, FaceEngine.CP_PAF_BGR24, faceInfoList);
             if (detectCode != 0 || faceInfoList.size() == 0) {
-                showToast("face detection finished, code is " + detectCode + ", face num is " + faceInfoList.size());
                 return;
             }
             //绘制bitmap
@@ -1174,7 +1177,7 @@ public class RecognizeActivity extends BaseActivity<RecognizePresenter> implemen
             int faceProcessCode = frEngine.process(bgr24, width, height, FaceEngine.CP_PAF_BGR24, faceInfoList, FaceEngine.ASF_AGE | FaceEngine.ASF_GENDER | FaceEngine.ASF_FACE3DANGLE);
             Log.i(TAG, "processImage: " + faceProcessCode);
             if (faceProcessCode != ErrorInfo.MOK) {
-                showToast("face process finished, code is " + faceProcessCode);
+                //showToast("face process finished, code is " + faceProcessCode);
                 return;
             }
             //年龄信息结果
@@ -1189,8 +1192,8 @@ public class RecognizeActivity extends BaseActivity<RecognizePresenter> implemen
             int face3DAngleCode = frEngine.getFace3DAngle(face3DAngleList);
 
             if ((ageCode | genderCode | face3DAngleCode) != ErrorInfo.MOK) {
-                showToast("at lease one of age、gender、face3DAngle detect failed! codes are: " + ageCode
-                        + " ," + genderCode + " ," + face3DAngleCode);
+               /* showToast("at lease one of age、gender、face3DAngle detect failed! codes are: " + ageCode
+                        + " ," + genderCode + " ," + face3DAngleCode);*/
                 return;
             }
             FaceFeature mainFeature = new FaceFeature();
@@ -1200,7 +1203,7 @@ public class RecognizeActivity extends BaseActivity<RecognizePresenter> implemen
             }
             if(mainFeature != null){
                 userInfo.setFaceImg(new String(mainFeature.getFeatureData()));
-                ToastUtils.showShort(userInfo.getUsername() + "====人脸特征值提取成功");
+                //ToastUtils.showShort(userInfo.getUsername() + "====人脸特征值提取成功");
             }
 
             boolean success = FaceServer.getInstance().registerBgr24(RecognizeActivity.this, bgr24, bitmap.getWidth(), bitmap.getHeight(),

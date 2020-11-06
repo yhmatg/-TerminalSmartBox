@@ -21,34 +21,34 @@ public class RecognizePresenter extends BasePresenter<RecognizeContract.View> im
     @Override
     public void getAllUserInfo() {
         addSubscribe(DataManager.getInstance().getAllUserInfo()
-        .compose(RxUtils.rxSchedulerHelper())
-        .subscribeWith(new BaseObserver<BaseResponse<List<UserInfo>>>(mView,false) {
-            @Override
-            public void onNext(BaseResponse<List<UserInfo>> listBaseResponse) {
-                mView.handelAllUserInfo(listBaseResponse);
-            }
+                .compose(RxUtils.rxSchedulerHelper())
+                .subscribeWith(new BaseObserver<BaseResponse<List<UserInfo>>>(mView, false) {
+                    @Override
+                    public void onNext(BaseResponse<List<UserInfo>> listBaseResponse) {
+                        mView.handelAllUserInfo(listBaseResponse);
+                    }
 
-            @Override
-            public void onError(Throwable e) {
-                super.onError(e);
-            }
-        }));
+                    @Override
+                    public void onError(Throwable e) {
+                        super.onError(e);
+                    }
+                }));
     }
 
     @Override
     public void updateFeature(FaceFeatureBody faceFeatureBody) {
         addSubscribe(DataManager.getInstance().updateFeature(faceFeatureBody)
-        .compose(RxUtils.rxSchedulerHelper())
-        .subscribeWith(new BaseObserver<BaseResponse<UserInfo>>(mView, false) {
-            @Override
-            public void onNext(BaseResponse<UserInfo> userInfoBaseResponse) {
-                mView.handleUpdateFeature(userInfoBaseResponse);
-            }
+                .compose(RxUtils.rxSchedulerHelper())
+                .subscribeWith(new BaseObserver<BaseResponse<UserInfo>>(mView, false) {
+                    @Override
+                    public void onNext(BaseResponse<UserInfo> userInfoBaseResponse) {
+                        mView.handleUpdateFeature(userInfoBaseResponse);
+                    }
 
-            @Override
-            public void onError(Throwable e) {
-                super.onError(e);
-            }
-        }));
+                    @Override
+                    public void onError(Throwable e) {
+                        super.onError(e);
+                    }
+                }));
     }
 }

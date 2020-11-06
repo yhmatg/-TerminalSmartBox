@@ -50,7 +50,7 @@ public class PreferenceHelperImpl implements PreferenceHelper {
 
     @Override
     public String getToken() {
-        return mPreferences.getString(Constants.TOKEN, "");
+        return mPreferences.getString(Constants.TOKEN, "8c72bc61-65ea-4814-aef9-d947ae3f9c5c");
     }
 
 
