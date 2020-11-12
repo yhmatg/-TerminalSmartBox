@@ -31,4 +31,8 @@ public interface GeeksApis {
     //人脸头像特征值更新
     @POST("/api/v1/users/updateFeature")
     Observable<BaseResponse<UserInfo>> updateFeature(@Body FaceFeatureBody faceFeatureBody);
+
+    //批量更新人脸特征值
+    @POST("/api/v1/users/updateFeature")
+    Observable<BaseResponse<List<UserInfo>>> updateFeatures(@Body List<FaceFeatureBody> faceFeatures);
 }

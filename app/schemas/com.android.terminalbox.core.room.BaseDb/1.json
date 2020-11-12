@@ -2,7 +2,7 @@
   "formatVersion": 1,
   "database": {
     "version": 1,
-    "identityHash": "d474a17b55243f716acd8610b35a5cf4",
+    "identityHash": "8f1f6d5dbca640715eecf1fbff96ed95",
     "entities": [
       {
         "tableName": "Oprecord",
@@ -73,11 +73,79 @@
         },
         "indices": [],
         "foreignKeys": []
+      },
+      {
+        "tableName": "UserInfo",
+        "createSql": "CREATE TABLE IF NOT EXISTS `${TABLE_NAME}` (`faceFeature` TEXT, `faceImg` TEXT, `faceStatus` TEXT, `flag` TEXT, `gmtModified` INTEGER NOT NULL, `id` INTEGER NOT NULL, `password` TEXT, `token` TEXT, `username` TEXT, PRIMARY KEY(`id`))",
+        "fields": [
+          {
+            "fieldPath": "faceFeature",
+            "columnName": "faceFeature",
+            "affinity": "TEXT",
+            "notNull": false
+          },
+          {
+            "fieldPath": "faceImg",
+            "columnName": "faceImg",
+            "affinity": "TEXT",
+            "notNull": false
+          },
+          {
+            "fieldPath": "faceStatus",
+            "columnName": "faceStatus",
+            "affinity": "TEXT",
+            "notNull": false
+          },
+          {
+            "fieldPath": "flag",
+            "columnName": "flag",
+            "affinity": "TEXT",
+            "notNull": false
+          },
+          {
+            "fieldPath": "gmtModified",
+            "columnName": "gmtModified",
+            "affinity": "INTEGER",
+            "notNull": true
+          },
+          {
+            "fieldPath": "id",
+            "columnName": "id",
+            "affinity": "INTEGER",
+            "notNull": true
+          },
+          {
+            "fieldPath": "password",
+            "columnName": "password",
+            "affinity": "TEXT",
+            "notNull": false
+          },
+          {
+            "fieldPath": "token",
+            "columnName": "token",
+            "affinity": "TEXT",
+            "notNull": false
+          },
+          {
+            "fieldPath": "username",
+            "columnName": "username",
+            "affinity": "TEXT",
+            "notNull": false
+          }
+        ],
+        "primaryKey": {
+          "columnNames": [
+            "id"
+          ],
+          "autoGenerate": false
+        },
+        "indices": [],
+        "foreignKeys": []
       }
     ],
     "setupQueries": [
       "CREATE TABLE IF NOT EXISTS room_master_table (id INTEGER PRIMARY KEY,identity_hash TEXT)",
-      "INSERT OR REPLACE INTO room_master_table (id,identity_hash) VALUES(42, \"d474a17b55243f716acd8610b35a5cf4\")"
+      "INSERT OR REPLACE INTO room_master_table (id,identity_hash) VALUES(42, \"8f1f6d5dbca640715eecf1fbff96ed95\")"
     ]
   }
 }

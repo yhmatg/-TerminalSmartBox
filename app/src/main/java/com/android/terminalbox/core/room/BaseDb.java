@@ -11,12 +11,15 @@ import com.android.terminalbox.app.BaseApplication;
 import com.android.terminalbox.core.bean.box.Oprecord;
 import com.android.terminalbox.core.bean.box.Tag;
 import com.android.terminalbox.core.bean.user.DbUser;
+import com.android.terminalbox.core.bean.user.UserInfo;
 import com.android.terminalbox.core.dao.OprecordDao;
 import com.android.terminalbox.core.dao.TagDao;
+import com.android.terminalbox.core.dao.UserDao;
 
 @Database(entities = {
         Oprecord.class,
-        Tag.class
+        Tag.class,
+        UserInfo.class
 }
         , version = 1)
 @TypeConverters(DateConverter.class)
@@ -54,5 +57,7 @@ public abstract class BaseDb extends RoomDatabase {
     public abstract OprecordDao getOprecordDao();
 
     public abstract TagDao getTagDao();
+
+    public abstract UserDao getUserDao();
 
 }

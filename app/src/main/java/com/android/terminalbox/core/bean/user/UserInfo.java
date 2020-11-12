@@ -1,5 +1,10 @@
 package com.android.terminalbox.core.bean.user;
 
+import android.arch.persistence.room.ColumnInfo;
+import android.arch.persistence.room.Entity;
+import android.arch.persistence.room.PrimaryKey;
+import android.support.annotation.NonNull;
+
 import java.io.Serializable;
 
 /**
@@ -8,25 +13,40 @@ import java.io.Serializable;
  * @author bejson.com (i@bejson.com)
  * @website http://www.bejson.com/java2pojo/
  */
-public class UserInfo implements Serializable {
+@Entity
+public class UserInfo {
 
     /**
-     * faceImg : http://172.16.68.110:9000/group1/M00/00/00/rBBEbl-aYIaAVJHfAAB9BjiV874339.png
-     * faceStatus : 0
+     * faceFeature : string1
+     * faceImg : string
+     * faceStatus : 2
      * flag : 1
+     * gmtModified : 1605167665000
      * id : 1
      * password : e10adc3949ba59abbe56e057f20f883e
      * token : code-generator_token_ae2b22d2-2cdb-4140-afed-2f61fc210046
      * username : manager
      */
 
+    private String faceFeature;
     private String faceImg;
     private String faceStatus;
     private String flag;
+    private long gmtModified;
+    @PrimaryKey
+    @NonNull
     private int id;
     private String password;
     private String token;
     private String username;
+
+    public String getFaceFeature() {
+        return faceFeature;
+    }
+
+    public void setFaceFeature(String faceFeature) {
+        this.faceFeature = faceFeature;
+    }
 
     public String getFaceImg() {
         return faceImg;
@@ -50,6 +70,14 @@ public class UserInfo implements Serializable {
 
     public void setFlag(String flag) {
         this.flag = flag;
+    }
+
+    public long getGmtModified() {
+        return gmtModified;
+    }
+
+    public void setGmtModified(long gmtModified) {
+        this.gmtModified = gmtModified;
     }
 
     public int getId() {

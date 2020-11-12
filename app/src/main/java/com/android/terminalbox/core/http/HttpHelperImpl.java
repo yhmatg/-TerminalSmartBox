@@ -59,4 +59,9 @@ public class HttpHelperImpl implements HttpHelper {
         return mGeeksApis.updateFeature(faceFeatureBody);
     }
 
+    @Override
+    public Observable<BaseResponse<List<UserInfo>>> updateFeatures(List<FaceFeatureBody> faceFeatures) {
+        return mGeeksApis.updateFeatures(faceFeatures);
+    }
+
 }

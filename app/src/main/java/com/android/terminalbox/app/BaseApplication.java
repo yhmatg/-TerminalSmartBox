@@ -6,6 +6,7 @@ import android.support.multidex.MultiDex;
 
 import com.android.terminalbox.BuildConfig;
 import com.android.terminalbox.R;
+import com.android.terminalbox.core.bean.user.UserInfo;
 import com.android.terminalbox.utils.Utils;
 import com.android.terminalbox.utils.logger.MyCrashListener;
 import com.android.terminalbox.utils.logger.TxtFormatStrategy;
@@ -18,6 +19,9 @@ import com.squareup.leakcanary.LeakCanary;
 import com.squareup.leakcanary.RefWatcher;
 import com.xuexiang.xlog.XLog;
 import com.xuexiang.xlog.crash.CrashHandler;
+
+import java.util.ArrayList;
+import java.util.List;
 
 /**
  * @author yhm
@@ -33,6 +37,7 @@ public class BaseApplication extends Application {
         return instance;
     }
     public static String relevanceId;
+    private List<UserInfo> users = new ArrayList<>();
 
     public static RefWatcher getRefWatcher(Context context) {
         BaseApplication application = (BaseApplication) context.getApplicationContext();
@@ -96,5 +101,13 @@ public class BaseApplication extends Application {
 
     public static void setRelevanceId(String relevanceId) {
         BaseApplication.relevanceId = relevanceId;
+    }
+
+    public List<UserInfo> getUsers() {
+        return users;
+    }
+
+    public void setUsers(List<UserInfo> users) {
+        this.users = users;
     }
 }

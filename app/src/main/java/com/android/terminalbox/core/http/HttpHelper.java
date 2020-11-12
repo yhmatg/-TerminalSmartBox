@@ -1,4 +1,5 @@
 package com.android.terminalbox.core.http;
+
 import com.android.terminalbox.core.bean.BaseResponse;
 import com.android.terminalbox.core.bean.user.FaceFeatureBody;
 import com.android.terminalbox.core.bean.user.UserInfo;
@@ -21,4 +22,6 @@ public interface HttpHelper {
     Observable<BaseResponse<List<UserInfo>>> getAllUserInfo();
 
     Observable<BaseResponse<UserInfo>> updateFeature(FaceFeatureBody faceFeatureBody);
+
+    Observable<BaseResponse<List<UserInfo>>> updateFeatures(List<FaceFeatureBody> faceFeatures);
 }

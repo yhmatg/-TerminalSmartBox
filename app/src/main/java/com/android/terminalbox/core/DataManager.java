@@ -78,5 +78,10 @@ public class DataManager implements HttpHelper, PreferenceHelper {
         return mHttpHelper.updateFeature(faceFeatureBody);
     }
 
+    @Override
+    public Observable<BaseResponse<List<UserInfo>>> updateFeatures(List<FaceFeatureBody> faceFeatures) {
+        return mHttpHelper.updateFeatures(faceFeatures);
+    }
+
 
 }
