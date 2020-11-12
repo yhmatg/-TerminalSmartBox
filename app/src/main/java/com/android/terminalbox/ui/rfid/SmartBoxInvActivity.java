@@ -155,6 +155,7 @@ public class SmartBoxInvActivity extends BaseActivity {
     private EsimUhfHelper.EsimUhfListener uhfListener=new EsimUhfHelper.EsimUhfListener() {
         @Override
         public void onTagRead(List<UhfTag> tags) {
+            Log.e(invCount+"======" + epcUnChangeTime,tags.toString());
             List<String> epcs = Stream.of(tags).map(new Function<UhfTag, String>() {
                 @Override
                 public String apply(UhfTag uhfTags) {

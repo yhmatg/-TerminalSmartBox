@@ -41,4 +41,7 @@
     <color name="drawer_item_bg_n">#fffff9</color>
     <color name="main_status_bar_blue">#279ede</color>
     <color name="color_bg_name">#80000000</color>
+    <color name="titele_color">#1076D8</color>
+    <color name="search_back_color">#529CE2</color>
+    <color name="search_hint">#80FFFFFF</color>
 </resources>

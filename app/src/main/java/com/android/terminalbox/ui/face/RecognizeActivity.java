@@ -91,6 +91,7 @@ import org.eclipse.paho.client.mqttv3.internal.wire.MqttConnect;
 
 import java.io.File;
 import java.io.FilenameFilter;
+import java.io.UnsupportedEncodingException;
 import java.util.ArrayList;
 import java.util.Enumeration;
 import java.util.List;
@@ -264,8 +265,8 @@ public class RecognizeActivity extends BaseActivity<RecognizePresenter> implemen
                 bundle.putString(ConstFromSrc.activityFrom, fromSrc);
                 JumpToActivity(InOutActivity.class, bundle);
             }
-            if("app/userface/update".equals(topic)){
-               mPresenter.getAllUserInfo();
+            if ("app/userface/update".equals(topic)) {
+                mPresenter.getAllUserInfo();
             }
         }
 
@@ -300,6 +301,7 @@ public class RecognizeActivity extends BaseActivity<RecognizePresenter> implemen
         recyclerShowFaceInfo.setLayoutManager(new GridLayoutManager(this, spanCount));
         recyclerShowFaceInfo.setItemAnimator(new DefaultItemAnimator());
         activeEngine(null);
+        mPresenter.getAllUserInfo();
     }
 
     /**
@@ -1023,7 +1025,7 @@ public class RecognizeActivity extends BaseActivity<RecognizePresenter> implemen
         //获取所有的用户信息，更新人脸特征值
         if (userInfos.getCode() == 200000) {
             List<UserInfo> data = userInfos.getData();
-            registerFaceAndGetFeature(data,this);
+            registerFaceAndGetFeature(data, this);
         }
     }
 
@@ -1107,7 +1109,7 @@ public class RecognizeActivity extends BaseActivity<RecognizePresenter> implemen
     }
 
     public void processImage(UserInfo userInfo) {
-        if(userInfo.getFaceImg() == null){
+        if (userInfo.getFaceImg() == null) {
             return;
         }
         File file = null;
@@ -1118,7 +1120,11 @@ public class RecognizeActivity extends BaseActivity<RecognizePresenter> implemen
         } catch (InterruptedException e) {
             e.printStackTrace();
         }
-        Bitmap bitmap = BitmapFactory.decodeFile(file.getAbsolutePath());
+        Bitmap bitmap = null;
+        if (file != null) {
+            bitmap = BitmapFactory.decodeFile(file.getAbsolutePath());
+        }
+
         if (bitmap == null) {
             return;
         }
@@ -1201,9 +1207,17 @@ public class RecognizeActivity extends BaseActivity<RecognizePresenter> implemen
             if (res != ErrorInfo.MOK) {
                 mainFeature = null;
             }
-            if(mainFeature != null){
+            if (mainFeature != null) {
+                try {
+                    //特征值提取存储测试 start
+                    String stringFeature = new String(mainFeature.getFeatureData(), "ISO_8859_1");
+                    byte[] bytes = stringFeature.getBytes("ISO_8859_1");
+                    byte[] featureData = mainFeature.getFeatureData();
+                    //特征值提取存储测试 end
+                } catch (UnsupportedEncodingException e) {
+                    e.printStackTrace();
+                }
                 userInfo.setFaceImg(new String(mainFeature.getFeatureData()));
-                //ToastUtils.showShort(userInfo.getUsername() + "====人脸特征值提取成功");
             }
 
             boolean success = FaceServer.getInstance().registerBgr24(RecognizeActivity.this, bgr24, bitmap.getWidth(), bitmap.getHeight(),

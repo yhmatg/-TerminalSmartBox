@@ -15,7 +15,7 @@ public class EsimUhfHelper{
     private EsimUhfListener esimUhfListener;
     private static EsimUhfHelper esimUhfHelper = null;
 //    CountDownTimer autoStopTimer=null;
-    private static String hostIp="172.16.63.220";
+    private static String hostIp="172.16.63.100";
 //    private static String hostIp="/dev/ttyS4";
     private static int allAntNum=4;
     private static int readMillisSeconds=30000;

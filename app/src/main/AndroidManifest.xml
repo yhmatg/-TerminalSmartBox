@@ -11,10 +11,10 @@
 
 
     <application
+        android:name=".app.BaseApplication"
         android:allowBackup="true"
         android:icon="@mipmap/ic_launcher"
         android:label="@string/app_name"
-        android:name=".app.BaseApplication"
         android:roundIcon="@mipmap/ic_launcher_round"
         android:supportsRtl="true"
         android:theme="@style/AppTheme">
@@ -28,7 +28,7 @@
         <activity
             android:name=".ui.rfid.SmartBoxInvActivity"
             android:launchMode="singleTop"
-            android:screenOrientation="landscape"></activity>
+            android:screenOrientation="portrait"></activity>
 
         <activity
             android:name=".ui.face.RecognizeActivity"
@@ -37,15 +37,13 @@
         <activity
             android:name=".ui.face.InOutActivity"
             android:launchMode="singleTop"
-            android:screenOrientation="landscape"></activity>
+            android:screenOrientation="portrait"></activity>
+        <activity android:name=".ui.MqttActivity"></activity>
         <activity
-            android:name=".ui.MqttActivity">
-            <!--<intent-filter>
-                <action android:name="android.intent.action.MAIN" />
+            android:name=".ui.inventory.InventoryActivity"
+            android:launchMode="singleTop"
+            android:screenOrientation="portrait"></activity>
 
-                <category android:name="android.intent.category.LAUNCHER" />
-            </intent-filter>-->
-        </activity>
         <service android:name="org.eclipse.paho.android.service.MqttService" />
     </application>
 
