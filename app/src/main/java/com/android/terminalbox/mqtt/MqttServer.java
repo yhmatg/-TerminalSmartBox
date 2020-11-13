@@ -59,7 +59,8 @@ public class MqttServer {
             this.mRylaiMqttCallback=rylaiMqttCallback;
             String serverUrl = "tcp://" + iotDevice.getIotHost()+ ":"+iotDevice.getMqttPort();
             String currentDate = ConnectUtils.getCurrentDate();
-            String clientId = mIotDevice.getDevId()+ "_0_0_" + currentDate;
+            String clientId = mIotDevice.getDevId();
+//            String clientId = mIotDevice.getDevId()+ "_0_0_" + currentDate;
             MqttConnectOptions mqttConnectOptions = intitMqttConnectOptions(currentDate);
             mqttAndroidClient = new MqttAndroidClient(context, serverUrl, clientId);
             mqttAndroidClient.setCallback(new MqttCallBack4IoTHub());
@@ -107,7 +108,7 @@ public class MqttServer {
         mqttConnectOptions.setCleanSession(true);
         mqttConnectOptions.setKeepAliveInterval(120);
         mqttConnectOptions.setConnectionTimeout(30);
-        mqttConnectOptions.setUserName(mIotDevice.getDevId());
+        mqttConnectOptions.setUserName(mIotDevice.getDevPassword());
         mqttConnectOptions.setPassword(password.toCharArray());
         return mqttConnectOptions;
     }

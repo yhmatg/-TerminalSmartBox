@@ -50,6 +50,7 @@ public class OrderBody {
 
         private String relevanceId;
         private String ekey;
+        private int userId;
 
         public String getRelevanceId() {
             return relevanceId;
@@ -65,6 +66,14 @@ public class OrderBody {
 
         public void setEkey(String ekey) {
             this.ekey = ekey;
+        }
+
+        public int getUserId() {
+            return userId;
+        }
+
+        public void setUserId(int userId) {
+            this.userId = userId;
         }
     }
 }

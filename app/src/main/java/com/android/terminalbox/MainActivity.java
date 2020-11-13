@@ -3,6 +3,7 @@ package com.android.terminalbox;
 import android.Manifest;
 import android.annotation.SuppressLint;
 import android.app.Activity;
+import android.content.Intent;
 import android.graphics.Bitmap;
 import android.graphics.BitmapFactory;
 import android.graphics.Canvas;
@@ -36,6 +37,7 @@ import com.android.terminalbox.ui.face.InOutActivity;
 import com.android.terminalbox.ui.inventory.InventoryActivity;
 import com.android.terminalbox.ui.recognize.RecognizeActivity;
 import com.android.terminalbox.ui.rfid.SmartBoxInvActivity;
+import com.android.terminalbox.ui.unlock.UnlockActivity;
 import com.android.terminalbox.utils.ToastUtils;
 import com.android.terminalbox.utils.box.ConfigUtil;
 import com.arcsoft.face.ActiveFileInfo;
@@ -118,7 +120,16 @@ public class MainActivity extends BaseActivity<MainPresenter> implements MainCon
         public void messageArrived(String topic, MqttMessage message) throws Exception {
             Log.e(TAG, "Mqtt Message messageArrived");
             if ("app/devices/15aa68f3183311ebb7260242ac120004_uniqueCode002/insts".equals(topic)) {
-
+                OrderBody orderBody = new Gson().fromJson(new String(message.getPayload()), OrderBody.class);
+                int userId = orderBody.getInstData().getUserId();
+                List<UserInfo> users = BaseApplication.getInstance().getUsers();
+                for (UserInfo user : users) {
+                    if(userId == user.getId()){
+                        BaseApplication.getInstance().setCurrentUer(user);
+                        break;
+                    }
+                }
+                startActivity(new Intent(MainActivity.this, UnlockActivity.class));
             }
             if ("app/userface/update".equals(topic)) {
                 mPresenter.getAllUserInfo();
@@ -357,7 +368,9 @@ public class MainActivity extends BaseActivity<MainPresenter> implements MainCon
                 iotDevice = new IotDevice();
                 iotDevice.setIotHost("172.16.61.101");
                 iotDevice.setMqttPort("1883");
-                iotDevice.setDevId("smartbox");
+                iotDevice.setPordId("15aa68f3183311ebb7260242ac120004");
+                iotDevice.setDevVerify("uniqueCode002");
+                iotDevice.setDevId(iotDevice.getPordId()+"_"+iotDevice.getDevVerify());
                 iotDevice.setDevPassword("smartbox");
             }
             MqttServer.getInstance().init(MainActivity.this, iotDevice, rylaiMqttCallback);

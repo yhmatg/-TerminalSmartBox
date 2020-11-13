@@ -22,6 +22,7 @@ public class IotDevice {
     private String pordId;
     @ColumnInfo(name = "dev_verify")
     private String devVerify;
+
     private String devId;
     @Column(name = "dev_password")
     private String devPassword;
