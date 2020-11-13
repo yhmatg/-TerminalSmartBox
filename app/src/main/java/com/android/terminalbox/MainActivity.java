@@ -129,7 +129,9 @@ public class MainActivity extends BaseActivity<MainPresenter> implements MainCon
                         break;
                     }
                 }
-                startActivity(new Intent(MainActivity.this, UnlockActivity.class));
+                Intent intent = new Intent(MainActivity.this,UnlockActivity.class);
+                intent.putExtra("relevanceId", orderBody.getInstData().getRelevanceId());
+                startActivity(intent);
             }
             if ("app/userface/update".equals(topic)) {
                 mPresenter.getAllUserInfo();

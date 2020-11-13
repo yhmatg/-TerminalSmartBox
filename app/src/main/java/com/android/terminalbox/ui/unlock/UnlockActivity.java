@@ -1,5 +1,6 @@
 package com.android.terminalbox.ui.unlock;
 
+import android.content.Intent;
 import android.os.Looper;
 import android.support.v7.widget.LinearLayoutManager;
 import android.support.v7.widget.RecyclerView;
@@ -194,6 +195,10 @@ public class UnlockActivity extends BaseActivity<UnlockPresenter> implements Unl
 
     @Override
     protected void initEventAndData() {
+        Intent intent = getIntent();
+        if(intent != null){
+            orderUuid = intent.getStringExtra("relevanceId");
+        }
         localFiles = BaseDb.getInstance().getEpcFileDao().findAllEpcFile();
         unlockStatus.setText("本地：" + localFiles.size());
         mAdapter = new FileBeanAdapter(files, this);
@@ -248,12 +253,16 @@ public class UnlockActivity extends BaseActivity<UnlockPresenter> implements Unl
     void performClick(View v) {
         switch (v.getId()) {
             case R.id.bt_open:
-                NewOrderBody newOrderBody = new NewOrderBody();
-                newOrderBody.setActType("存取");
-                orderUuid = UUID.randomUUID().toString();
-                newOrderBody.setRelevanceId(orderUuid);
-                newOrderBody.setRemark("remarkOne");
-                mPresenter.newOrder(deviceId, newOrderBody);
+                if(StringUtils.isEmpty(orderUuid)){
+                    NewOrderBody newOrderBody = new NewOrderBody();
+                    newOrderBody.setActType("存取");
+                    orderUuid = UUID.randomUUID().toString();
+                    newOrderBody.setRelevanceId(orderUuid);
+                    newOrderBody.setRemark("remarkOne");
+                    mPresenter.newOrder(deviceId, newOrderBody);
+                }else {
+                    openReport(orderUuid);
+                }
                 break;
             case R.id.bt_close:
                 if (StringUtils.isEmpty(orderUuid)) {
