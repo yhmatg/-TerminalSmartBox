@@ -38,7 +38,7 @@ public class BaseApplication extends Application {
     }
     public static String relevanceId;
     private List<UserInfo> users = new ArrayList<>();
-
+    private UserInfo currentUer;
     public static RefWatcher getRefWatcher(Context context) {
         BaseApplication application = (BaseApplication) context.getApplicationContext();
         return application.refWatcher;
@@ -109,5 +109,13 @@ public class BaseApplication extends Application {
 
     public void setUsers(List<UserInfo> users) {
         this.users = users;
+    }
+
+    public UserInfo getCurrentUer() {
+        return currentUer;
+    }
+
+    public void setCurrentUer(UserInfo currentUer) {
+        this.currentUer = currentUer;
     }
 }

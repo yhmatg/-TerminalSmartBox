@@ -3,9 +3,14 @@ package com.android.terminalbox.faceserver;
 import android.content.Context;
 import android.graphics.Bitmap;
 import android.graphics.Rect;
+import android.util.Base64;
 import android.util.Log;
 
+import com.android.terminalbox.app.BaseApplication;
+import com.android.terminalbox.core.bean.user.UserInfo;
 import com.android.terminalbox.model.FaceRegisterInfo;
+import com.android.terminalbox.ui.recognize.RecognizeUser;
+import com.android.terminalbox.utils.StringUtils;
 import com.arcsoft.face.ErrorInfo;
 import com.arcsoft.face.FaceEngine;
 import com.arcsoft.face.FaceFeature;
@@ -21,6 +26,7 @@ import java.io.File;
 import java.io.FileInputStream;
 import java.io.FileOutputStream;
 import java.io.IOException;
+import java.io.UnsupportedEncodingException;
 import java.util.ArrayList;
 import java.util.List;
 
@@ -666,6 +672,29 @@ public class FaceServer {
         return null;
     }
 
+    public RecognizeUser recognizeUser(FaceFeature faceFeature){
+        FaceFeature tempFaceFeature = new FaceFeature();
+        FaceSimilar faceSimilar = new FaceSimilar();
+        List<UserInfo> users = BaseApplication.getInstance().getUsers();
+        float maxSimilar = 0;
+        int maxSimilarIndex = -1;
+        for (int i = 0; i < users.size(); i++) {
+            UserInfo userInfo = users.get(i);
+            if(!StringUtils.isEmpty(userInfo.getFaceFeature())){
+                byte[] decode = Base64.decode(userInfo.getFaceFeature(), Base64.DEFAULT);
+                tempFaceFeature.setFeatureData(decode);
+                faceEngine.compareFaceFeature(faceFeature, tempFaceFeature, faceSimilar);
+                if (faceSimilar.getScore() > maxSimilar) {
+                    maxSimilar = faceSimilar.getScore();
+                    maxSimilarIndex = i;
+                }
+            }
+        }
+        if (maxSimilarIndex != -1) {
+            return new RecognizeUser(maxSimilar,users.get(maxSimilarIndex));
+        }
+        return null;
+    }
     /**
      * 将图像中需要截取的Rect向外扩张一倍，若扩张一倍会溢出，则扩张到边界，若Rect已溢出，则收缩到边界
      *

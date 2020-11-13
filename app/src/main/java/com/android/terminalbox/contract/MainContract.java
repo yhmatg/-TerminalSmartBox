@@ -25,6 +25,6 @@ public interface MainContract {
     interface Presenter extends AbstractPresenter<View> {
         void getAllUserInfo();
 
-        void updateFeature(List<FaceFeatureBody> faceFeatures);
+        void updateFeatures(List<FaceFeatureBody> faceFeatures);
     }
 }

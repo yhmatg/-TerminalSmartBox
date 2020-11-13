@@ -1,0 +1,44 @@
+<?xml version="1.0" encoding="utf-8"?>
+<RelativeLayout xmlns:android="http://schemas.android.com/apk/res/android"
+    android:layout_width="match_parent"
+    android:layout_height="match_parent">
+
+    <TextView
+        android:id="@+id/tv_point"
+        android:layout_width="wrap_content"
+        android:layout_height="wrap_content"
+        android:layout_centerHorizontal="true"
+        android:layout_marginTop="@dimen/dp_10"
+        android:text="请在区域内进行识别..."
+        android:textSize="@dimen/sp_18" />
+
+    <FrameLayout
+        android:id="@+id/fl_face"
+        android:layout_width="@dimen/dp_240"
+        android:layout_height="@dimen/dp_240"
+        android:layout_below="@+id/tv_point"
+        android:layout_centerHorizontal="true"
+        android:layout_marginTop="@dimen/dp_20">
+
+        <TextureView
+            android:id="@+id/single_camera_texture_preview"
+            android:layout_width="match_parent"
+            android:layout_height="match_parent" />
+
+        <com.android.terminalbox.widget.FaceRectView
+            android:id="@+id/single_camera_face_rect_view"
+            android:layout_width="match_parent"
+            android:layout_height="match_parent" />
+    </FrameLayout>
+
+    <TextView
+        android:id="@+id/recognize_result"
+        android:layout_width="wrap_content"
+        android:layout_height="wrap_content"
+        android:layout_below="@+id/fl_face"
+        android:layout_centerHorizontal="true"
+        android:layout_marginTop="@dimen/sp_30"
+        android:text="识别结果"
+        android:textSize="@dimen/sp_18" />
+
+</RelativeLayout>

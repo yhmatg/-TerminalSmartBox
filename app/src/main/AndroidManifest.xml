@@ -45,6 +45,10 @@
             android:screenOrientation="portrait"></activity>
 
         <service android:name="org.eclipse.paho.android.service.MqttService" />
+        <activity
+            android:name=".ui.recognize.RecognizeActivity"
+            android:launchMode="singleTop"
+            android:screenOrientation="portrait"></activity>
     </application>
 
 </manifest>

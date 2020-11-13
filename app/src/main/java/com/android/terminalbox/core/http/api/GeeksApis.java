@@ -33,6 +33,6 @@ public interface GeeksApis {
     Observable<BaseResponse<UserInfo>> updateFeature(@Body FaceFeatureBody faceFeatureBody);
 
     //批量更新人脸特征值
-    @POST("/api/v1/users/updateFeature")
+    @POST("/api/v1/users/updateFeatures")
     Observable<BaseResponse<List<UserInfo>>> updateFeatures(@Body List<FaceFeatureBody> faceFeatures);
 }

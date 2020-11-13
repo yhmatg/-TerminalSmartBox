@@ -12,6 +12,7 @@ import android.os.AsyncTask;
 import android.os.Bundle;
 import android.support.v4.app.ActivityCompat;
 import android.support.v4.view.GestureDetectorCompat;
+import android.util.Base64;
 import android.util.Log;
 import android.view.View;
 
@@ -22,15 +23,21 @@ import com.android.terminalbox.common.ConstFromSrc;
 import com.android.terminalbox.common.Constants;
 import com.android.terminalbox.contract.MainContract;
 import com.android.terminalbox.core.bean.BaseResponse;
+import com.android.terminalbox.core.bean.box.IotDevice;
 import com.android.terminalbox.core.bean.user.FaceFeatureBody;
+import com.android.terminalbox.core.bean.user.OrderBody;
 import com.android.terminalbox.core.bean.user.UserInfo;
 import com.android.terminalbox.core.room.BaseDb;
 import com.android.terminalbox.faceserver.FaceServer;
+import com.android.terminalbox.mqtt.MqttServer;
+import com.android.terminalbox.mqtt.RylaiMqttCallback;
 import com.android.terminalbox.presenter.MainPresenter;
-import com.android.terminalbox.ui.face.RecognizeActivity;
+import com.android.terminalbox.ui.face.InOutActivity;
 import com.android.terminalbox.ui.inventory.InventoryActivity;
 import com.android.terminalbox.ui.inventory.InventoryActivity_ViewBinding;
+import com.android.terminalbox.ui.recognize.RecognizeActivity;
 import com.android.terminalbox.ui.rfid.SmartBoxInvActivity;
+import com.android.terminalbox.utils.ToastUtils;
 import com.android.terminalbox.utils.box.ConfigUtil;
 import com.arcsoft.face.ActiveFileInfo;
 import com.arcsoft.face.AgeInfo;
@@ -47,6 +54,11 @@ import com.arcsoft.imageutil.ArcSoftImageFormat;
 import com.arcsoft.imageutil.ArcSoftImageUtil;
 import com.arcsoft.imageutil.ArcSoftImageUtilError;
 import com.bumptech.glide.Glide;
+import com.google.gson.Gson;
+
+import org.eclipse.paho.client.mqttv3.IMqttDeliveryToken;
+import org.eclipse.paho.client.mqttv3.IMqttToken;
+import org.eclipse.paho.client.mqttv3.MqttMessage;
 
 import java.io.File;
 import java.io.UnsupportedEncodingException;
@@ -72,6 +84,49 @@ public class MainActivity extends BaseActivity<MainPresenter> implements MainCon
      * 用于特征提取的引擎
      */
     private FaceEngine frEngine;
+    private IotDevice iotDevice;
+    private RylaiMqttCallback rylaiMqttCallback = new RylaiMqttCallback() {
+        @Override
+        public void onSuccess(IMqttToken asyncActionToken) {
+            Log.e(TAG, "Mqtt Message onSuccess");
+        }
+
+        @Override
+        public void onFailure(IMqttToken asyncActionToken, Throwable exception) {
+            Log.e(TAG, "Mqtt Message onFailure");
+            Log.d(TAG, "Mqtt Message Action==============失败");
+        }
+
+        @Override
+        public void connectComplete(boolean reconnect, String serverURI) {
+            Log.e(TAG, "Mqtt Message connectComplete");
+        }
+
+        @Override
+        public void connectionLost(Throwable cause) {
+            Log.e(TAG, "Mqtt Message connectionLost");
+        }
+
+
+        @Override
+        public void deliveryComplete(IMqttDeliveryToken token) {
+            Log.e(TAG, "Mqtt Message deliveryComplete");
+            Log.d(TAG, "Mqtt Message==============消息上传完成");
+
+        }
+
+        @Override
+        public void messageArrived(String topic, MqttMessage message) throws Exception {
+            Log.e(TAG, "Mqtt Message messageArrived");
+            if ("app/devices/15aa68f3183311ebb7260242ac120004_uniqueCode002/insts".equals(topic)) {
+
+            }
+            if ("app/userface/update".equals(topic)) {
+                mPresenter.getAllUserInfo();
+            }
+        }
+
+    };
 
     @Override
     protected int getLayoutId() {
@@ -90,11 +145,14 @@ public class MainActivity extends BaseActivity<MainPresenter> implements MainCon
 
     @Override
     protected void initEventAndData() {
-        activeEngine();
+        //activeEngine();
         frEngine = new FaceEngine();
         frEngine.init(this, DetectMode.ASF_DETECT_MODE_IMAGE, DetectFaceOrientPriority.ASF_OP_0_ONLY,
                 16, 6, FaceEngine.ASF_FACE_RECOGNITION | FaceEngine.ASF_AGE | FaceEngine.ASF_FACE_DETECT | FaceEngine.ASF_GENDER | FaceEngine.ASF_FACE3DANGLE);
         mPresenter.getAllUserInfo();
+        //初始化mqtt
+        MqttConnect mqttConnect = new MqttConnect();
+        mqttConnect.start();
     }
 
     @OnClick({R.id.btn_inv, R.id.btn_access, R.id.bt_change_org})
@@ -102,7 +160,8 @@ public class MainActivity extends BaseActivity<MainPresenter> implements MainCon
         Bundle bundle = new Bundle();
         switch (view.getId()) {
             case R.id.btn_inv:
-                JumpToActivity(InventoryActivity.class);
+                //JumpToActivity(InventoryActivity.class);
+                JumpToActivity(RecognizeActivity.class);
                 break;
             case R.id.btn_access:
                 mPresenter.getAllUserInfo();
@@ -124,6 +183,11 @@ public class MainActivity extends BaseActivity<MainPresenter> implements MainCon
 
     @Override
     public void handleUpdateFeature(BaseResponse<List<UserInfo>> userInfos) {
+        if(200000 == userInfos.getCode()){
+            ToastUtils.showShort("更新特征值成功");
+        }else {
+            ToastUtils.showShort("更新特征值失败：" + userInfos.getMessage());
+        }
 
     }
 
@@ -146,7 +210,7 @@ public class MainActivity extends BaseActivity<MainPresenter> implements MainCon
                     BaseApplication.getInstance().getUsers().clear();
                     BaseApplication.getInstance().getUsers().addAll(userInfos);
                     BaseDb.getInstance().getUserDao().insertItems(userInfos);
-                    mPresenter.updateFeature(faceFeatureBodys);
+                    mPresenter.updateFeatures(faceFeatureBodys);
                 } catch (Exception e) {
                     e.printStackTrace();
                 }
@@ -211,9 +275,10 @@ public class MainActivity extends BaseActivity<MainPresenter> implements MainCon
         }
         if (mainFeature != null) {
             try {
-                userInfo.setFaceFeature(new String(mainFeature.getFeatureData(), "ISO_8859_1"));
+                String featureStr = Base64.encodeToString(mainFeature.getFeatureData(), Base64.DEFAULT);
+                userInfo.setFaceFeature(featureStr);
                 userInfo.setFaceStatus("2");
-            } catch (UnsupportedEncodingException e) {
+            } catch (Exception e) {
                 e.printStackTrace();
             }
         }
@@ -282,4 +347,21 @@ public class MainActivity extends BaseActivity<MainPresenter> implements MainCon
                 });
 
     }
+
+    //yhm start 1105
+    class MqttConnect extends Thread {
+        @Override
+        public void run() {
+            super.run();
+            if (iotDevice == null) {
+                iotDevice = new IotDevice();
+                iotDevice.setIotHost("172.16.61.101");
+                iotDevice.setMqttPort("1883");
+                iotDevice.setDevId("smartbox");
+                iotDevice.setDevPassword("smartbox");
+            }
+            MqttServer.getInstance().init(MainActivity.this, iotDevice, rylaiMqttCallback);
+        }
+    }
+    //yhm end 1105
 }

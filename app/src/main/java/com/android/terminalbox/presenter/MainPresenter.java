@@ -36,7 +36,7 @@ public class MainPresenter extends BasePresenter<MainContract.View> implements M
     }
 
     @Override
-    public void updateFeature(List<FaceFeatureBody> faceFeatures) {
+    public void updateFeatures(List<FaceFeatureBody> faceFeatures) {
         addSubscribe(DataManager.getInstance().updateFeatures(faceFeatures)
         .compose(RxUtils.rxSchedulerHelper())
         .subscribeWith(new BaseObserver<BaseResponse<List<UserInfo>>>(mView, false) {
