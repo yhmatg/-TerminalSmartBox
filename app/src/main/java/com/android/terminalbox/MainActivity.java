@@ -34,7 +34,6 @@ import com.android.terminalbox.mqtt.RylaiMqttCallback;
 import com.android.terminalbox.presenter.MainPresenter;
 import com.android.terminalbox.ui.face.InOutActivity;
 import com.android.terminalbox.ui.inventory.InventoryActivity;
-import com.android.terminalbox.ui.inventory.InventoryActivity_ViewBinding;
 import com.android.terminalbox.ui.recognize.RecognizeActivity;
 import com.android.terminalbox.ui.rfid.SmartBoxInvActivity;
 import com.android.terminalbox.utils.ToastUtils;
@@ -145,7 +144,7 @@ public class MainActivity extends BaseActivity<MainPresenter> implements MainCon
 
     @Override
     protected void initEventAndData() {
-        //activeEngine();
+        activeEngine();
         frEngine = new FaceEngine();
         frEngine.init(this, DetectMode.ASF_DETECT_MODE_IMAGE, DetectFaceOrientPriority.ASF_OP_0_ONLY,
                 16, 6, FaceEngine.ASF_FACE_RECOGNITION | FaceEngine.ASF_AGE | FaceEngine.ASF_FACE_DETECT | FaceEngine.ASF_GENDER | FaceEngine.ASF_FACE3DANGLE);
@@ -160,15 +159,14 @@ public class MainActivity extends BaseActivity<MainPresenter> implements MainCon
         Bundle bundle = new Bundle();
         switch (view.getId()) {
             case R.id.btn_inv:
-                //JumpToActivity(InventoryActivity.class);
-                JumpToActivity(RecognizeActivity.class);
+                JumpToActivity(InventoryActivity.class);
                 break;
             case R.id.btn_access:
-                mPresenter.getAllUserInfo();
+                JumpToActivity(RecognizeActivity.class);
                 break;
             case R.id.bt_change_org:
-                bundle.putString(ConstFromSrc.activityFrom, ConstFromSrc.tagsIn);
-                ConfigUtil.setFtOrient(this, ASF_OP_90_ONLY);
+                //mPresenter.getAllUserInfo();
+                ConfigUtil.setFtOrient(MainActivity.this, ASF_OP_90_ONLY);
                 break;
         }
     }
@@ -200,11 +198,13 @@ public class MainActivity extends BaseActivity<MainPresenter> implements MainCon
                 try {
                     //要在子线程中使用，否则会报错
                     for (UserInfo userInfo : userInfos) {
-                        processImage(userInfo);
-                        FaceFeatureBody faceFeatureBody = new FaceFeatureBody();
-                        faceFeatureBody.setFaceFeature(userInfo.getFaceFeature());
-                        faceFeatureBody.setId(userInfo.getId());
-                        faceFeatureBodys.add(faceFeatureBody);
+                        if("0".equals(userInfo.getFaceStatus())){
+                            processImage(userInfo);
+                            FaceFeatureBody faceFeatureBody = new FaceFeatureBody();
+                            faceFeatureBody.setFaceFeature(userInfo.getFaceFeature());
+                            faceFeatureBody.setId(userInfo.getId());
+                            faceFeatureBodys.add(faceFeatureBody);
+                        }
                     }
                     //提取完人脸特征值后将用户提交的后端,本地数据库,内存
                     BaseApplication.getInstance().getUsers().clear();

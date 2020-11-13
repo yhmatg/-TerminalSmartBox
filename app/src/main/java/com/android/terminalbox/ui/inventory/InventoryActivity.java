@@ -1,7 +1,6 @@
 package com.android.terminalbox.ui.inventory;
 
 import android.content.Context;
-import android.os.Handler;
 import android.os.Looper;
 import android.support.v7.widget.LinearLayoutManager;
 import android.support.v7.widget.RecyclerView;
@@ -16,17 +15,15 @@ import android.view.inputmethod.InputMethodManager;
 import android.widget.EditText;
 import android.widget.ImageView;
 import android.widget.TextView;
-import android.widget.Toast;
 
 import com.android.terminalbox.R;
 import com.android.terminalbox.base.activity.BaseActivity;
 import com.android.terminalbox.base.presenter.AbstractPresenter;
+import com.android.terminalbox.core.bean.user.EpcFile;
 import com.android.terminalbox.uhf.EsimUhfHelper;
 import com.android.terminalbox.uhf.EsimUhfParams;
 import com.android.terminalbox.uhf.UhfTag;
-import com.android.terminalbox.ui.rfid.SmartBoxInvActivity;
 import com.android.terminalbox.utils.ToastUtils;
-import com.android.terminalbox.widget.LoadingDialog;
 import com.annimon.stream.Collectors;
 import com.annimon.stream.Stream;
 import com.annimon.stream.function.Function;
@@ -48,9 +45,9 @@ public class InventoryActivity extends BaseActivity {
     RecyclerView mRecycleView;
     @BindView(R.id.edit_search)
     EditText editText;
-    private List<FileBean> files = new ArrayList<>();
+    private List<EpcFile> files = new ArrayList<>();
     //存储一次盘点的数据
-    private List<FileBean> allFiles = new ArrayList<>();
+    private List<EpcFile> allFiles = new ArrayList<>();
     private FileBeanAdapter mAdapter;
     public static int epcUnChangeTime = 0;
     public static int epcUnChangeMaxTime = 20;
@@ -69,19 +66,19 @@ public class InventoryActivity extends BaseActivity {
                     return uhfTags.getEpc();
                 }
             }).collect(Collectors.toList());//Log.d(TAG, "invTags: 本次盘点到标签" + epcs.size() + "    " + epcs.toString());
-            List<String> fileToEpcs = Stream.of(files).map(new Function<FileBean, String>() {
+            List<String> fileToEpcs = Stream.of(files).map(new Function<EpcFile, String>() {
                 @Override
-                public String apply(FileBean fileBean) {
+                public String apply(EpcFile fileBean) {
                     return fileBean.getEpcCode();
                 }
             }).collect(Collectors.toList());
             epcs.removeAll(fileToEpcs);//            Log.d(TAG, "invTags: 其中以前未盘到" + epcs.size() + "    " + epcs.toString());
             if (epcs.size() > 0) {//扫描到新标签
                 epcUnChangeTime = 0;
-                List<FileBean> epcToFiles = Stream.of(epcs).map(new Function<String, FileBean>() {
+                List<EpcFile> epcToFiles = Stream.of(epcs).map(new Function<String, EpcFile>() {
                     @Override
-                    public FileBean apply(String s) {
-                        return new FileBean("档案Epc", s);
+                    public EpcFile apply(String s) {
+                        return new EpcFile("档案Epc", s);
                     }
                 }).collect(Collectors.toList());
                 files.addAll(epcToFiles);//Log.d(TAG, "invTags: 本次盘点后总标签" + inBoxEpcsTemp.size() + "    " + inBoxEpcsTemp.toString());
@@ -155,9 +152,9 @@ public class InventoryActivity extends BaseActivity {
                     imm.toggleSoftInput(0, InputMethodManager.HIDE_NOT_ALWAYS);
                     String assetsId = editText.getText().toString();
                     editText.setSelection(assetsId.length());
-                    List<FileBean> filterList = Stream.of(allFiles).filter(new Predicate<FileBean>() {
+                    List<EpcFile> filterList = Stream.of(allFiles).filter(new Predicate<EpcFile>() {
                         @Override
-                        public boolean test(FileBean value) {
+                        public boolean test(EpcFile value) {
                             int i = value.getEpcCode().indexOf(assetsId);
                             return i != -1;
                         }
@@ -193,7 +190,13 @@ public class InventoryActivity extends BaseActivity {
         //todo 开始转圈动画
         boolean isStartOk= EsimUhfHelper.getInstance().startReadTags(esimUhfParams,uhfListener);
         if (!isStartOk) {
-            ToastUtils.showShort("读写器异常");
+            runOnUiThread(new Runnable() {
+                @Override
+                public void run() {
+                    ToastUtils.showShort("读写器异常");
+                    roundImg.clearAnimation();
+                }
+            });
         }
     }
 
@@ -215,7 +218,6 @@ public class InventoryActivity extends BaseActivity {
                 break;
             case R.id.home_icon:
                 finish();
-            default:
                 break;
         }
     }

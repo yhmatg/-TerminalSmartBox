@@ -1,5 +1,7 @@
 package com.android.terminalbox.core.http.api;
 
+import com.android.terminalbox.core.bean.user.NewOrderBody;
+import com.android.terminalbox.core.bean.user.OrderResponse;
 import com.android.terminalbox.core.bean.BaseResponse;
 import com.android.terminalbox.core.bean.user.FaceFeatureBody;
 import com.android.terminalbox.core.bean.user.UserInfo;
@@ -11,7 +13,7 @@ import io.reactivex.Observable;
 import retrofit2.http.Body;
 import retrofit2.http.GET;
 import retrofit2.http.POST;
-import retrofit2.http.Query;
+import retrofit2.http.Path;
 
 /**
  * @author yhm
@@ -35,4 +37,8 @@ public interface GeeksApis {
     //批量更新人脸特征值
     @POST("/api/v1/users/updateFeatures")
     Observable<BaseResponse<List<UserInfo>>> updateFeatures(@Body List<FaceFeatureBody> faceFeatures);
+
+    //创建操作单
+    @POST("/api/v1/actrecords/devices/{dev_id}/")
+    Observable<BaseResponse<OrderResponse>> newOrder(@Path("dev_id") String devId, @Body NewOrderBody newOrderBody);
 }

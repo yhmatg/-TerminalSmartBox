@@ -8,7 +8,7 @@ import android.view.ViewGroup;
 import android.widget.TextView;
 
 import com.android.terminalbox.R;
-import com.android.terminalbox.ui.rfid.SimpleTagAdapter;
+import com.android.terminalbox.core.bean.user.EpcFile;
 
 import java.util.List;
 
@@ -17,10 +17,10 @@ import butterknife.ButterKnife;
 
 public class FileBeanAdapter extends RecyclerView.Adapter <FileBeanAdapter.ViewHolder>{
     private static final String TAG = "TagAdapter";
-    private List<FileBean> currentTags;
+    private List<EpcFile> currentTags;
     private Context mContext;
 
-    public FileBeanAdapter(List<FileBean> currentTags, Context mContext) {
+    public FileBeanAdapter(List<EpcFile> currentTags, Context mContext) {
         this.currentTags = currentTags;
         this.mContext = mContext;
     }
@@ -33,9 +33,9 @@ public class FileBeanAdapter extends RecyclerView.Adapter <FileBeanAdapter.ViewH
 
     @Override
     public void onBindViewHolder( ViewHolder viewHolder, final int i) {
-        FileBean fileBean = currentTags.get(i);
-        viewHolder.tvFileName.setText(fileBean.getName());
-        viewHolder.tvFileCode.setText(fileBean.getEpcCode());
+        EpcFile epcFile = currentTags.get(i);
+        viewHolder.tvFileName.setText(epcFile.getName());
+        viewHolder.tvFileCode.setText(epcFile.getEpcCode());
     }
 
 

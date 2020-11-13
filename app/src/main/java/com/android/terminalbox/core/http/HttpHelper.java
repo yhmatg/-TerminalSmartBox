@@ -1,5 +1,7 @@
 package com.android.terminalbox.core.http;
 
+import com.android.terminalbox.core.bean.user.NewOrderBody;
+import com.android.terminalbox.core.bean.user.OrderResponse;
 import com.android.terminalbox.core.bean.BaseResponse;
 import com.android.terminalbox.core.bean.user.FaceFeatureBody;
 import com.android.terminalbox.core.bean.user.UserInfo;
@@ -8,7 +10,6 @@ import com.android.terminalbox.core.bean.user.UserLoginResponse;
 import java.util.List;
 
 import io.reactivex.Observable;
-import retrofit2.http.Body;
 
 /**
  * @author yhm
@@ -24,4 +25,6 @@ public interface HttpHelper {
     Observable<BaseResponse<UserInfo>> updateFeature(FaceFeatureBody faceFeatureBody);
 
     Observable<BaseResponse<List<UserInfo>>> updateFeatures(List<FaceFeatureBody> faceFeatures);
+
+    Observable<BaseResponse<OrderResponse>> newOrder(String devId, NewOrderBody newOrderBody);
 }

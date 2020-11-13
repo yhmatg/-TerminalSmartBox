@@ -1,4 +1,6 @@
 package com.android.terminalbox.core;
+import com.android.terminalbox.core.bean.user.NewOrderBody;
+import com.android.terminalbox.core.bean.user.OrderResponse;
 import com.android.terminalbox.core.bean.BaseResponse;
 import com.android.terminalbox.core.bean.user.FaceFeatureBody;
 import com.android.terminalbox.core.bean.user.UserInfo;
@@ -81,6 +83,11 @@ public class DataManager implements HttpHelper, PreferenceHelper {
     @Override
     public Observable<BaseResponse<List<UserInfo>>> updateFeatures(List<FaceFeatureBody> faceFeatures) {
         return mHttpHelper.updateFeatures(faceFeatures);
+    }
+
+    @Override
+    public Observable<BaseResponse<OrderResponse>> newOrder(String devId, NewOrderBody newOrderBody) {
+        return mHttpHelper.newOrder(devId, newOrderBody);
     }
 
 

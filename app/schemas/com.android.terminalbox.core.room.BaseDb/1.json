@@ -2,7 +2,7 @@
   "formatVersion": 1,
   "database": {
     "version": 1,
-    "identityHash": "8f1f6d5dbca640715eecf1fbff96ed95",
+    "identityHash": "1989e6e96487e4b87298b47ab421779a",
     "entities": [
       {
         "tableName": "Oprecord",
@@ -141,11 +141,37 @@
         },
         "indices": [],
         "foreignKeys": []
+      },
+      {
+        "tableName": "EpcFile",
+        "createSql": "CREATE TABLE IF NOT EXISTS `${TABLE_NAME}` (`name` TEXT, `epcCode` TEXT NOT NULL, PRIMARY KEY(`epcCode`))",
+        "fields": [
+          {
+            "fieldPath": "name",
+            "columnName": "name",
+            "affinity": "TEXT",
+            "notNull": false
+          },
+          {
+            "fieldPath": "epcCode",
+            "columnName": "epcCode",
+            "affinity": "TEXT",
+            "notNull": true
+          }
+        ],
+        "primaryKey": {
+          "columnNames": [
+            "epcCode"
+          ],
+          "autoGenerate": false
+        },
+        "indices": [],
+        "foreignKeys": []
       }
     ],
     "setupQueries": [
       "CREATE TABLE IF NOT EXISTS room_master_table (id INTEGER PRIMARY KEY,identity_hash TEXT)",
-      "INSERT OR REPLACE INTO room_master_table (id,identity_hash) VALUES(42, \"8f1f6d5dbca640715eecf1fbff96ed95\")"
+      "INSERT OR REPLACE INTO room_master_table (id,identity_hash) VALUES(42, \"1989e6e96487e4b87298b47ab421779a\")"
     ]
   }
 }

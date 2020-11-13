@@ -52,6 +52,7 @@ import com.android.terminalbox.mqtt.MqttServer;
 import com.android.terminalbox.mqtt.RylaiMqttCallback;
 import com.android.terminalbox.presenter.RecognizePresenter;
 import com.android.terminalbox.ui.face.InOutActivity;
+import com.android.terminalbox.ui.unlock.UnlockActivity;
 import com.android.terminalbox.utils.box.ConfigUtil;
 import com.android.terminalbox.utils.box.DrawHelper;
 import com.android.terminalbox.utils.camera.CameraHelper;
@@ -224,14 +225,13 @@ public class RecognizeActivity extends BaseActivity<RecognizePresenter> implemen
         ftInitCode = ftEngine.init(this, DetectMode.ASF_DETECT_MODE_VIDEO, ConfigUtil.getFtOrient(this),
                 16, MAX_DETECT_NUM, FaceEngine.ASF_FACE_DETECT);
 
+        frEngine = new FaceEngine();
+        frInitCode = frEngine.init(this, DetectMode.ASF_DETECT_MODE_IMAGE, DetectFaceOrientPriority.ASF_OP_0_ONLY,
+                16, MAX_DETECT_NUM, FaceEngine.ASF_FACE_RECOGNITION);
+
         /*frEngine = new FaceEngine();
         frInitCode = frEngine.init(this, DetectMode.ASF_DETECT_MODE_IMAGE, DetectFaceOrientPriority.ASF_OP_0_ONLY,
-                16, MAX_DETECT_NUM, FaceEngine.ASF_FACE_RECOGNITION);*/
-
-        frEngine = new FaceEngine();
-        frEngine.init(this, DetectMode.ASF_DETECT_MODE_IMAGE, DetectFaceOrientPriority.ASF_OP_0_ONLY,
-                16, 6, FaceEngine.ASF_FACE_RECOGNITION | FaceEngine.ASF_AGE | FaceEngine.ASF_FACE_DETECT | FaceEngine.ASF_GENDER | FaceEngine.ASF_FACE3DANGLE);
-
+                16, 6, FaceEngine.ASF_FACE_RECOGNITION | FaceEngine.ASF_AGE | FaceEngine.ASF_FACE_DETECT | FaceEngine.ASF_GENDER | FaceEngine.ASF_FACE3DANGLE);*/
         flEngine = new FaceEngine();
         flInitCode = flEngine.init(this, DetectMode.ASF_DETECT_MODE_IMAGE, DetectFaceOrientPriority.ASF_OP_0_ONLY,
                 16, MAX_DETECT_NUM, FaceEngine.ASF_LIVENESS);
@@ -646,6 +646,8 @@ public class RecognizeActivity extends BaseActivity<RecognizePresenter> implemen
                             BaseApplication.getInstance().setCurrentUer(compareResult.getUser());
                             recognizeResult.setText("人脸识别成功");
                             Log.d(TAG, "人脸识别成功");
+                            startActivity(new Intent(RecognizeActivity.this, UnlockActivity.class));
+                            finish();
                         } else {
                             recognizeResult.setText("人脸识别失败");
                             faceHelper.setName(requestId, "人员未识别");
@@ -659,7 +661,6 @@ public class RecognizeActivity extends BaseActivity<RecognizePresenter> implemen
                             faceHelper.setName(requestId, getString(R.string.recognize_failed_notice, "NOT_REGISTERED"));
                             retryRecognizeDelayed(requestId);
                         }
-
                     }
 
                     @Override

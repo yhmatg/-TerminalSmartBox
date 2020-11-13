@@ -10,16 +10,18 @@ import android.support.annotation.NonNull;
 import com.android.terminalbox.app.BaseApplication;
 import com.android.terminalbox.core.bean.box.Oprecord;
 import com.android.terminalbox.core.bean.box.Tag;
-import com.android.terminalbox.core.bean.user.DbUser;
 import com.android.terminalbox.core.bean.user.UserInfo;
+import com.android.terminalbox.core.dao.EpcFileDao;
 import com.android.terminalbox.core.dao.OprecordDao;
 import com.android.terminalbox.core.dao.TagDao;
 import com.android.terminalbox.core.dao.UserDao;
+import com.android.terminalbox.core.bean.user.EpcFile;
 
 @Database(entities = {
         Oprecord.class,
         Tag.class,
-        UserInfo.class
+        UserInfo.class,
+        EpcFile.class
 }
         , version = 1)
 @TypeConverters(DateConverter.class)
@@ -60,4 +62,5 @@ public abstract class BaseDb extends RoomDatabase {
 
     public abstract UserDao getUserDao();
 
+    public abstract EpcFileDao getEpcFileDao();
 }
