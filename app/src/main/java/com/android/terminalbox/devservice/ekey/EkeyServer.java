@@ -141,10 +141,7 @@ public class EkeyServer {
     };
 
     public void openEkey() {
-        for(int i=0;i<3;i++) {
-            SerialServer.getInstance().sendHexData(cmd_open);
-            Log.d(TAG, "openEkey: 开锁"+i);
-        }
+        SerialServer.getInstance().sendHexData(cmd_open);
         startTimer();
     }
 

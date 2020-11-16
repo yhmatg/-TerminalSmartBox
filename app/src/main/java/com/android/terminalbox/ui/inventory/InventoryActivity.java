@@ -171,15 +171,7 @@ public class InventoryActivity extends BaseActivity {
         //开始盘点
         roundImg.startAnimation(mRadarAnim);
         esimUhfParams = new EsimUhfParams.Builder().antIndex(1,2,3,4).build();
-        new Thread(() -> {
-            try {
-                Looper.prepare();
-                startInvTags();
-                Looper.loop();
-            } catch (Exception e) {
-                e.printStackTrace();
-            }
-        }).start();
+        startInvTags();
     }
 
     private void startInvTags() {
@@ -190,13 +182,7 @@ public class InventoryActivity extends BaseActivity {
         //todo 开始转圈动画
         boolean isStartOk= EsimUhfHelper.getInstance().startReadTags(esimUhfParams,uhfListener);
         if (!isStartOk) {
-            runOnUiThread(new Runnable() {
-                @Override
-                public void run() {
-                    ToastUtils.showShort("读写器异常");
-                    roundImg.clearAnimation();
-                }
-            });
+            ToastUtils.showShort("读写器异常");
         }
     }
 

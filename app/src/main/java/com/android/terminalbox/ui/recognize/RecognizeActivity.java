@@ -210,13 +210,6 @@ public class RecognizeActivity extends BaseActivity<RecognizePresenter> implemen
         return new RecognizePresenter();
     }
 
-    /*private void initView() {
-        previewView = findViewById(R.id.single_camera_texture_preview);
-        //在布局结束后才做初始化操作
-        previewView.getViewTreeObserver().addOnGlobalLayoutListener(this);
-        faceRectView = findViewById(R.id.single_camera_face_rect_view);
-    }*/
-
     /**
      * 初始化引擎
      */

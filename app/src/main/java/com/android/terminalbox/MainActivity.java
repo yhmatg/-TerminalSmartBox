@@ -179,7 +179,8 @@ public class MainActivity extends BaseActivity<MainPresenter> implements MainCon
                 break;
             case R.id.bt_change_org:
                 //mPresenter.getAllUserInfo();
-                ConfigUtil.setFtOrient(MainActivity.this, ASF_OP_90_ONLY);
+                //ConfigUtil.setFtOrient(MainActivity.this, ASF_OP_90_ONLY);
+                JumpToActivity(UnlockActivity.class);
                 break;
         }
     }

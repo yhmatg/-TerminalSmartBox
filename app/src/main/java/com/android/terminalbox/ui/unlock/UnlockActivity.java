@@ -76,13 +76,11 @@ public class UnlockActivity extends BaseActivity<UnlockPresenter> implements Unl
         switch (ekeyStatus) {
             case OPEN:
                 Log.e(TAG, "=========ekey open============: " + Thread.currentThread().toString());
-                runOnUiThread(() -> unlockStatus.setText("锁状态：开启"));
+                unlockStatus.setText("锁状态：开启");
                 break;
             case CLOSED:
                 Log.e(TAG, "=========ekey open============: " + Thread.currentThread().toString());
-                runOnUiThread(() -> {
-                    unlockStatus.setText("锁状态：关闭");
-                });
+                unlockStatus.setText("锁状态：关闭");
                 startInvTags();
                 break;
         }
@@ -196,7 +194,7 @@ public class UnlockActivity extends BaseActivity<UnlockPresenter> implements Unl
     @Override
     protected void initEventAndData() {
         Intent intent = getIntent();
-        if(intent != null){
+        if (intent != null) {
             orderUuid = intent.getStringExtra("relevanceId");
         }
         localFiles = BaseDb.getInstance().getEpcFileDao().findAllEpcFile();
@@ -208,7 +206,7 @@ public class UnlockActivity extends BaseActivity<UnlockPresenter> implements Unl
         ekeyServer = EkeyServer.getInstance();
         ekeyServer.addStatusChangeListenner(ekeyStatusChangeListener);
         //todo 锁暂不实现
-        /*new Thread(() -> {
+      /*  new Thread(() -> {
             try {
                 Looper.prepare();
                 ekeyServer.openEkey();
@@ -217,6 +215,7 @@ public class UnlockActivity extends BaseActivity<UnlockPresenter> implements Unl
                 e.printStackTrace();
             }
         }).start();*/
+        ekeyServer.openEkey();
         //初始化rfid
         esimUhfParams = new EsimUhfParams.Builder().antIndex(1, 2, 3, 4).build();
         initAnim();
@@ -239,13 +238,7 @@ public class UnlockActivity extends BaseActivity<UnlockPresenter> implements Unl
         invCount = 1;
         boolean isStartOk = EsimUhfHelper.getInstance().startReadTags(esimUhfParams, uhfListener);
         if (!isStartOk) {
-            runOnUiThread(new Runnable() {
-                @Override
-                public void run() {
-                    ToastUtils.showShort("读写器异常");
-                    roundImg.clearAnimation();
-                }
-            });
+            ToastUtils.showShort("读写器异常");
         }
     }
 
@@ -253,14 +246,14 @@ public class UnlockActivity extends BaseActivity<UnlockPresenter> implements Unl
     void performClick(View v) {
         switch (v.getId()) {
             case R.id.bt_open:
-                if(StringUtils.isEmpty(orderUuid)){
+                if (StringUtils.isEmpty(orderUuid)) {
                     NewOrderBody newOrderBody = new NewOrderBody();
                     newOrderBody.setActType("存取");
                     orderUuid = UUID.randomUUID().toString();
                     newOrderBody.setRelevanceId(orderUuid);
                     newOrderBody.setRemark("remarkOne");
                     mPresenter.newOrder(deviceId, newOrderBody);
-                }else {
+                } else {
                     openReport(orderUuid);
                 }
                 break;
@@ -275,15 +268,7 @@ public class UnlockActivity extends BaseActivity<UnlockPresenter> implements Unl
                     invNumbers.setText("总数");
                     inNumbers.setText("存件");
                     outNumbers.setText("取件");
-                    new Thread(() -> {
-                        try {
-                            Looper.prepare();
-                            startInvTags();
-                            Looper.loop();
-                        } catch (Exception e) {
-                            e.printStackTrace();
-                        }
-                    }).start();
+                    startInvTags();
                 }
                 break;
         }

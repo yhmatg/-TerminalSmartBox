@@ -8,9 +8,15 @@ import com.android.terminalbox.core.bean.BaseResponse;
 import com.android.terminalbox.core.bean.user.FaceFeatureBody;
 import com.android.terminalbox.core.bean.user.UserInfo;
 import com.android.terminalbox.core.http.widget.BaseObserver;
+import com.android.terminalbox.core.room.BaseDb;
+import com.android.terminalbox.utils.CommonUtils;
 import com.android.terminalbox.utils.RxUtils;
 
 import java.util.List;
+
+import io.reactivex.Observable;
+import io.reactivex.ObservableEmitter;
+import io.reactivex.ObservableOnSubscribe;
 
 public class MainPresenter extends BasePresenter<MainContract.View> implements MainContract.Presenter {
 
@@ -33,6 +39,24 @@ public class MainPresenter extends BasePresenter<MainContract.View> implements M
                         super.onError(e);
                     }
                 }));
+    }
+
+    public Observable<BaseResponse<List<UserInfo>>> getLocalUsers(){
+        Observable<BaseResponse<List<UserInfo>>> baseResponseObservable = Observable.create(new ObservableOnSubscribe<BaseResponse<List<UserInfo>>>() {
+            @Override
+            public void subscribe(ObservableEmitter<BaseResponse<List<UserInfo>>> emitter) throws Exception {
+                if (CommonUtils.isNetworkConnected()) {
+                    emitter.onComplete();
+                } else {
+                    List<UserInfo> allUsers = BaseDb.getInstance().getUserDao().findAllUsers();
+                    BaseResponse<List<UserInfo>> listBaseResponse = new BaseResponse<>();
+                    listBaseResponse.setCode(200000);
+                    listBaseResponse.setData(allUsers);
+                    listBaseResponse.setMessage("获取所有用户成功");
+                }
+            }
+        });
+        return baseResponseObservable;
     }
 
     @Override

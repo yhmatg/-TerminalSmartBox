@@ -22,7 +22,7 @@ public class AppProp {
         uhf_host="172.16.63.220";
         ekey_check_period=1000;
 //        ekey_comPort="/dev/ttyMT1";
-        ekey_comPort="/dev/ttyS4";
+        ekey_comPort="/dev/ttyXRUSB1";
         ekey_baudrate=9600;
     }
 
