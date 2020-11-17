@@ -61,11 +61,7 @@ public class RetrofitClient {
         return SingletonHolder.INSTANCE;
     }
     private RetrofitClient() {
-        url = PreferenceHelperImpl.getInstance().getHostUrl();
-        if(StringUtils.isEmpty(url)){
-            url ="http://172.16.68.142/";
-        }
-        retrofit = createRetrofit(provideClient(), url);
+        retrofit = createRetrofit(provideClient(), "http://117.34.118.157:20000/");
 
     }
 
@@ -78,7 +74,7 @@ public class RetrofitClient {
         }
         File cacheFile = new File(Constants.PATH_CACHE);
         Cache cache = new Cache(cacheFile, 1024 * 1024 * 50);
-        Interceptor cacheInterceptor = new Interceptor() {
+        /*Interceptor cacheInterceptor = new Interceptor() {
             @Override
             public Response intercept(Chain chain) throws IOException {
                 Request request = chain.request();
@@ -105,7 +101,7 @@ public class RetrofitClient {
                 }
                 return response;
             }
-        };
+        };*/
         //设置缓存
         //builder.addNetworkInterceptor(cacheInterceptor);
         //builder.addInterceptor(cacheInterceptor);

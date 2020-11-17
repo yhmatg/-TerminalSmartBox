@@ -90,7 +90,7 @@ public class UnlockActivity extends BaseActivity<UnlockPresenter> implements Unl
         @Override
         public void onTagRead(List<UhfTag> tags) {
             synchronized (UnlockActivity.class) {
-                Log.e(invCount + "======" + epcUnChangeTime, tags.toString());
+                Log.e(invCount + "======" + epcUnChangeTime, tags.toString() + Thread.currentThread().toString());
                 List<String> epcs = Stream.of(tags).map(new Function<UhfTag, String>() {
                     @Override
                     public String apply(UhfTag uhfTags) {
@@ -166,7 +166,7 @@ public class UnlockActivity extends BaseActivity<UnlockPresenter> implements Unl
                                             return epcFile.getEpcCode();
                                         }
                                     }).collect(Collectors.toList());
-                                    invReport(orderUuid, inEpcStrings, inEpcStrings);
+                                    invReport(orderUuid, inEpcStrings, outEpcStrings);
                                 }
                             });
                         }
@@ -205,16 +205,6 @@ public class UnlockActivity extends BaseActivity<UnlockPresenter> implements Unl
         //初始化锁
         ekeyServer = EkeyServer.getInstance();
         ekeyServer.addStatusChangeListenner(ekeyStatusChangeListener);
-        //todo 锁暂不实现
-      /*  new Thread(() -> {
-            try {
-                Looper.prepare();
-                ekeyServer.openEkey();
-                Looper.loop();
-            } catch (Exception e) {
-                e.printStackTrace();
-            }
-        }).start();*/
         ekeyServer.openEkey();
         //初始化rfid
         esimUhfParams = new EsimUhfParams.Builder().antIndex(1, 2, 3, 4).build();

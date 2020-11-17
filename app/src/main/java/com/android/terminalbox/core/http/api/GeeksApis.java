@@ -27,15 +27,15 @@ public interface GeeksApis {
     Observable<BaseResponse<UserLoginResponse>> login(@Body UserInfo userInfo);
 
     //获取所有用户信息
-    @GET("/api/v1/users")
+    @GET("/api/v1/unauth/users")
     Observable<BaseResponse<List<UserInfo>>> getAllUserInfo();
 
     //人脸头像特征值更新
-    @POST("/api/v1/users/updateFeature")
+    @POST("/api/v1/unauth/updateFeature")
     Observable<BaseResponse<UserInfo>> updateFeature(@Body FaceFeatureBody faceFeatureBody);
 
     //批量更新人脸特征值
-    @POST("/api/v1/users/updateFeatures")
+    @POST("/api/v1/unauth/updateFeatures")
     Observable<BaseResponse<List<UserInfo>>> updateFeatures(@Body List<FaceFeatureBody> faceFeatures);
 
     //创建操作单

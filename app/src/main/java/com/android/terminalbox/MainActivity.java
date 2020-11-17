@@ -178,9 +178,9 @@ public class MainActivity extends BaseActivity<MainPresenter> implements MainCon
                 JumpToActivity(RecognizeActivity.class);
                 break;
             case R.id.bt_change_org:
-                //mPresenter.getAllUserInfo();
-                //ConfigUtil.setFtOrient(MainActivity.this, ASF_OP_90_ONLY);
-                JumpToActivity(UnlockActivity.class);
+                mPresenter.getAllUserInfo();
+                ConfigUtil.setFtOrient(MainActivity.this, ASF_OP_90_ONLY);
+                //JumpToActivity(UnlockActivity.class);
                 break;
         }
     }
@@ -369,8 +369,8 @@ public class MainActivity extends BaseActivity<MainPresenter> implements MainCon
             super.run();
             if (iotDevice == null) {
                 iotDevice = new IotDevice();
-                iotDevice.setIotHost("172.16.61.101");
-                iotDevice.setMqttPort("1883");
+                iotDevice.setIotHost("117.34.118.157");
+                iotDevice.setMqttPort("20008");
                 iotDevice.setPordId("15aa68f3183311ebb7260242ac120004");
                 iotDevice.setDevVerify("uniqueCode002");
                 iotDevice.setDevId(iotDevice.getPordId()+"_"+iotDevice.getDevVerify());

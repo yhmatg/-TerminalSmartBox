@@ -26,7 +26,7 @@ public class CacheInterceptor implements Interceptor {
         if (NetworkUtil.isNetworkAvailable(context)) {
             Response response = chain.proceed(request);
             // read from cache for 60 s
-            int maxAge = 60;
+            int maxAge = 10;
             return response.newBuilder()
                     .removeHeader("Pragma")
                     .removeHeader("Cache-Control")

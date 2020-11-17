@@ -40,7 +40,7 @@ public class PreferenceHelperImpl implements PreferenceHelper {
 
     @Override
     public String getHostUrl() {
-        return mPreferences.getString(Constants.HOSTURL, "");
+        return mPreferences.getString(Constants.HOSTURL, "http://117.34.118.157:20000/");
     }
 
     @Override
