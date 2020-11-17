@@ -11,6 +11,7 @@ import android.support.v4.app.ActivityCompat;
 import android.util.Base64;
 import android.util.Log;
 import android.view.View;
+import android.widget.TextView;
 
 import com.android.terminalbox.app.BaseApplication;
 import com.android.terminalbox.base.activity.BaseActivity;
@@ -18,6 +19,7 @@ import com.android.terminalbox.common.Constants;
 import com.android.terminalbox.contract.MainContract;
 import com.android.terminalbox.core.bean.BaseResponse;
 import com.android.terminalbox.core.bean.box.IotDevice;
+import com.android.terminalbox.core.bean.user.EpcFile;
 import com.android.terminalbox.core.bean.user.FaceFeatureBody;
 import com.android.terminalbox.core.bean.user.OrderBody;
 import com.android.terminalbox.core.bean.user.UserInfo;
@@ -25,11 +27,11 @@ import com.android.terminalbox.core.room.BaseDb;
 import com.android.terminalbox.mqtt.MqttServer;
 import com.android.terminalbox.mqtt.RylaiMqttCallback;
 import com.android.terminalbox.presenter.MainPresenter;
+import com.android.terminalbox.ui.MqttActivity;
 import com.android.terminalbox.ui.inventory.InventoryActivity;
 import com.android.terminalbox.ui.recognize.RecognizeActivity;
 import com.android.terminalbox.ui.unlock.UnlockActivity;
 import com.android.terminalbox.utils.ToastUtils;
-import com.android.terminalbox.utils.box.ConfigUtil;
 import com.arcsoft.face.ActiveFileInfo;
 import com.arcsoft.face.ErrorInfo;
 import com.arcsoft.face.FaceEngine;
@@ -43,13 +45,20 @@ import com.arcsoft.imageutil.ArcSoftImageUtil;
 import com.arcsoft.imageutil.ArcSoftImageUtilError;
 import com.bumptech.glide.Glide;
 import com.google.gson.Gson;
+
 import org.eclipse.paho.client.mqttv3.IMqttDeliveryToken;
 import org.eclipse.paho.client.mqttv3.IMqttToken;
 import org.eclipse.paho.client.mqttv3.MqttMessage;
+
 import java.io.File;
+import java.text.SimpleDateFormat;
 import java.util.ArrayList;
+import java.util.Calendar;
+import java.util.Date;
 import java.util.List;
 import java.util.concurrent.ExecutionException;
+
+import butterknife.BindView;
 import butterknife.OnClick;
 import io.reactivex.Observable;
 import io.reactivex.ObservableEmitter;
@@ -59,10 +68,14 @@ import io.reactivex.android.schedulers.AndroidSchedulers;
 import io.reactivex.disposables.Disposable;
 import io.reactivex.schedulers.Schedulers;
 
-import static com.arcsoft.face.enums.DetectFaceOrientPriority.ASF_OP_90_ONLY;
-
 public class MainActivity extends BaseActivity<MainPresenter> implements MainContract.View {
     private static String TAG = "MainActivity";
+    @BindView(R.id.week_text)
+    TextView weekText;
+    @BindView(R.id.time_text)
+    TextView timeText;
+    @BindView(R.id.file_number)
+    TextView fileNumber;
     private List<UserInfo> users = new ArrayList<>();
     /**
      * 用于特征提取的引擎
@@ -148,6 +161,12 @@ public class MainActivity extends BaseActivity<MainPresenter> implements MainCon
         //初始化mqtt
         MqttConnect mqttConnect = new MqttConnect();
         mqttConnect.start();
+        SimpleDateFormat simpleDateFormat = new SimpleDateFormat("MM/dd HH:mm");// HH:mm:ss
+        weekText.setText(getWeekDay());
+        Date date = new Date(System.currentTimeMillis());
+        timeText.setText(simpleDateFormat.format(date));
+        List<EpcFile> allEpcFile = BaseDb.getInstance().getEpcFileDao().findAllEpcFile();
+        fileNumber.setText(String.valueOf(allEpcFile.size()));
     }
 
     @OnClick({R.id.btn_inv, R.id.btn_access, R.id.bt_change_org})
@@ -161,9 +180,9 @@ public class MainActivity extends BaseActivity<MainPresenter> implements MainCon
                 JumpToActivity(RecognizeActivity.class);
                 break;
             case R.id.bt_change_org:
-                mPresenter.getAllUserInfo();
-                ConfigUtil.setFtOrient(MainActivity.this, ASF_OP_90_ONLY);
-                //JumpToActivity(UnlockActivity.class);
+                //mPresenter.getAllUserInfo();
+                //ConfigUtil.setFtOrient(MainActivity.this, ASF_OP_90_ONLY);
+                JumpToActivity(MqttActivity.class);
                 break;
         }
     }
@@ -363,4 +382,33 @@ public class MainActivity extends BaseActivity<MainPresenter> implements MainCon
         }
     }
     //yhm end 1105
+
+    public String getWeekDay(){
+        int weekDay = Calendar.getInstance().get(Calendar.DAY_OF_WEEK);
+        String day = "";
+        switch (weekDay){
+            case 1:
+                day = "Sunday";
+                break;
+            case 2:
+                day = "Monday";
+                break;
+            case 3:
+                day = "Tuesday";
+                break;
+            case 4:
+                day = "Wednesday";
+                break;
+            case 5:
+                day = "Thursday";
+                break;
+            case 6:
+                day = "Friday";
+                break;
+            case 7:
+                day = "Saturday";
+                break;
+        }
+        return day;
+    }
 }

@@ -16,11 +16,13 @@ import com.android.terminalbox.mqtt.RylaiMqttCallback;
 import com.android.terminalbox.mqtt.own.Props;
 import com.android.terminalbox.mqtt.own.ResultProp;
 import com.google.gson.Gson;
+
 import org.eclipse.paho.client.mqttv3.IMqttDeliveryToken;
 import org.eclipse.paho.client.mqttv3.IMqttToken;
 import org.eclipse.paho.client.mqttv3.MqttMessage;
 
 import java.util.ArrayList;
+import java.util.UUID;
 
 public class MqttActivity extends AppCompatActivity {
     String TAG = "MqttActivity";
@@ -159,6 +161,7 @@ public class MqttActivity extends AppCompatActivity {
         ArrayList<ResultProp> resultProps = new ArrayList<>();
         ResultProp resultProp = new ResultProp();
         resultProp.setCap_id("id3");
+        relevanceId = UUID.randomUUID().toString();
         resultProp.setRelevance_id(relevanceId);
         resultProp.setData_event_time(System.currentTimeMillis());
         ResultProp.Prop prop = new ResultProp.Prop();
