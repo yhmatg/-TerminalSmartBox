@@ -1,7 +1,6 @@
 package com.android.terminalbox.ui.inventory;
 
 import android.content.Context;
-import android.os.Looper;
 import android.support.v7.widget.LinearLayoutManager;
 import android.support.v7.widget.RecyclerView;
 import android.util.Log;
@@ -14,6 +13,8 @@ import android.view.inputmethod.EditorInfo;
 import android.view.inputmethod.InputMethodManager;
 import android.widget.EditText;
 import android.widget.ImageView;
+import android.widget.LinearLayout;
+import android.widget.RelativeLayout;
 import android.widget.TextView;
 
 import com.android.terminalbox.R;
@@ -45,6 +46,12 @@ public class InventoryActivity extends BaseActivity {
     RecyclerView mRecycleView;
     @BindView(R.id.edit_search)
     EditText editText;
+    @BindView(R.id.number_layout)
+    LinearLayout numberLayout;
+    @BindView(R.id.tv_see_detail)
+    TextView seeDetail;
+    @BindView(R.id.detail_layout)
+    RelativeLayout detailLayout;
     private List<EpcFile> files = new ArrayList<>();
     //存储一次盘点的数据
     private List<EpcFile> allFiles = new ArrayList<>();
@@ -112,9 +119,6 @@ public class InventoryActivity extends BaseActivity {
                             public void run() {
                                 allFiles.addAll(files);
                                 roundImg.clearAnimation();
-                                numberText.setVisibility(View.GONE);
-                                roundImg.setVisibility(View.GONE);
-                                mRecycleView.setVisibility(View.VISIBLE);
                             }
                         });
                     }
@@ -138,9 +142,10 @@ public class InventoryActivity extends BaseActivity {
 
     @Override
     protected void initEventAndData() {
-        numberText.setVisibility(View.VISIBLE);
+        numberLayout.setVisibility(View.VISIBLE);
         roundImg.setVisibility(View.VISIBLE);
-        mRecycleView.setVisibility(View.GONE);
+        detailLayout.setVisibility(View.GONE);
+        editText.setVisibility(View.GONE);
         mAdapter = new FileBeanAdapter(files, this);
         mRecycleView.setLayoutManager(new LinearLayoutManager(this));
         mRecycleView.setAdapter(mAdapter);
@@ -196,14 +201,17 @@ public class InventoryActivity extends BaseActivity {
 
     }
 
-    @OnClick({R.id.titleLeft, R.id.home_icon})
+    @OnClick({R.id.titleLeft,R.id.tv_see_detail})
     void performClick(View v) {
         switch (v.getId()) {
             case R.id.titleLeft:
                 finish();
                 break;
-            case R.id.home_icon:
-                finish();
+            case R.id.tv_see_detail:
+                numberLayout.setVisibility(View.GONE);
+                roundImg.setVisibility(View.GONE);
+                detailLayout.setVisibility(View.VISIBLE);
+                editText.setVisibility(View.VISIBLE);
                 break;
         }
     }

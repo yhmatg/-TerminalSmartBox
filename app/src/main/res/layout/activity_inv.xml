@@ -1,12 +1,36 @@
 <?xml version="1.0" encoding="utf-8"?>
 <RelativeLayout xmlns:android="http://schemas.android.com/apk/res/android"
     android:layout_width="match_parent"
-    android:layout_height="match_parent">
+    android:layout_height="match_parent"
+    android:background="@drawable/back_icon">
 
-    <include layout="@layout/search_title" />
+    <ImageView
+        android:id="@+id/titleLeft"
+        android:layout_width="@dimen/dp_40"
+        android:layout_height="@dimen/dp_40"
+        android:padding="@dimen/dp_10"
+        android:src="@drawable/left_arrow" />
 
-    <TextView
-        android:id="@+id/tv_number"
+    <EditText
+        android:id="@+id/edit_search"
+        android:layout_width="match_parent"
+        android:layout_height="@dimen/dp_48"
+        android:layout_below="@+id/titleLeft"
+        android:layout_marginStart="@dimen/dp_20"
+        android:layout_marginEnd="@dimen/dp_20"
+        android:background="@drawable/search_back"
+        android:cursorVisible="false"
+        android:hint="半成品号/仪器名称查询"
+        android:imeOptions="actionSearch"
+        android:paddingStart="@dimen/dp_20"
+        android:paddingEnd="@dimen/dp_20"
+        android:singleLine="true"
+        android:textColor="#B0BCCA"
+        android:textColorHint="#B0BCCA"
+        android:textSize="@dimen/sp_13" />
+
+    <LinearLayout
+        android:id="@+id/number_layout"
         android:layout_width="wrap_content"
         android:layout_height="wrap_content"
         android:layout_alignStart="@+id/iv_round"
@@ -14,23 +38,92 @@
         android:layout_alignEnd="@+id/iv_round"
         android:layout_alignBottom="@+id/iv_round"
         android:gravity="center"
-        android:text="数量统计0件"
-        android:textSize="@dimen/sp_12" />
+        android:orientation="horizontal">
+
+        <TextView
+            android:layout_width="wrap_content"
+            android:layout_height="wrap_content"
+            android:text="盘点中"
+            android:textColor="@color/white"
+            android:textSize="@dimen/sp_16" />
+
+        <TextView
+            android:id="@+id/tv_number"
+            android:layout_width="wrap_content"
+            android:layout_height="wrap_content"
+            android:text="58"
+            android:textColor="@color/white"
+            android:textSize="@dimen/sp_48" />
+
+        <TextView
+            android:layout_width="wrap_content"
+            android:layout_height="wrap_content"
+            android:text="件"
+            android:textColor="@color/white"
+            android:textSize="@dimen/sp_16" />
+    </LinearLayout>
 
 
     <ImageView
         android:id="@+id/iv_round"
-        android:layout_width="wrap_content"
-        android:layout_height="wrap_content"
+        android:layout_width="@dimen/dp_203"
+        android:layout_height="@dimen/dp_203"
         android:layout_centerHorizontal="true"
         android:layout_centerVertical="true"
         android:src="@drawable/round_icon" />
 
-    <android.support.v7.widget.RecyclerView
-        android:id="@+id/rv_inv_items"
+    <TextView
+        android:id="@+id/tv_see_detail"
+        android:layout_width="wrap_content"
+        android:layout_height="wrap_content"
+        android:layout_below="@+id/iv_round"
+        android:layout_centerHorizontal="true"
+        android:layout_marginTop="@dimen/dp_50"
+        android:text="查看详情"
+        android:textColor="@color/white"
+        android:textSize="@dimen/sp_16" />
+
+    <RelativeLayout
+        android:id="@+id/detail_layout"
         android:layout_width="match_parent"
         android:layout_height="match_parent"
-        android:layout_below="@+id/search_layout" />
+        android:layout_below="@+id/edit_search"
+        android:background="@drawable/epc_files_back"
+        android:padding="@dimen/dp_10">
+
+        <LinearLayout
+            android:id="@+id/ll_title"
+            android:layout_width="match_parent"
+            android:layout_height="wrap_content"
+            android:layout_marginTop="@dimen/dp_14">
+
+            <TextView
+                android:id="@+id/tv_file_name"
+                android:layout_width="0dp"
+                android:layout_height="wrap_content"
+                android:layout_weight="1"
+                android:gravity="center"
+                android:text="名称"
+                android:textColor="@color/white"
+                android:textSize="@dimen/sp_12" />
+
+            <TextView
+                android:layout_width="0dp"
+                android:layout_height="wrap_content"
+                android:layout_alignParentEnd="true"
+                android:layout_weight="1"
+                android:gravity="center"
+                android:text="编号"
+                android:textColor="@color/white"
+                android:textSize="@dimen/sp_12" />
+        </LinearLayout>
+
+        <android.support.v7.widget.RecyclerView
+            android:id="@+id/rv_inv_items"
+            android:layout_width="match_parent"
+            android:layout_height="match_parent"
+            android:layout_below="@+id/ll_title" />
+    </RelativeLayout>
 
 
 </RelativeLayout>
