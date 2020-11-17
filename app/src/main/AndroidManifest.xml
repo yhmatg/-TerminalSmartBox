@@ -25,19 +25,6 @@
                 <category android:name="android.intent.category.LAUNCHER" />
             </intent-filter>
         </activity>
-        <activity
-            android:name=".ui.rfid.SmartBoxInvActivity"
-            android:launchMode="singleTop"
-            android:screenOrientation="portrait"></activity>
-
-        <activity
-            android:name=".ui.face.RecognizeActivity"
-            android:launchMode="singleTop"
-            android:screenOrientation="portrait"></activity>
-        <activity
-            android:name=".ui.face.InOutActivity"
-            android:launchMode="singleTop"
-            android:screenOrientation="portrait"></activity>
         <activity android:name=".ui.MqttActivity"></activity>
         <activity
             android:name=".ui.inventory.InventoryActivity"

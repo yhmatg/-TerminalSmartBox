@@ -10,24 +10,17 @@ import android.widget.TextView;
 
 import com.android.terminalbox.R;
 import com.android.terminalbox.core.bean.box.IotDevice;
-import com.android.terminalbox.core.bean.box.Oprecord;
 import com.android.terminalbox.core.bean.user.OrderBody;
-import com.android.terminalbox.core.dao.OprecordDao;
 import com.android.terminalbox.mqtt.MqttServer;
 import com.android.terminalbox.mqtt.RylaiMqttCallback;
-import com.android.terminalbox.mqtt.TagMessage;
 import com.android.terminalbox.mqtt.own.Props;
 import com.android.terminalbox.mqtt.own.ResultProp;
 import com.google.gson.Gson;
-
 import org.eclipse.paho.client.mqttv3.IMqttDeliveryToken;
 import org.eclipse.paho.client.mqttv3.IMqttToken;
-import org.eclipse.paho.client.mqttv3.MqttException;
 import org.eclipse.paho.client.mqttv3.MqttMessage;
-import org.eclipse.paho.client.mqttv3.internal.wire.MqttConnect;
 
 import java.util.ArrayList;
-import java.util.List;
 
 public class MqttActivity extends AppCompatActivity {
     String TAG = "MqttActivity";

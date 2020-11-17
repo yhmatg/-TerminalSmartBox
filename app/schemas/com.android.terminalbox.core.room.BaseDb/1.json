@@ -2,78 +2,8 @@
   "formatVersion": 1,
   "database": {
     "version": 1,
-    "identityHash": "1989e6e96487e4b87298b47ab421779a",
+    "identityHash": "8c6b54fc7bf4e472e0c3ac3d2b42971a",
     "entities": [
-      {
-        "tableName": "Oprecord",
-        "createSql": "CREATE TABLE IF NOT EXISTS `${TABLE_NAME}` (`id` INTEGER PRIMARY KEY AUTOINCREMENT NOT NULL, `userName` TEXT, `op_type` TEXT, `op_date` INTEGER)",
-        "fields": [
-          {
-            "fieldPath": "id",
-            "columnName": "id",
-            "affinity": "INTEGER",
-            "notNull": true
-          },
-          {
-            "fieldPath": "userName",
-            "columnName": "userName",
-            "affinity": "TEXT",
-            "notNull": false
-          },
-          {
-            "fieldPath": "opType",
-            "columnName": "op_type",
-            "affinity": "TEXT",
-            "notNull": false
-          },
-          {
-            "fieldPath": "op_date",
-            "columnName": "op_date",
-            "affinity": "INTEGER",
-            "notNull": false
-          }
-        ],
-        "primaryKey": {
-          "columnNames": [
-            "id"
-          ],
-          "autoGenerate": true
-        },
-        "indices": [],
-        "foreignKeys": []
-      },
-      {
-        "tableName": "Tag",
-        "createSql": "CREATE TABLE IF NOT EXISTS `${TABLE_NAME}` (`id` INTEGER PRIMARY KEY AUTOINCREMENT NOT NULL, `tag_epc` TEXT, `op_id` INTEGER NOT NULL)",
-        "fields": [
-          {
-            "fieldPath": "id",
-            "columnName": "id",
-            "affinity": "INTEGER",
-            "notNull": true
-          },
-          {
-            "fieldPath": "tagEpc",
-            "columnName": "tag_epc",
-            "affinity": "TEXT",
-            "notNull": false
-          },
-          {
-            "fieldPath": "opId",
-            "columnName": "op_id",
-            "affinity": "INTEGER",
-            "notNull": true
-          }
-        ],
-        "primaryKey": {
-          "columnNames": [
-            "id"
-          ],
-          "autoGenerate": true
-        },
-        "indices": [],
-        "foreignKeys": []
-      },
       {
         "tableName": "UserInfo",
         "createSql": "CREATE TABLE IF NOT EXISTS `${TABLE_NAME}` (`faceFeature` TEXT, `faceImg` TEXT, `faceStatus` TEXT, `flag` TEXT, `gmtModified` INTEGER NOT NULL, `id` INTEGER NOT NULL, `password` TEXT, `token` TEXT, `username` TEXT, PRIMARY KEY(`id`))",
@@ -171,7 +101,7 @@
     ],
     "setupQueries": [
       "CREATE TABLE IF NOT EXISTS room_master_table (id INTEGER PRIMARY KEY,identity_hash TEXT)",
-      "INSERT OR REPLACE INTO room_master_table (id,identity_hash) VALUES(42, \"1989e6e96487e4b87298b47ab421779a\")"
+      "INSERT OR REPLACE INTO room_master_table (id,identity_hash) VALUES(42, \"8c6b54fc7bf4e472e0c3ac3d2b42971a\")"
     ]
   }
 }
