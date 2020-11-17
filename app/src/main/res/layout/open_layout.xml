@@ -1,0 +1,27 @@
+<?xml version="1.0" encoding="utf-8"?>
+<RelativeLayout xmlns:android="http://schemas.android.com/apk/res/android"
+    android:id="@+id/open_layout"
+    android:layout_width="wrap_content"
+    android:layout_height="wrap_content">
+
+    <ImageView
+        android:id="@+id/iv_unlock_one"
+        android:layout_width="wrap_content"
+        android:layout_height="wrap_content"
+        android:src="@drawable/unlock_one" />
+
+    <ImageView
+        android:id="@+id/iv_unlock_two"
+        android:layout_width="wrap_content"
+        android:layout_height="wrap_content"
+        android:layout_toEndOf="@+id/iv_unlock_one"
+        android:src="@drawable/unlock_two" />
+
+    <ImageView
+        android:layout_width="wrap_content"
+        android:layout_height="wrap_content"
+        android:layout_below="@+id/iv_unlock_one"
+        android:layout_centerHorizontal="true"
+        android:layout_marginTop="@dimen/dp_36"
+        android:src="@drawable/unlock_icon" />
+</RelativeLayout>

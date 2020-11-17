@@ -9,6 +9,7 @@ import android.view.animation.Animation;
 import android.view.animation.LinearInterpolator;
 import android.view.animation.RotateAnimation;
 import android.widget.ImageView;
+import android.widget.RelativeLayout;
 import android.widget.TextView;
 
 import com.android.terminalbox.R;
@@ -16,7 +17,6 @@ import com.android.terminalbox.base.activity.BaseActivity;
 import com.android.terminalbox.contract.UnlockContract;
 import com.android.terminalbox.core.bean.BaseResponse;
 import com.android.terminalbox.core.bean.user.EpcFile;
-import com.android.terminalbox.core.bean.user.NewOrderBody;
 import com.android.terminalbox.core.bean.user.OrderResponse;
 import com.android.terminalbox.core.room.BaseDb;
 import com.android.terminalbox.devservice.ekey.EkeyServer;
@@ -29,7 +29,6 @@ import com.android.terminalbox.uhf.EsimUhfHelper;
 import com.android.terminalbox.uhf.EsimUhfParams;
 import com.android.terminalbox.uhf.UhfTag;
 import com.android.terminalbox.ui.inventory.FileBeanAdapter;
-import com.android.terminalbox.utils.StringUtils;
 import com.android.terminalbox.utils.ToastUtils;
 import com.annimon.stream.Collectors;
 import com.annimon.stream.Stream;
@@ -38,7 +37,6 @@ import com.google.gson.Gson;
 
 import java.util.ArrayList;
 import java.util.List;
-import java.util.UUID;
 
 import butterknife.BindView;
 import butterknife.OnClick;
@@ -46,23 +44,32 @@ import butterknife.OnClick;
 public class UnlockActivity extends BaseActivity<UnlockPresenter> implements UnlockContract.View {
     private static String TAG = "UnlockActivity";
     private static String deviceId = "15aa68f3183311ebb7260242ac120004_uniqueCode002";
-    @BindView(R.id.unlock_status)
-    TextView unlockStatus;
     @BindView(R.id.inv_numbers)
     TextView invNumbers;
-    @BindView(R.id.out_numbers)
+    @BindView(R.id.all_number)
+    TextView allNumbers;
+    @BindView(R.id.out_number)
     TextView outNumbers;
-    @BindView(R.id.in_numbers)
+    @BindView(R.id.in_number)
     TextView inNumbers;
     @BindView(R.id.iv_round)
     ImageView roundImg;
-    @BindView(R.id.rv_inv_items)
-    RecyclerView mRecycleView;
+    @BindView(R.id.rv_out_items)
+    RecyclerView mOutRecycleView;
+    @BindView(R.id.in_inv_items)
+    RecyclerView mInRecycleView;
+    @BindView(R.id.open_layout)
+    RelativeLayout openLayout;
+    @BindView(R.id.close_layout)
+    RelativeLayout closeLayout;
+    @BindView(R.id.inout_layout)
+    RelativeLayout inOutLayout;
     private List<EpcFile> files = new ArrayList<>();
     private List<EpcFile> localFiles = new ArrayList<>();
     private List<EpcFile> inFiles = new ArrayList<>();
     private List<EpcFile> outFiles = new ArrayList<>();
-    private FileBeanAdapter mAdapter;
+    private FileBeanAdapter mOutAdapter;
+    private FileBeanAdapter mInAdapter;
     private Animation mRadarAnim;
     public static int epcUnChangeTime = 0;
     public static int epcUnChangeMaxTime = 20;
@@ -75,11 +82,12 @@ public class UnlockActivity extends BaseActivity<UnlockPresenter> implements Unl
         switch (ekeyStatus) {
             case OPEN:
                 Log.e(TAG, "=========ekey open============: " + Thread.currentThread().toString());
-                unlockStatus.setText("锁状态：开启");
                 break;
             case CLOSED:
                 Log.e(TAG, "=========ekey open============: " + Thread.currentThread().toString());
-                unlockStatus.setText("锁状态：关闭");
+                openLayout.setVisibility(View.GONE);
+                closeLayout.setVisibility(View.VISIBLE);
+                inOutLayout.setVisibility(View.GONE);
                 startInvTags();
                 break;
         }
@@ -116,7 +124,7 @@ public class UnlockActivity extends BaseActivity<UnlockPresenter> implements Unl
                     runOnUiThread(new Runnable() {
                         @Override
                         public void run() {
-                            invNumbers.setText("总数：" + files.size());
+                            allNumbers.setText(String.valueOf(files.size()));
                         }
                     });
                 } else {
@@ -124,12 +132,6 @@ public class UnlockActivity extends BaseActivity<UnlockPresenter> implements Unl
                     if (epcUnChangeTime >= epcUnChangeMaxTime) {//次扫描不到新标签，假定扫描完 Log.d(TAG, "invTags: " + epcUnChangeTime + "+次未找到新标签,假定扫描完");
                         if (files.size() != preSize) {
                             preSize = files.size();
-                            runOnUiThread(new Runnable() {
-                                @Override
-                                public void run() {
-                                    mAdapter.notifyDataSetChanged();
-                                }
-                            });
                         }
                         EsimUhfHelper.getInstance().stopRead();
                         if (invCount < invMaxCount) {
@@ -147,8 +149,12 @@ public class UnlockActivity extends BaseActivity<UnlockPresenter> implements Unl
                                     tempInvFiles.removeAll(tempLocal);
                                     //取件
                                     tempLocal.removeAll(files);
-                                    inNumbers.setText("存件：" + tempInvFiles.size());
-                                    outNumbers.setText("取件：" + tempLocal.size());
+                                    inNumbers.setText(String.valueOf(tempInvFiles.size()));
+                                    outNumbers.setText(String.valueOf(tempLocal.size()));
+                                    inFiles.addAll(tempInvFiles);
+                                    outFiles.addAll(tempLocal);
+                                    mInAdapter.notifyDataSetChanged();
+                                    mOutAdapter.notifyDataSetChanged();
                                     //数据库更新
                                     BaseDb.getInstance().getEpcFileDao().insertItems(tempInvFiles);
                                     BaseDb.getInstance().getEpcFileDao().deleteItems(tempLocal);
@@ -166,6 +172,9 @@ public class UnlockActivity extends BaseActivity<UnlockPresenter> implements Unl
                                         }
                                     }).collect(Collectors.toList());
                                     invReport(orderUuid, inEpcStrings, outEpcStrings);
+                                    openLayout.setVisibility(View.GONE);
+                                    closeLayout.setVisibility(View.GONE);
+                                    inOutLayout.setVisibility(View.VISIBLE);
                                 }
                             });
                         }
@@ -192,19 +201,24 @@ public class UnlockActivity extends BaseActivity<UnlockPresenter> implements Unl
 
     @Override
     protected void initEventAndData() {
+        openLayout.setVisibility(View.VISIBLE);
+        closeLayout.setVisibility(View.GONE);
+        inOutLayout.setVisibility(View.GONE);
         Intent intent = getIntent();
         if (intent != null) {
             orderUuid = intent.getStringExtra("relevanceId");
         }
         localFiles = BaseDb.getInstance().getEpcFileDao().findAllEpcFile();
-        unlockStatus.setText("本地：" + localFiles.size());
-        mAdapter = new FileBeanAdapter(files, this);
-        mRecycleView.setLayoutManager(new LinearLayoutManager(this));
-        mRecycleView.setAdapter(mAdapter);
+        mOutAdapter = new FileBeanAdapter(outFiles, this);
+        mOutRecycleView.setLayoutManager(new LinearLayoutManager(this));
+        mOutRecycleView.setAdapter(mOutAdapter);
+        mInAdapter = new FileBeanAdapter(inFiles, this);
+        mInRecycleView.setLayoutManager(new LinearLayoutManager(this));
+        mInRecycleView.setAdapter(mInAdapter);
         //初始化锁
         ekeyServer = EkeyServer.getInstance();
         ekeyServer.addStatusChangeListenner(ekeyStatusChangeListener);
-        //ekeyServer.openEkey();
+        ekeyServer.openEkey();
         //初始化rfid
         esimUhfParams = new EsimUhfParams.Builder().antIndex(1, 2, 3, 4).build();
         initAnim();
@@ -231,34 +245,11 @@ public class UnlockActivity extends BaseActivity<UnlockPresenter> implements Unl
         }
     }
 
-    @OnClick({R.id.bt_open, R.id.bt_close})
+    @OnClick({R.id.titleLeft})
     void performClick(View v) {
         switch (v.getId()) {
-            case R.id.bt_open:
-                if (StringUtils.isEmpty(orderUuid)) {
-                    NewOrderBody newOrderBody = new NewOrderBody();
-                    newOrderBody.setActType("存取");
-                    orderUuid = UUID.randomUUID().toString();
-                    newOrderBody.setRelevanceId(orderUuid);
-                    newOrderBody.setRemark("remarkOne");
-                    mPresenter.newOrder(deviceId, newOrderBody);
-                } else {
-                    openReport(orderUuid);
-                }
-                break;
-            case R.id.bt_close:
-                if (StringUtils.isEmpty(orderUuid)) {
-                    ToastUtils.showShort("请先开锁！！！");
-                } else {
-                    closeReport(orderUuid);
-                    roundImg.startAnimation(mRadarAnim);
-                    files.clear();
-                    mAdapter.notifyDataSetChanged();
-                    invNumbers.setText("总数");
-                    inNumbers.setText("存件");
-                    outNumbers.setText("取件");
-                    startInvTags();
-                }
+            case R.id.titleLeft:
+                finish();
                 break;
         }
     }
