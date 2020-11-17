@@ -21,7 +21,7 @@
         android:layout_marginTop="10dp"
         android:src="@drawable/title_icon" />
 
-    <TextView
+    <TextClock
         android:id="@+id/week_text"
         android:layout_width="wrap_content"
         android:layout_height="wrap_content"
@@ -30,9 +30,10 @@
         android:layout_marginTop="@dimen/dp_45"
         android:text="Monday"
         android:textColor="#10C7F6"
+        android:format24Hour="EEEE"
         android:textSize="@dimen/sp_28" />
 
-    <TextView
+    <TextClock
         android:id="@+id/time_text"
         android:layout_width="wrap_content"
         android:layout_height="wrap_content"
@@ -40,6 +41,7 @@
         android:layout_marginStart="@dimen/dp_35"
         android:layout_marginTop="@dimen/dp_8"
         android:text="10/26 09:00"
+        android:format24Hour="EEEEE"
         android:textColor="@color/white"
         android:textSize="@dimen/sp_19" />
 

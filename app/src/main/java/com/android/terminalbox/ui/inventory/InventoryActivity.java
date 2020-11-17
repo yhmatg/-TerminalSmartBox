@@ -58,15 +58,15 @@ public class InventoryActivity extends BaseActivity {
     private FileBeanAdapter mAdapter;
     public static int epcUnChangeTime = 0;
     public static int epcUnChangeMaxTime = 20;
-    private int preSize=0;
-    int invCount=0;
-    int invMaxCount=5;
+    private int preSize = 0;
+    int invCount = 0;
+    int invMaxCount = 5;
     EsimUhfParams esimUhfParams;
     private Animation mRadarAnim;
-    private EsimUhfHelper.EsimUhfListener uhfListener=new EsimUhfHelper.EsimUhfListener() {
+    private EsimUhfHelper.EsimUhfListener uhfListener = new EsimUhfHelper.EsimUhfListener() {
         @Override
         public void onTagRead(List<UhfTag> tags) {
-            Log.e(invCount+"======" + epcUnChangeTime,tags.toString());
+            Log.e(invCount + "======" + epcUnChangeTime, tags.toString());
             List<String> epcs = Stream.of(tags).map(new Function<UhfTag, String>() {
                 @Override
                 public String apply(UhfTag uhfTags) {
@@ -89,7 +89,7 @@ public class InventoryActivity extends BaseActivity {
                     }
                 }).collect(Collectors.toList());
                 files.addAll(epcToFiles);//Log.d(TAG, "invTags: 本次盘点后总标签" + inBoxEpcsTemp.size() + "    " + inBoxEpcsTemp.toString());
-                Log.e(TAG,files.size() + "====" + files.toString());
+                Log.e(TAG, files.size() + "====" + files.toString());
                 runOnUiThread(new Runnable() {
                     @Override
                     public void run() {
@@ -99,8 +99,8 @@ public class InventoryActivity extends BaseActivity {
             } else {
                 epcUnChangeTime++;
                 if (epcUnChangeTime >= epcUnChangeMaxTime) {//次扫描不到新标签，假定扫描完 Log.d(TAG, "invTags: " + epcUnChangeTime + "+次未找到新标签,假定扫描完");
-                    if(files.size()!=preSize) {
-                        preSize=files.size();
+                    if (files.size() != preSize) {
+                        preSize = files.size();
                         runOnUiThread(new Runnable() {
                             @Override
                             public void run() {
@@ -109,11 +109,11 @@ public class InventoryActivity extends BaseActivity {
                         });
                     }
                     EsimUhfHelper.getInstance().stopRead();
-                    if(invCount<invMaxCount) {
+                    if (invCount < invMaxCount) {
                         invCount++;
                         EsimUhfHelper.getInstance().startReadTags(esimUhfParams, uhfListener);
-                    }else{
-                       //todo 结束转圈动画
+                    } else {
+                        //todo 结束转圈动画
                         runOnUiThread(new Runnable() {
                             @Override
                             public void run() {
@@ -126,6 +126,7 @@ public class InventoryActivity extends BaseActivity {
             }
         }
     };
+
     private void initAnim() {
         mRadarAnim = new RotateAnimation(0f, 360f, Animation.RELATIVE_TO_SELF, 0.5f, Animation.RELATIVE_TO_SELF, 0.5f);
         mRadarAnim.setFillAfter(true); // 设置保持动画最后的状态
@@ -175,17 +176,17 @@ public class InventoryActivity extends BaseActivity {
         initAnim();
         //开始盘点
         roundImg.startAnimation(mRadarAnim);
-        esimUhfParams = new EsimUhfParams.Builder().antIndex(1,2,3,4).build();
+        esimUhfParams = new EsimUhfParams.Builder().antIndex(1, 2, 3, 4).build();
         startInvTags();
     }
 
     private void startInvTags() {
         epcUnChangeTime = 0;
         Log.d(TAG, "startInvTags: start inv...");
-        preSize=0;
-        invCount=1;
+        preSize = 0;
+        invCount = 1;
         //todo 开始转圈动画
-        boolean isStartOk= EsimUhfHelper.getInstance().startReadTags(esimUhfParams,uhfListener);
+        boolean isStartOk = EsimUhfHelper.getInstance().startReadTags(esimUhfParams, uhfListener);
         if (!isStartOk) {
             ToastUtils.showShort("读写器异常");
         }
@@ -201,7 +202,7 @@ public class InventoryActivity extends BaseActivity {
 
     }
 
-    @OnClick({R.id.titleLeft,R.id.tv_see_detail})
+    @OnClick({R.id.titleLeft, R.id.tv_see_detail})
     void performClick(View v) {
         switch (v.getId()) {
             case R.id.titleLeft:

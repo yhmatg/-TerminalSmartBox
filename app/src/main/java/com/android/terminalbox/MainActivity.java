@@ -11,6 +11,7 @@ import android.support.v4.app.ActivityCompat;
 import android.util.Base64;
 import android.util.Log;
 import android.view.View;
+import android.widget.TextClock;
 import android.widget.TextView;
 
 import com.android.terminalbox.app.BaseApplication;
@@ -51,10 +52,8 @@ import org.eclipse.paho.client.mqttv3.IMqttToken;
 import org.eclipse.paho.client.mqttv3.MqttMessage;
 
 import java.io.File;
-import java.text.SimpleDateFormat;
 import java.util.ArrayList;
 import java.util.Calendar;
-import java.util.Date;
 import java.util.List;
 import java.util.concurrent.ExecutionException;
 
@@ -71,9 +70,9 @@ import io.reactivex.schedulers.Schedulers;
 public class MainActivity extends BaseActivity<MainPresenter> implements MainContract.View {
     private static String TAG = "MainActivity";
     @BindView(R.id.week_text)
-    TextView weekText;
+    TextClock weekText;
     @BindView(R.id.time_text)
-    TextView timeText;
+    TextClock timeText;
     @BindView(R.id.file_number)
     TextView fileNumber;
     private List<UserInfo> users = new ArrayList<>();
@@ -161,10 +160,8 @@ public class MainActivity extends BaseActivity<MainPresenter> implements MainCon
         //初始化mqtt
         MqttConnect mqttConnect = new MqttConnect();
         mqttConnect.start();
-        SimpleDateFormat simpleDateFormat = new SimpleDateFormat("MM/dd HH:mm");// HH:mm:ss
-        weekText.setText(getWeekDay());
-        Date date = new Date(System.currentTimeMillis());
-        timeText.setText(simpleDateFormat.format(date));
+        weekText.setFormat24Hour("EEEE");
+        timeText.setFormat24Hour("MM/dd HH:mm");
         List<EpcFile> allEpcFile = BaseDb.getInstance().getEpcFileDao().findAllEpcFile();
         fileNumber.setText(String.valueOf(allEpcFile.size()));
     }
