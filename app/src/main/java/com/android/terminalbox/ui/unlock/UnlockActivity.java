@@ -1,7 +1,6 @@
 package com.android.terminalbox.ui.unlock;
 
 import android.content.Intent;
-import android.os.Looper;
 import android.support.v7.widget.LinearLayoutManager;
 import android.support.v7.widget.RecyclerView;
 import android.util.Log;
@@ -14,10 +13,11 @@ import android.widget.TextView;
 
 import com.android.terminalbox.R;
 import com.android.terminalbox.base.activity.BaseActivity;
-import com.android.terminalbox.core.bean.user.NewOrderBody;
-import com.android.terminalbox.core.bean.user.OrderResponse;
 import com.android.terminalbox.contract.UnlockContract;
 import com.android.terminalbox.core.bean.BaseResponse;
+import com.android.terminalbox.core.bean.user.EpcFile;
+import com.android.terminalbox.core.bean.user.NewOrderBody;
+import com.android.terminalbox.core.bean.user.OrderResponse;
 import com.android.terminalbox.core.room.BaseDb;
 import com.android.terminalbox.devservice.ekey.EkeyServer;
 import com.android.terminalbox.devservice.ekey.EkeyStatusChangeListener;
@@ -28,7 +28,6 @@ import com.android.terminalbox.presenter.UnlockPresenter;
 import com.android.terminalbox.uhf.EsimUhfHelper;
 import com.android.terminalbox.uhf.EsimUhfParams;
 import com.android.terminalbox.uhf.UhfTag;
-import com.android.terminalbox.core.bean.user.EpcFile;
 import com.android.terminalbox.ui.inventory.FileBeanAdapter;
 import com.android.terminalbox.utils.StringUtils;
 import com.android.terminalbox.utils.ToastUtils;
@@ -205,7 +204,7 @@ public class UnlockActivity extends BaseActivity<UnlockPresenter> implements Unl
         //初始化锁
         ekeyServer = EkeyServer.getInstance();
         ekeyServer.addStatusChangeListenner(ekeyStatusChangeListener);
-        ekeyServer.openEkey();
+        //ekeyServer.openEkey();
         //初始化rfid
         esimUhfParams = new EsimUhfParams.Builder().antIndex(1, 2, 3, 4).build();
         initAnim();

@@ -1,15 +1,25 @@
 <?xml version="1.0" encoding="utf-8"?>
 <RelativeLayout xmlns:android="http://schemas.android.com/apk/res/android"
     android:layout_width="match_parent"
-    android:layout_height="match_parent">
+    android:layout_height="match_parent"
+    android:background="@drawable/back_icon">
+
+    <ImageView
+        android:id="@+id/titleLeft"
+        android:layout_width="@dimen/dp_40"
+        android:layout_height="@dimen/dp_40"
+        android:padding="@dimen/dp_10"
+        android:src="@drawable/left_arrow" />
 
     <TextView
         android:id="@+id/tv_point"
         android:layout_width="wrap_content"
         android:layout_height="wrap_content"
+        android:layout_below="@+id/titleLeft"
         android:layout_centerHorizontal="true"
         android:layout_marginTop="@dimen/dp_10"
         android:text="请在区域内进行识别..."
+        android:textColor="@color/white"
         android:textSize="@dimen/sp_18" />
 
     <FrameLayout
@@ -31,14 +41,25 @@
             android:layout_height="match_parent" />
     </FrameLayout>
 
-    <TextView
-        android:id="@+id/recognize_result"
+    <ImageView
+        android:id="@+id/iv_inner"
+        android:layout_width="@dimen/dp_200"
+        android:layout_height="@dimen/dp_200"
+        android:layout_alignParentBottom="true"
+        android:layout_centerHorizontal="true"
+        android:layout_marginBottom="@dimen/dp_66"
+        android:src="@drawable/face_inner" />
+
+    <ImageView
+        android:id="@+id/iv_outer"
         android:layout_width="wrap_content"
         android:layout_height="wrap_content"
-        android:layout_below="@+id/fl_face"
-        android:layout_centerHorizontal="true"
-        android:layout_marginTop="@dimen/sp_30"
-        android:text="识别结果"
-        android:textSize="@dimen/sp_18" />
+        android:layout_alignStart="@+id/iv_inner"
+        android:layout_alignTop="@+id/iv_inner"
+        android:layout_alignEnd="@+id/iv_inner"
+        android:layout_alignBottom="@+id/iv_inner"
+        android:padding="@dimen/dp_50"
+        android:src="@drawable/face_outer" />
+
 
 </RelativeLayout>

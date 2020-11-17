@@ -13,7 +13,10 @@ import android.util.Log;
 import android.view.View;
 import android.view.ViewTreeObserver;
 import android.view.WindowManager;
-import android.widget.TextView;
+import android.view.animation.Animation;
+import android.view.animation.LinearInterpolator;
+import android.view.animation.RotateAnimation;
+import android.widget.ImageView;
 
 import com.android.terminalbox.R;
 import com.android.terminalbox.app.BaseApplication;
@@ -54,6 +57,7 @@ import java.util.concurrent.ConcurrentHashMap;
 import java.util.concurrent.TimeUnit;
 
 import butterknife.BindView;
+import butterknife.OnClick;
 import io.reactivex.Observable;
 import io.reactivex.ObservableEmitter;
 import io.reactivex.ObservableOnSubscribe;
@@ -137,9 +141,11 @@ public class RecognizeActivity extends BaseActivity<RecognizePresenter> implemen
      */
     @BindView(R.id.single_camera_face_rect_view)
     FaceRectView faceRectView;
-    //人脸识别结果
-    @BindView(R.id.recognize_result)
-    TextView recognizeResult;
+
+    @BindView(R.id.iv_outer)
+    ImageView outerImg;
+
+    private Animation mRadarAnim;
 
 
     private static final int ACTION_REQUEST_PERMISSIONS = 0x001;
@@ -160,6 +166,15 @@ public class RecognizeActivity extends BaseActivity<RecognizePresenter> implemen
     @Override
     public RecognizePresenter initPresenter() {
         return new RecognizePresenter();
+    }
+
+    private void initAnim() {
+        mRadarAnim = new RotateAnimation(0f, 360f, Animation.RELATIVE_TO_SELF, 0.5f, Animation.RELATIVE_TO_SELF, 0.5f);
+        mRadarAnim.setFillAfter(true); // 设置保持动画最后的状态
+        mRadarAnim.setDuration(2000); // 设置动画时间
+        mRadarAnim.setRepeatCount(Animation.INFINITE);//设置动画重复次数 无限循环
+        mRadarAnim.setInterpolator(new LinearInterpolator());
+        mRadarAnim.setRepeatMode(Animation.RESTART);
     }
 
     /**
@@ -264,7 +279,7 @@ public class RecognizeActivity extends BaseActivity<RecognizePresenter> implemen
     protected void initEventAndData() {
         //保持亮屏
         getWindow().addFlags(WindowManager.LayoutParams.FLAG_KEEP_SCREEN_ON);
-
+        initAnim();
         if (Build.VERSION.SDK_INT >= Build.VERSION_CODES.KITKAT) {
             WindowManager.LayoutParams attributes = getWindow().getAttributes();
             attributes.systemUiVisibility = View.SYSTEM_UI_FLAG_IMMERSIVE_STICKY | View.SYSTEM_UI_FLAG_HIDE_NAVIGATION;
@@ -283,6 +298,7 @@ public class RecognizeActivity extends BaseActivity<RecognizePresenter> implemen
                 finish();
             }
         },30000);
+        outerImg.startAnimation(mRadarAnim);
     }
 
     private void initCamera() {
@@ -589,12 +605,11 @@ public class RecognizeActivity extends BaseActivity<RecognizePresenter> implemen
                     public void onNext(RecognizeUser compareResult) {
                         if (compareResult != null && compareResult.getSimilar() > SIMILAR_THRESHOLD) {
                             BaseApplication.getInstance().setCurrentUer(compareResult.getUser());
-                            recognizeResult.setText("人脸识别成功");
                             Log.d(TAG, "人脸识别成功");
                             startActivity(new Intent(RecognizeActivity.this, UnlockActivity.class));
+                            outerImg.clearAnimation();
                             finish();
                         } else {
-                            recognizeResult.setText("人脸识别失败");
                             faceHelper.setName(requestId, "人员未识别");
                             retryRecognizeDelayed(requestId);
                         }
@@ -743,6 +758,15 @@ public class RecognizeActivity extends BaseActivity<RecognizePresenter> implemen
             } else {
                 showToast(getString(R.string.permission_denied));
             }
+        }
+    }
+
+    @OnClick({R.id.titleLeft})
+    void performClick(View v) {
+        switch (v.getId()) {
+            case R.id.titleLeft:
+                finish();
+                break;
         }
     }
 
