@@ -88,6 +88,7 @@ public class UnlockActivity extends BaseActivity<UnlockPresenter> implements Unl
                 openLayout.setVisibility(View.GONE);
                 closeLayout.setVisibility(View.VISIBLE);
                 inOutLayout.setVisibility(View.GONE);
+                roundImg.startAnimation(mRadarAnim);
                 startInvTags();
                 break;
         }
@@ -175,6 +176,7 @@ public class UnlockActivity extends BaseActivity<UnlockPresenter> implements Unl
                                     openLayout.setVisibility(View.GONE);
                                     closeLayout.setVisibility(View.GONE);
                                     inOutLayout.setVisibility(View.VISIBLE);
+                                    roundImg.clearAnimation();
                                 }
                             });
                         }

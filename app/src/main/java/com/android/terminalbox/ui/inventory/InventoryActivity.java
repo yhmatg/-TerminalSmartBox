@@ -145,6 +145,7 @@ public class InventoryActivity extends BaseActivity {
     protected void initEventAndData() {
         numberLayout.setVisibility(View.VISIBLE);
         roundImg.setVisibility(View.VISIBLE);
+        seeDetail.setVisibility(View.VISIBLE);
         detailLayout.setVisibility(View.GONE);
         editText.setVisibility(View.GONE);
         mAdapter = new FileBeanAdapter(files, this);
@@ -213,6 +214,7 @@ public class InventoryActivity extends BaseActivity {
                 roundImg.setVisibility(View.GONE);
                 detailLayout.setVisibility(View.VISIBLE);
                 editText.setVisibility(View.VISIBLE);
+                seeDetail.setVisibility(View.GONE);
                 break;
         }
     }

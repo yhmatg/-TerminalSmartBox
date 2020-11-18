@@ -21,12 +21,13 @@
         android:layout_alignEnd="@+id/iv_round"
         android:layout_alignBottom="@+id/iv_round"
         android:gravity="center"
+        android:textColor="#68D4F8"
         android:text="盘点中..."
         android:textSize="@dimen/sp_18" />
 
     <ImageView
-        android:layout_width="wrap_content"
-        android:layout_height="wrap_content"
+        android:layout_width="@dimen/dp_45"
+        android:layout_height="@dimen/dp_60"
         android:layout_below="@+id/iv_round"
         android:layout_centerHorizontal="true"
         android:layout_marginTop="@dimen/dp_36"

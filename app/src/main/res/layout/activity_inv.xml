@@ -44,7 +44,7 @@
             android:layout_width="wrap_content"
             android:layout_height="wrap_content"
             android:text="盘点中"
-            android:textColor="@color/white"
+            android:textColor="#68D4F8"
             android:textSize="@dimen/sp_16" />
 
         <TextView
@@ -52,14 +52,14 @@
             android:layout_width="wrap_content"
             android:layout_height="wrap_content"
             android:text="58"
-            android:textColor="@color/white"
+            android:textColor="#68D4F8"
             android:textSize="@dimen/sp_48" />
 
         <TextView
             android:layout_width="wrap_content"
             android:layout_height="wrap_content"
             android:text="件"
-            android:textColor="@color/white"
+            android:textColor="#68D4F8"
             android:textSize="@dimen/sp_16" />
     </LinearLayout>
 
@@ -80,7 +80,7 @@
         android:layout_centerHorizontal="true"
         android:layout_marginTop="@dimen/dp_50"
         android:text="查看详情"
-        android:textColor="@color/white"
+        android:textColor="#68D4F8"
         android:textSize="@dimen/sp_16" />
 
     <RelativeLayout

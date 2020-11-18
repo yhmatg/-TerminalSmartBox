@@ -6,22 +6,23 @@
 
     <ImageView
         android:id="@+id/iv_unlock_one"
-        android:layout_width="wrap_content"
-        android:layout_height="wrap_content"
+        android:layout_width="@dimen/dp_120"
+        android:layout_height="@dimen/dp_120"
         android:src="@drawable/unlock_one" />
 
     <ImageView
+        android:layout_marginStart="@dimen/dp_30"
         android:id="@+id/iv_unlock_two"
-        android:layout_width="wrap_content"
-        android:layout_height="wrap_content"
+        android:layout_width="@dimen/dp_120"
+        android:layout_height="@dimen/dp_120"
         android:layout_toEndOf="@+id/iv_unlock_one"
         android:src="@drawable/unlock_two" />
 
     <ImageView
-        android:layout_width="wrap_content"
-        android:layout_height="wrap_content"
+        android:layout_width="@dimen/dp_60"
+        android:layout_height="@dimen/dp_60"
         android:layout_below="@+id/iv_unlock_one"
         android:layout_centerHorizontal="true"
-        android:layout_marginTop="@dimen/dp_36"
+        android:layout_marginTop="@dimen/dp_40"
         android:src="@drawable/unlock_icon" />
 </RelativeLayout>
