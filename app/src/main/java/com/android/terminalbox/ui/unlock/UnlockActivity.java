@@ -107,7 +107,7 @@ public class UnlockActivity extends BaseActivity<UnlockPresenter> implements Unl
     EsimUhfParams esimUhfParams;
     private EsimUhfHelper.EsimUhfListener uhfListener = new EsimUhfHelper.EsimUhfListener() {
         @Override
-        public void onTagRead(List<UhfTag> tags) {
+        public synchronized void onTagRead(List<UhfTag> tags) {
             synchronized (UnlockActivity.class) {
                 Log.e(invCount + "======" + epcUnChangeTime, tags.toString() + Thread.currentThread().toString());
                 List<String> epcs = Stream.of(tags).map(new Function<UhfTag, String>() {

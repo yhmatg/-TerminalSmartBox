@@ -67,7 +67,7 @@ public class InventoryActivity extends BaseActivity {
     private Handler mHandler = new Handler();
     private EsimUhfHelper.EsimUhfListener uhfListener = new EsimUhfHelper.EsimUhfListener() {
         @Override
-        public void onTagRead(List<UhfTag> tags) {
+        public synchronized void onTagRead(List<UhfTag> tags) {
             Log.e(invCount + "======bug" + epcUnChangeTime, tags.toString());
             Log.e("Thread======", Thread.currentThread().toString());
             List<String> epcs = Stream.of(tags).map(new Function<UhfTag, String>() {
