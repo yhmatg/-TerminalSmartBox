@@ -1,6 +1,7 @@
 package com.android.terminalbox.ui.unlock;
 
 import android.content.Intent;
+import android.os.Handler;
 import android.support.v7.widget.LinearLayoutManager;
 import android.support.v7.widget.RecyclerView;
 import android.util.Log;
@@ -17,6 +18,7 @@ import com.android.terminalbox.base.activity.BaseActivity;
 import com.android.terminalbox.contract.UnlockContract;
 import com.android.terminalbox.core.bean.BaseResponse;
 import com.android.terminalbox.core.bean.user.EpcFile;
+import com.android.terminalbox.core.bean.user.NewOrderBody;
 import com.android.terminalbox.core.bean.user.OrderResponse;
 import com.android.terminalbox.core.room.BaseDb;
 import com.android.terminalbox.devservice.ekey.EkeyServer;
@@ -29,6 +31,7 @@ import com.android.terminalbox.uhf.EsimUhfHelper;
 import com.android.terminalbox.uhf.EsimUhfParams;
 import com.android.terminalbox.uhf.UhfTag;
 import com.android.terminalbox.ui.inventory.FileBeanAdapter;
+import com.android.terminalbox.utils.StringUtils;
 import com.android.terminalbox.utils.ToastUtils;
 import com.annimon.stream.Collectors;
 import com.annimon.stream.Stream;
@@ -37,6 +40,7 @@ import com.google.gson.Gson;
 
 import java.util.ArrayList;
 import java.util.List;
+import java.util.UUID;
 
 import butterknife.BindView;
 import butterknife.OnClick;
@@ -64,6 +68,7 @@ public class UnlockActivity extends BaseActivity<UnlockPresenter> implements Unl
     RelativeLayout closeLayout;
     @BindView(R.id.inout_layout)
     RelativeLayout inOutLayout;
+    private Handler mHandler = new Handler();
     private List<EpcFile> files = new ArrayList<>();
     private List<EpcFile> localFiles = new ArrayList<>();
     private List<EpcFile> inFiles = new ArrayList<>();
@@ -82,6 +87,9 @@ public class UnlockActivity extends BaseActivity<UnlockPresenter> implements Unl
         switch (ekeyStatus) {
             case OPEN:
                 Log.e(TAG, "=========ekey open============: " + Thread.currentThread().toString());
+                if(!StringUtils.isEmpty(orderUuid)){
+                    openReport(orderUuid);
+                }
                 break;
             case CLOSED:
                 Log.e(TAG, "=========ekey open============: " + Thread.currentThread().toString());
@@ -89,6 +97,9 @@ public class UnlockActivity extends BaseActivity<UnlockPresenter> implements Unl
                 closeLayout.setVisibility(View.VISIBLE);
                 inOutLayout.setVisibility(View.GONE);
                 roundImg.startAnimation(mRadarAnim);
+                if(!StringUtils.isEmpty(orderUuid)){
+                    closeReport(orderUuid);
+                }
                 startInvTags();
                 break;
         }
@@ -136,8 +147,14 @@ public class UnlockActivity extends BaseActivity<UnlockPresenter> implements Unl
                         }
                         EsimUhfHelper.getInstance().stopRead();
                         if (invCount < invMaxCount) {
-                            invCount++;
-                            EsimUhfHelper.getInstance().startReadTags(esimUhfParams, uhfListener);
+                            mHandler.postDelayed(new Runnable() {
+                                @Override
+                                public void run() {
+                                    invCount++;
+                                    epcUnChangeTime = 0;
+                                    EsimUhfHelper.getInstance().startReadTags(esimUhfParams, uhfListener);
+                                }
+                            },200);
                         } else {
                             runOnUiThread(new Runnable() {
                                 @Override
@@ -210,6 +227,15 @@ public class UnlockActivity extends BaseActivity<UnlockPresenter> implements Unl
         if (intent != null) {
             orderUuid = intent.getStringExtra("relevanceId");
         }
+        if(StringUtils.isEmpty(orderUuid)){
+            NewOrderBody newOrderBody = new NewOrderBody();
+            newOrderBody.setActType("存取");
+            orderUuid = UUID.randomUUID().toString();
+            newOrderBody.setRelevanceId(orderUuid);
+            newOrderBody.setRemark("remarkOne");
+            mPresenter.newOrder(deviceId,newOrderBody);
+        }
+
         localFiles = BaseDb.getInstance().getEpcFileDao().findAllEpcFile();
         mOutAdapter = new FileBeanAdapter(outFiles, this);
         mOutRecycleView.setLayoutManager(new LinearLayoutManager(this));
@@ -306,7 +332,13 @@ public class UnlockActivity extends BaseActivity<UnlockPresenter> implements Unl
     @Override
     public void handleNewOrder(BaseResponse<OrderResponse> NewOrderResponse) {
         if (200000 == NewOrderResponse.getCode()) {
-            openReport(NewOrderResponse.getData().getRelevanceId());
+            orderUuid = NewOrderResponse.getData().getRelevanceId();
         }
+    }
+
+    @Override
+    protected void onDestroy() {
+        mHandler.removeMessages(0);
+        super.onDestroy();
     }
 }

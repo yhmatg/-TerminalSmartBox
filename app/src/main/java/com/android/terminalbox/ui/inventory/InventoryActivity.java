@@ -1,6 +1,7 @@
 package com.android.terminalbox.ui.inventory;
 
 import android.content.Context;
+import android.os.Handler;
 import android.support.v7.widget.LinearLayoutManager;
 import android.support.v7.widget.RecyclerView;
 import android.util.Log;
@@ -63,10 +64,12 @@ public class InventoryActivity extends BaseActivity {
     int invMaxCount = 5;
     EsimUhfParams esimUhfParams;
     private Animation mRadarAnim;
+    private Handler mHandler = new Handler();
     private EsimUhfHelper.EsimUhfListener uhfListener = new EsimUhfHelper.EsimUhfListener() {
         @Override
         public void onTagRead(List<UhfTag> tags) {
-            Log.e(invCount + "======" + epcUnChangeTime, tags.toString());
+            Log.e(invCount + "======bug" + epcUnChangeTime, tags.toString());
+            Log.e("Thread======", Thread.currentThread().toString());
             List<String> epcs = Stream.of(tags).map(new Function<UhfTag, String>() {
                 @Override
                 public String apply(UhfTag uhfTags) {
@@ -110,8 +113,15 @@ public class InventoryActivity extends BaseActivity {
                     }
                     EsimUhfHelper.getInstance().stopRead();
                     if (invCount < invMaxCount) {
-                        invCount++;
-                        EsimUhfHelper.getInstance().startReadTags(esimUhfParams, uhfListener);
+                        mHandler.postDelayed(new Runnable() {
+                            @Override
+                            public void run() {
+                                invCount++;
+                                epcUnChangeTime = 0;
+                                EsimUhfHelper.getInstance().startReadTags(esimUhfParams, uhfListener);
+                            }
+                        },200);
+
                     } else {
                         //todo 结束转圈动画
                         runOnUiThread(new Runnable() {
@@ -221,6 +231,7 @@ public class InventoryActivity extends BaseActivity {
 
     @Override
     protected void onDestroy() {
+        mHandler.removeMessages(0);
         super.onDestroy();
     }
 }

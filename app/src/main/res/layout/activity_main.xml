@@ -74,14 +74,14 @@
         android:layout_width="@dimen/dp_158"
         android:layout_height="@dimen/dp_75"
         android:layout_below="@+id/btn_access"
-        android:layout_marginLeft="16dp"
+        android:layout_marginLeft="@dimen/dp_20"
         android:layout_marginRight="16dp"
         android:layout_marginTop="@dimen/dp_100"
         android:background="@drawable/btn_selector"
         android:text="换方向"
         android:textColor="@android:color/white"
-        android:textSize="24sp"
-        android:visibility="gone" />
+        android:textSize="@dimen/sp_24"
+        android:visibility="visible" />
 
     <ImageView
         android:layout_width="@dimen/dp_144"

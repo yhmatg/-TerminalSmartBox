@@ -28,6 +28,7 @@ import com.android.terminalbox.core.room.BaseDb;
 import com.android.terminalbox.mqtt.MqttServer;
 import com.android.terminalbox.mqtt.RylaiMqttCallback;
 import com.android.terminalbox.presenter.MainPresenter;
+import com.android.terminalbox.ui.MqttActivity;
 import com.android.terminalbox.ui.inventory.InventoryActivity;
 import com.android.terminalbox.ui.recognize.RecognizeActivity;
 import com.android.terminalbox.ui.unlock.UnlockActivity;
@@ -164,6 +165,11 @@ public class MainActivity extends BaseActivity<MainPresenter> implements MainCon
         mqttConnect.start();
         weekText.setFormat24Hour("EEEE");
         timeText.setFormat24Hour("MM/dd HH:mm");
+    }
+
+    @Override
+    protected void onResume() {
+        super.onResume();
         List<EpcFile> allEpcFile = BaseDb.getInstance().getEpcFileDao().findAllEpcFile();
         fileNumber.setText(String.valueOf(allEpcFile.size()));
     }
@@ -181,7 +187,7 @@ public class MainActivity extends BaseActivity<MainPresenter> implements MainCon
             case R.id.bt_change_org:
                 //mPresenter.getAllUserInfo();
                 ConfigUtil.setFtOrient(MainActivity.this, ASF_OP_90_ONLY);
-                //JumpToActivity(MqttActivity.class);
+                JumpToActivity(MqttActivity.class);
                 break;
         }
     }

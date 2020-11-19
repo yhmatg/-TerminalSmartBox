@@ -27,7 +27,7 @@ import java.util.UUID;
 public class MqttActivity extends AppCompatActivity {
     String TAG = "MqttActivity";
     private IotDevice iotDevice;
-    private String relevanceId;
+    private String relevanceId  = "11111111111";
     private RylaiMqttCallback rylaiMqttCallback= new RylaiMqttCallback() {
 
 
@@ -111,9 +111,11 @@ public class MqttActivity extends AppCompatActivity {
             super.run();
             if (iotDevice == null) {
                 iotDevice = new IotDevice();
-                iotDevice.setIotHost("172.16.61.101");
-                iotDevice.setMqttPort("1883");
-                iotDevice.setDevId("smartbox");
+                iotDevice.setIotHost("117.34.118.157");
+                iotDevice.setMqttPort("20008");
+                iotDevice.setPordId("15aa68f3183311ebb7260242ac120004");
+                iotDevice.setDevVerify("uniqueCode002");
+                iotDevice.setDevId(iotDevice.getPordId()+"_"+iotDevice.getDevVerify());
                 iotDevice.setDevPassword("smartbox");
             }
             try {
@@ -130,6 +132,7 @@ public class MqttActivity extends AppCompatActivity {
         ArrayList<ResultProp> resultProps = new ArrayList<>();
         ResultProp resultProp = new ResultProp();
         resultProp.setCap_id("id1");
+        relevanceId = "open"+ UUID.randomUUID().toString() ;
         resultProp.setRelevance_id(relevanceId);
         resultProp.setData_event_time(System.currentTimeMillis());
         ResultProp.Prop prop = new ResultProp.Prop();
@@ -146,6 +149,7 @@ public class MqttActivity extends AppCompatActivity {
         ArrayList<ResultProp> resultProps = new ArrayList<>();
         ResultProp resultProp = new ResultProp();
         resultProp.setCap_id("id2");
+        //relevanceId = "close" + UUID.randomUUID().toString() ;
         resultProp.setRelevance_id(relevanceId);
         resultProp.setData_event_time(System.currentTimeMillis());
         ResultProp.Prop prop = new ResultProp.Prop();
@@ -161,14 +165,52 @@ public class MqttActivity extends AppCompatActivity {
         ArrayList<ResultProp> resultProps = new ArrayList<>();
         ResultProp resultProp = new ResultProp();
         resultProp.setCap_id("id3");
-        relevanceId = UUID.randomUUID().toString();
+        //relevanceId = "inv" + UUID.randomUUID().toString() ;
         resultProp.setRelevance_id(relevanceId);
         resultProp.setData_event_time(System.currentTimeMillis());
         ResultProp.Prop prop = new ResultProp.Prop();
         ArrayList<String> inList = new ArrayList<>();
-        inList.add("epc01");
+        inList.add("epc000000000000000000001");
+        inList.add("epc000000000000000000001");
+        inList.add("epc000000000000000000001");
+        inList.add("epc000000000000000000001");
+        inList.add("epc000000000000000000001");
+        inList.add("epc000000000000000000001");
+        inList.add("epc000000000000000000001");
+        inList.add("epc000000000000000000001");
+        inList.add("epc000000000000000000001");
+        inList.add("epc000000000000000000001");
+        inList.add("epc000000000000000000001");
+        inList.add("epc000000000000000000001");
+        inList.add("epc000000000000000000001");
+        inList.add("epc000000000000000000001");
+        inList.add("epc000000000000000000001");
+        inList.add("epc000000000000000000001");
+        inList.add("epc000000000000000000001");
+        inList.add("epc000000000000000000001");
+        inList.add("epc000000000000000000001");
+        inList.add("epc000000000000000000001");
         ArrayList<String> outList = new ArrayList<>();
-        outList.add("epc02");
+        outList.add("epc000000000000000000002");
+        outList.add("epc000000000000000000002");
+        outList.add("epc000000000000000000002");
+        outList.add("epc000000000000000000002");
+        outList.add("epc000000000000000000002");
+        outList.add("epc000000000000000000002");
+        outList.add("epc000000000000000000002");
+        outList.add("epc000000000000000000002");
+        outList.add("epc000000000000000000002");
+        outList.add("epc000000000000000000002");
+        outList.add("epc000000000000000000002");
+        outList.add("epc000000000000000000002");
+        outList.add("epc000000000000000000002");
+        outList.add("epc000000000000000000002");
+        outList.add("epc000000000000000000002");
+        outList.add("epc000000000000000000002");
+        outList.add("epc000000000000000000002");
+        outList.add("epc000000000000000000002");
+        outList.add("epc000000000000000000002");
+        outList.add("epc000000000000000000002");
         prop.setRfid_in(inList);
         prop.setRfid_out(outList);
         resultProp.setProp(prop);
