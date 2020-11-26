@@ -26,5 +26,5 @@ public interface HttpHelper {
 
     Observable<BaseResponse<List<UserInfo>>> updateFeatures(List<FaceFeatureBody> faceFeatures);
 
-    Observable<BaseResponse<OrderResponse>> newOrder(String devId, NewOrderBody newOrderBody);
+    Observable<BaseResponse<OrderResponse>> newOrder(String devId, NewOrderBody newOrderBody,int userId);
 }

@@ -58,7 +58,7 @@ public class InventoryActivity extends BaseActivity {
     private List<EpcFile> allFiles = new ArrayList<>();
     private FileBeanAdapter mAdapter;
     public static int epcUnChangeTime = 0;
-    public static int epcUnChangeMaxTime = 20;
+    public static int epcUnChangeMaxTime = 10;
     private int preSize = 0;
     int invCount = 0;
     int invMaxCount = 5;

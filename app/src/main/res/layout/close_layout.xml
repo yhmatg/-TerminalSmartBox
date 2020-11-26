@@ -27,8 +27,8 @@
         android:textSize="@dimen/sp_18" />
 
     <ImageView
-        android:layout_width="@dimen/dp_45"
-        android:layout_height="@dimen/dp_60"
+        android:layout_width="@dimen/dp_30"
+        android:layout_height="@dimen/dp_40"
         android:layout_below="@+id/iv_round"
         android:layout_centerHorizontal="true"
         android:layout_marginTop="@dimen/dp_36"

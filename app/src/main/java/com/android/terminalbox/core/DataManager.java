@@ -86,8 +86,8 @@ public class DataManager implements HttpHelper, PreferenceHelper {
     }
 
     @Override
-    public Observable<BaseResponse<OrderResponse>> newOrder(String devId, NewOrderBody newOrderBody) {
-        return mHttpHelper.newOrder(devId, newOrderBody);
+    public Observable<BaseResponse<OrderResponse>> newOrder(String devId, NewOrderBody newOrderBody,int userId) {
+        return mHttpHelper.newOrder(devId, newOrderBody,userId);
     }
 
 

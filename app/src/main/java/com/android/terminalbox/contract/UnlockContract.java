@@ -21,7 +21,7 @@ public interface UnlockContract {
 
     interface Presenter extends AbstractPresenter<View> {
 
-        void newOrder(String devId, NewOrderBody newOrderBody);
+        void newOrder(String devId, NewOrderBody newOrderBody,int userId);
 
     }
 }

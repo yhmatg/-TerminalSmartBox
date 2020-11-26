@@ -62,6 +62,7 @@ public class ResultProp {
         private boolean closeEkey;
         private List<String> rfid_out;
         private List<String> rfid_in;
+        private int rfid_inbox;
 
         public String getOpenType() {
             return openType;
@@ -101,6 +102,14 @@ public class ResultProp {
 
         public void setRfid_in(List<String> rfid_in) {
             this.rfid_in = rfid_in;
+        }
+
+        public int getRfid_inbox() {
+            return rfid_inbox;
+        }
+
+        public void setRfid_inbox(int rfid_inbox) {
+            this.rfid_inbox = rfid_inbox;
         }
     }
 }

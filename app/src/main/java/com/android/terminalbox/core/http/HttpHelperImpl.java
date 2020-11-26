@@ -67,8 +67,8 @@ public class HttpHelperImpl implements HttpHelper {
     }
 
     @Override
-    public Observable<BaseResponse<OrderResponse>> newOrder(String devId, NewOrderBody newOrderBody) {
-        return mGeeksApis.newOrder(devId, newOrderBody);
+    public Observable<BaseResponse<OrderResponse>> newOrder(String devId, NewOrderBody newOrderBody,int userId) {
+        return mGeeksApis.newOrder(devId, newOrderBody,userId);
     }
 
 }

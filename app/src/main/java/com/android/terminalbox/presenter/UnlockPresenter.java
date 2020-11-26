@@ -20,8 +20,8 @@ public class UnlockPresenter extends BasePresenter<UnlockContract.View> implemen
     private static String deviceId = "15aa68f3183311ebb7260242ac120004_uniqueCode002";
 
     @Override
-    public void newOrder(String devId, NewOrderBody newOrderBody) {
-        addSubscribe(DataManager.getInstance().newOrder(devId, newOrderBody)
+    public void newOrder(String devId, NewOrderBody newOrderBody,int userId) {
+        addSubscribe(DataManager.getInstance().newOrder(devId, newOrderBody,userId)
                 .compose(RxUtils.rxSchedulerHelper())
                 .subscribeWith(new BaseObserver<BaseResponse<OrderResponse>>(mView, false) {
                                    @Override

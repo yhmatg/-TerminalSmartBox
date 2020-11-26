@@ -14,12 +14,14 @@ import android.widget.RelativeLayout;
 import android.widget.TextView;
 
 import com.android.terminalbox.R;
+import com.android.terminalbox.app.BaseApplication;
 import com.android.terminalbox.base.activity.BaseActivity;
 import com.android.terminalbox.contract.UnlockContract;
 import com.android.terminalbox.core.bean.BaseResponse;
 import com.android.terminalbox.core.bean.user.EpcFile;
 import com.android.terminalbox.core.bean.user.NewOrderBody;
 import com.android.terminalbox.core.bean.user.OrderResponse;
+import com.android.terminalbox.core.bean.user.UserInfo;
 import com.android.terminalbox.core.room.BaseDb;
 import com.android.terminalbox.devservice.ekey.EkeyServer;
 import com.android.terminalbox.devservice.ekey.EkeyStatusChangeListener;
@@ -176,6 +178,7 @@ public class UnlockActivity extends BaseActivity<UnlockPresenter> implements Unl
                                     //数据库更新
                                     BaseDb.getInstance().getEpcFileDao().insertItems(tempInvFiles);
                                     BaseDb.getInstance().getEpcFileDao().deleteItems(tempLocal);
+                                    List<EpcFile> allEpcFile = BaseDb.getInstance().getEpcFileDao().findAllEpcFile();
                                     roundImg.clearAnimation();
                                     List<String> inEpcStrings = Stream.of(tempInvFiles).map(new Function<EpcFile, String>() {
                                         @Override
@@ -189,7 +192,7 @@ public class UnlockActivity extends BaseActivity<UnlockPresenter> implements Unl
                                             return epcFile.getEpcCode();
                                         }
                                     }).collect(Collectors.toList());
-                                    invReport(orderUuid, inEpcStrings, outEpcStrings);
+                                    invReport(orderUuid, inEpcStrings, outEpcStrings,allEpcFile.size());
                                     openLayout.setVisibility(View.GONE);
                                     closeLayout.setVisibility(View.GONE);
                                     inOutLayout.setVisibility(View.VISIBLE);
@@ -203,6 +206,7 @@ public class UnlockActivity extends BaseActivity<UnlockPresenter> implements Unl
         }
 
     };
+    private UserInfo currentUer;
 
     private void initAnim() {
         mRadarAnim = new RotateAnimation(0f, 360f, Animation.RELATIVE_TO_SELF, 0.5f, Animation.RELATIVE_TO_SELF, 0.5f);
@@ -220,6 +224,7 @@ public class UnlockActivity extends BaseActivity<UnlockPresenter> implements Unl
 
     @Override
     protected void initEventAndData() {
+        currentUer = BaseApplication.getInstance().getCurrentUer();
         openLayout.setVisibility(View.VISIBLE);
         closeLayout.setVisibility(View.GONE);
         inOutLayout.setVisibility(View.GONE);
@@ -233,7 +238,7 @@ public class UnlockActivity extends BaseActivity<UnlockPresenter> implements Unl
             orderUuid = UUID.randomUUID().toString();
             newOrderBody.setRelevanceId(orderUuid);
             newOrderBody.setRemark("remarkOne");
-            mPresenter.newOrder(deviceId,newOrderBody);
+            mPresenter.newOrder(deviceId,newOrderBody,currentUer.getId());
         }
 
         localFiles = BaseDb.getInstance().getEpcFileDao().findAllEpcFile();
@@ -313,7 +318,7 @@ public class UnlockActivity extends BaseActivity<UnlockPresenter> implements Unl
         MqttServer.getInstance().reportProperties(new Gson().toJson(props));
     }
 
-    public void invReport(String relevanceId, List<String> inList, List<String> outList) {
+    public void invReport(String relevanceId, List<String> inList, List<String> outList,int allFileNum) {
         Props props = new Props();
         ArrayList<ResultProp> resultProps = new ArrayList<>();
         ResultProp resultProp = new ResultProp();
@@ -323,6 +328,7 @@ public class UnlockActivity extends BaseActivity<UnlockPresenter> implements Unl
         ResultProp.Prop prop = new ResultProp.Prop();
         prop.setRfid_in(inList);
         prop.setRfid_out(outList);
+        prop.setRfid_inbox(allFileNum);
         resultProp.setProp(prop);
         resultProps.add(resultProp);
         props.setProps(resultProps);
@@ -333,6 +339,8 @@ public class UnlockActivity extends BaseActivity<UnlockPresenter> implements Unl
     public void handleNewOrder(BaseResponse<OrderResponse> NewOrderResponse) {
         if (200000 == NewOrderResponse.getCode()) {
             orderUuid = NewOrderResponse.getData().getRelevanceId();
+        }else {
+            orderUuid = null;
         }
     }
 
