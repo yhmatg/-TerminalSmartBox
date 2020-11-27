@@ -251,7 +251,12 @@ public class UnlockActivity extends BaseActivity<UnlockPresenter> implements Unl
         //初始化锁
         ekeyServer = EkeyServer.getInstance();
         ekeyServer.addStatusChangeListenner(ekeyStatusChangeListener);
-        ekeyServer.openEkey();
+        mHandler.postDelayed(new Runnable() {
+            @Override
+            public void run() {
+                ekeyServer.openEkey();
+            }
+        },1000);
         //初始化rfid
         esimUhfParams = new EsimUhfParams.Builder().antIndex(1, 2, 3, 4).build();
         initAnim();

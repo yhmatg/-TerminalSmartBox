@@ -81,7 +81,7 @@
         android:text="换方向"
         android:textColor="@android:color/white"
         android:textSize="@dimen/sp_24"
-        android:visibility="visible" />
+        android:visibility="gone" />
 
     <ImageView
         android:layout_width="@dimen/dp_144"
