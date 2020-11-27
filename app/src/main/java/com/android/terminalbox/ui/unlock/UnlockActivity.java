@@ -89,7 +89,7 @@ public class UnlockActivity extends BaseActivity<UnlockPresenter> implements Unl
         switch (ekeyStatus) {
             case OPEN:
                 Log.e(TAG, "=========ekey open============: " + Thread.currentThread().toString());
-                if(!StringUtils.isEmpty(orderUuid)){
+                if (!StringUtils.isEmpty(orderUuid)) {
                     openReport(orderUuid);
                 }
                 break;
@@ -99,7 +99,7 @@ public class UnlockActivity extends BaseActivity<UnlockPresenter> implements Unl
                 closeLayout.setVisibility(View.VISIBLE);
                 inOutLayout.setVisibility(View.GONE);
                 roundImg.startAnimation(mRadarAnim);
-                if(!StringUtils.isEmpty(orderUuid)){
+                if (!StringUtils.isEmpty(orderUuid)) {
                     closeReport(orderUuid);
                 }
                 startInvTags();
@@ -135,10 +135,12 @@ public class UnlockActivity extends BaseActivity<UnlockPresenter> implements Unl
                     }).collect(Collectors.toList());
                     files.addAll(epcToFiles);//Log.d(TAG, "invTags: 本次盘点后总标签" + inBoxEpcsTemp.size() + "    " + inBoxEpcsTemp.toString());
                     Log.e(TAG, files.size() + "====" + files.toString());
-                    runOnUiThread(new Runnable() {
+                    mHandler.post(new Runnable() {
                         @Override
                         public void run() {
-                            allNumbers.setText(String.valueOf(files.size()));
+                            if (allNumbers != null) {
+                                allNumbers.setText(String.valueOf(files.size()));
+                            }
                         }
                     });
                 } else {
@@ -156,9 +158,9 @@ public class UnlockActivity extends BaseActivity<UnlockPresenter> implements Unl
                                     epcUnChangeTime = 0;
                                     EsimUhfHelper.getInstance().startReadTags(esimUhfParams, uhfListener);
                                 }
-                            },200);
+                            }, 200);
                         } else {
-                            runOnUiThread(new Runnable() {
+                            mHandler.post(new Runnable() {
                                 @Override
                                 public void run() {
                                     ArrayList<EpcFile> tempLocal = new ArrayList<>();
@@ -169,8 +171,12 @@ public class UnlockActivity extends BaseActivity<UnlockPresenter> implements Unl
                                     tempInvFiles.removeAll(tempLocal);
                                     //取件
                                     tempLocal.removeAll(files);
-                                    inNumbers.setText(String.valueOf(tempInvFiles.size()));
-                                    outNumbers.setText(String.valueOf(tempLocal.size()));
+                                    if (inNumbers != null) {
+                                        inNumbers.setText(String.valueOf(tempInvFiles.size()));
+                                    }
+                                    if (outNumbers != null) {
+                                        outNumbers.setText(String.valueOf(tempLocal.size()));
+                                    }
                                     inFiles.addAll(tempInvFiles);
                                     outFiles.addAll(tempLocal);
                                     mInAdapter.notifyDataSetChanged();
@@ -179,7 +185,6 @@ public class UnlockActivity extends BaseActivity<UnlockPresenter> implements Unl
                                     BaseDb.getInstance().getEpcFileDao().insertItems(tempInvFiles);
                                     BaseDb.getInstance().getEpcFileDao().deleteItems(tempLocal);
                                     List<EpcFile> allEpcFile = BaseDb.getInstance().getEpcFileDao().findAllEpcFile();
-                                    roundImg.clearAnimation();
                                     List<String> inEpcStrings = Stream.of(tempInvFiles).map(new Function<EpcFile, String>() {
                                         @Override
                                         public String apply(EpcFile epcFile) {
@@ -192,11 +197,19 @@ public class UnlockActivity extends BaseActivity<UnlockPresenter> implements Unl
                                             return epcFile.getEpcCode();
                                         }
                                     }).collect(Collectors.toList());
-                                    invReport(orderUuid, inEpcStrings, outEpcStrings,allEpcFile.size());
-                                    openLayout.setVisibility(View.GONE);
-                                    closeLayout.setVisibility(View.GONE);
-                                    inOutLayout.setVisibility(View.VISIBLE);
-                                    roundImg.clearAnimation();
+                                    invReport(orderUuid, inEpcStrings, outEpcStrings, allEpcFile.size());
+                                    if(openLayout != null){
+                                        openLayout.setVisibility(View.GONE);
+                                    }
+                                    if(closeLayout != null){
+                                        closeLayout.setVisibility(View.GONE);
+                                    }
+                                    if(inOutLayout != null){
+                                        inOutLayout.setVisibility(View.VISIBLE);
+                                    }
+                                    if (roundImg != null) {
+                                        roundImg.clearAnimation();
+                                    }
                                 }
                             });
                         }
@@ -232,13 +245,13 @@ public class UnlockActivity extends BaseActivity<UnlockPresenter> implements Unl
         if (intent != null) {
             orderUuid = intent.getStringExtra("relevanceId");
         }
-        if(StringUtils.isEmpty(orderUuid)){
+        if (StringUtils.isEmpty(orderUuid)) {
             NewOrderBody newOrderBody = new NewOrderBody();
             newOrderBody.setActType("存取");
             orderUuid = UUID.randomUUID().toString();
             newOrderBody.setRelevanceId(orderUuid);
             newOrderBody.setRemark("remarkOne");
-            mPresenter.newOrder(deviceId,newOrderBody,currentUer.getId());
+            mPresenter.newOrder(deviceId, newOrderBody, currentUer.getId());
         }
 
         localFiles = BaseDb.getInstance().getEpcFileDao().findAllEpcFile();
@@ -256,7 +269,7 @@ public class UnlockActivity extends BaseActivity<UnlockPresenter> implements Unl
             public void run() {
                 ekeyServer.openEkey();
             }
-        },1000);
+        }, 1000);
         //初始化rfid
         esimUhfParams = new EsimUhfParams.Builder().antIndex(1, 2, 3, 4).build();
         initAnim();
@@ -323,7 +336,7 @@ public class UnlockActivity extends BaseActivity<UnlockPresenter> implements Unl
         MqttServer.getInstance().reportProperties(new Gson().toJson(props));
     }
 
-    public void invReport(String relevanceId, List<String> inList, List<String> outList,int allFileNum) {
+    public void invReport(String relevanceId, List<String> inList, List<String> outList, int allFileNum) {
         Props props = new Props();
         ArrayList<ResultProp> resultProps = new ArrayList<>();
         ResultProp resultProp = new ResultProp();
@@ -344,7 +357,7 @@ public class UnlockActivity extends BaseActivity<UnlockPresenter> implements Unl
     public void handleNewOrder(BaseResponse<OrderResponse> NewOrderResponse) {
         if (200000 == NewOrderResponse.getCode()) {
             orderUuid = NewOrderResponse.getData().getRelevanceId();
-        }else {
+        } else {
             orderUuid = null;
         }
     }
@@ -353,5 +366,13 @@ public class UnlockActivity extends BaseActivity<UnlockPresenter> implements Unl
     protected void onDestroy() {
         mHandler.removeMessages(0);
         super.onDestroy();
+    }
+
+    @Override
+    protected void onPause() {
+        super.onPause();
+        if (EsimUhfHelper.getInstance().isInvStart()) {
+            EsimUhfHelper.getInstance().stopRead();
+        }
     }
 }

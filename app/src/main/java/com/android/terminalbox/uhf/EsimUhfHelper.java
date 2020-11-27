@@ -20,6 +20,7 @@ public class EsimUhfHelper{
     private static int allAntNum=4;
     private static int readMillisSeconds=30000;
     private static ReadListener RL=null;
+    private boolean isInvStart = false;
     public interface EsimUhfListener {
         void onTagRead(List<UhfTag> tags);
     }
@@ -113,6 +114,7 @@ public class EsimUhfHelper{
         }else{
 //            autoStopTimer.start();
         }
+        isInvStart = true;
         return true;
     }
 
@@ -120,7 +122,15 @@ public class EsimUhfHelper{
         Log.d(TAG, "stopRead: 停止盘存");
         if(reader!=null){
             Reader.READER_ERR reader_err = reader.StopReading();
+            if(reader_err == Reader.READER_ERR.MT_OK_ERR){
+                isInvStart = false;
+                esimUhfListener = null;
+            }
             Log.d(TAG, "stopRead: 停止盘存"+reader_err);
         }
+    }
+
+    public boolean isInvStart() {
+        return isInvStart;
     }
 }

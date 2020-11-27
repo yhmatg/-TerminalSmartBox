@@ -93,10 +93,12 @@ public class InventoryActivity extends BaseActivity {
                 }).collect(Collectors.toList());
                 files.addAll(epcToFiles);//Log.d(TAG, "invTags: 本次盘点后总标签" + inBoxEpcsTemp.size() + "    " + inBoxEpcsTemp.toString());
                 Log.e(TAG, files.size() + "====" + files.toString());
-                runOnUiThread(new Runnable() {
+                mHandler.post(new Runnable() {
                     @Override
                     public void run() {
-                        numberText.setText("" + files.size());
+                        if(numberText != null){
+                            numberText.setText("" + files.size());
+                        }
                     }
                 });
             } else {
@@ -104,7 +106,7 @@ public class InventoryActivity extends BaseActivity {
                 if (epcUnChangeTime >= epcUnChangeMaxTime) {//次扫描不到新标签，假定扫描完 Log.d(TAG, "invTags: " + epcUnChangeTime + "+次未找到新标签,假定扫描完");
                     if (files.size() != preSize) {
                         preSize = files.size();
-                        runOnUiThread(new Runnable() {
+                        mHandler.post(new Runnable() {
                             @Override
                             public void run() {
                                 mAdapter.notifyDataSetChanged();
@@ -123,12 +125,13 @@ public class InventoryActivity extends BaseActivity {
                         },200);
 
                     } else {
-                        //todo 结束转圈动画
-                        runOnUiThread(new Runnable() {
+                        mHandler.post(new Runnable() {
                             @Override
                             public void run() {
                                 allFiles.addAll(files);
-                                roundImg.clearAnimation();
+                                if(roundImg != null){
+                                    roundImg.clearAnimation();
+                                }
                             }
                         });
                     }
@@ -233,5 +236,13 @@ public class InventoryActivity extends BaseActivity {
     protected void onDestroy() {
         mHandler.removeMessages(0);
         super.onDestroy();
+    }
+
+    @Override
+    protected void onPause() {
+        super.onPause();
+        if(EsimUhfHelper.getInstance().isInvStart()){
+            EsimUhfHelper.getInstance().stopRead();
+        }
     }
 }
