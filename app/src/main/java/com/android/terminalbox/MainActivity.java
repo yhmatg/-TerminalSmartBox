@@ -28,8 +28,8 @@ import com.android.terminalbox.core.room.BaseDb;
 import com.android.terminalbox.mqtt.MqttServer;
 import com.android.terminalbox.mqtt.RylaiMqttCallback;
 import com.android.terminalbox.presenter.MainPresenter;
-import com.android.terminalbox.ui.MqttActivity;
 import com.android.terminalbox.ui.inventory.InventoryActivity;
+import com.android.terminalbox.ui.inventory.NewInvActivity;
 import com.android.terminalbox.ui.recognize.RecognizeActivity;
 import com.android.terminalbox.ui.unlock.UnlockActivity;
 import com.android.terminalbox.utils.ToastUtils;
@@ -179,7 +179,7 @@ public class MainActivity extends BaseActivity<MainPresenter> implements MainCon
         Bundle bundle = new Bundle();
         switch (view.getId()) {
             case R.id.btn_inv:
-                JumpToActivity(InventoryActivity.class);
+                JumpToActivity(NewInvActivity.class);
                 break;
             case R.id.btn_access:
                 JumpToActivity(RecognizeActivity.class);
@@ -187,7 +187,7 @@ public class MainActivity extends BaseActivity<MainPresenter> implements MainCon
             case R.id.bt_change_org:
                 //mPresenter.getAllUserInfo();
                 ConfigUtil.setFtOrient(MainActivity.this, ASF_OP_90_ONLY);
-                JumpToActivity(MqttActivity.class);
+                JumpToActivity(InventoryActivity.class);
                 break;
         }
     }

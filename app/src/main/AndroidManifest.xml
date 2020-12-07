@@ -41,6 +41,10 @@
             android:name=".ui.unlock.UnlockActivity"
             android:launchMode="singleTop"
             android:screenOrientation="portrait"></activity>
+        <activity
+            android:name=".ui.inventory.NewInvActivity"
+            android:launchMode="singleTop"
+            android:screenOrientation="portrait"></activity>
     </application>
 
 </manifest>
