@@ -112,12 +112,9 @@ public class NewInvActivity extends BaseActivity {
         //开始盘点
         roundImg.startAnimation(mRadarAnim);
         UhfManager.getInstance().confReadListener(uhfListener);
-        UhfManager.getInstance().confReadHostIp("172.16.63.100").setShowLog(true);
-        UhfManager.getInstance().confReadAntIndexs(new int[]{1, 2, 3, 4});
-        UhfManager.getInstance().confReadTagFilter(null);
         InventoryStrategy inventoryStrategy = new InventoryStrategy();
         inventoryStrategy.setMaxTimesOfInv(3);
-        inventoryStrategy.setMaxTimesOfUnChange(6);
+        inventoryStrategy.setMaxTimesOfUnChange(3);
         UhfManager.getInstance().confInventoryStrategy(inventoryStrategy);
         roundImg.startAnimation(mRadarAnim);
         UhfManager.getInstance().startReadTags();
@@ -135,7 +132,7 @@ public class NewInvActivity extends BaseActivity {
 
         @Override
         public void onStartFail(ReaderResult reader_err) {
-            Log.d(TAG, "onStartFail:" + "=============");
+            Log.d(TAG, "onStartFail:" + "=============" + reader_err.toString());
         }
 
         @Override

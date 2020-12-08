@@ -28,12 +28,11 @@ import com.android.terminalbox.core.room.BaseDb;
 import com.android.terminalbox.mqtt.MqttServer;
 import com.android.terminalbox.mqtt.RylaiMqttCallback;
 import com.android.terminalbox.presenter.MainPresenter;
-import com.android.terminalbox.ui.inventory.InventoryActivity;
 import com.android.terminalbox.ui.inventory.NewInvActivity;
 import com.android.terminalbox.ui.recognize.RecognizeActivity;
+import com.android.terminalbox.ui.unlock.NewUnlockActivity;
 import com.android.terminalbox.ui.unlock.UnlockActivity;
 import com.android.terminalbox.utils.ToastUtils;
-import com.android.terminalbox.utils.box.ConfigUtil;
 import com.arcsoft.face.ActiveFileInfo;
 import com.arcsoft.face.ErrorInfo;
 import com.arcsoft.face.FaceEngine;
@@ -46,6 +45,8 @@ import com.arcsoft.imageutil.ArcSoftImageFormat;
 import com.arcsoft.imageutil.ArcSoftImageUtil;
 import com.arcsoft.imageutil.ArcSoftImageUtilError;
 import com.bumptech.glide.Glide;
+import com.esim.rylai.smartbox.ekey.EkeyManager;
+import com.esim.rylai.smartbox.uhf.UhfManager;
 import com.google.gson.Gson;
 
 import org.eclipse.paho.client.mqttv3.IMqttDeliveryToken;
@@ -67,8 +68,6 @@ import io.reactivex.Observer;
 import io.reactivex.android.schedulers.AndroidSchedulers;
 import io.reactivex.disposables.Disposable;
 import io.reactivex.schedulers.Schedulers;
-
-import static com.arcsoft.face.enums.DetectFaceOrientPriority.ASF_OP_90_ONLY;
 
 public class MainActivity extends BaseActivity<MainPresenter> implements MainContract.View {
     private static String TAG = "MainActivity";
@@ -165,6 +164,12 @@ public class MainActivity extends BaseActivity<MainPresenter> implements MainCon
         mqttConnect.start();
         weekText.setFormat24Hour("EEEE");
         timeText.setFormat24Hour("MM/dd HH:mm");
+        EkeyManager.getInstance().config(this, "/dev/ttyXRUSB1", 9600, null, 2000, 1);
+        EkeyManager.getInstance().setShowLog(true);
+        UhfManager.getInstance().confReadHostIp("172.16.63.100").setShowLog(true);
+        UhfManager.getInstance().confReadAntIndexs(new int[]{1});
+        UhfManager.getInstance().confReadTagFilter(null);
+        UhfManager.getInstance().setShowLog(true);
     }
 
     @Override
@@ -186,8 +191,11 @@ public class MainActivity extends BaseActivity<MainPresenter> implements MainCon
                 break;
             case R.id.bt_change_org:
                 //mPresenter.getAllUserInfo();
-                ConfigUtil.setFtOrient(MainActivity.this, ASF_OP_90_ONLY);
-                JumpToActivity(InventoryActivity.class);
+                //ConfigUtil.setFtOrient(MainActivity.this, ASF_OP_90_ONLY);
+                UserInfo userInfo = new UserInfo();
+                userInfo.setId(3);
+                BaseApplication.getInstance().setCurrentUer(userInfo);
+                JumpToActivity(NewUnlockActivity.class);
                 break;
         }
     }

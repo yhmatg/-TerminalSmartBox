@@ -28,7 +28,7 @@ import com.android.terminalbox.faceserver.FaceServer;
 import com.android.terminalbox.model.DrawInfo;
 import com.android.terminalbox.model.FacePreviewInfo;
 import com.android.terminalbox.presenter.RecognizePresenter;
-import com.android.terminalbox.ui.unlock.UnlockActivity;
+import com.android.terminalbox.ui.unlock.NewUnlockActivity;
 import com.android.terminalbox.utils.box.ConfigUtil;
 import com.android.terminalbox.utils.box.DrawHelper;
 import com.android.terminalbox.utils.camera.CameraHelper;
@@ -606,7 +606,7 @@ public class RecognizeActivity extends BaseActivity<RecognizePresenter> implemen
                         if (compareResult != null && compareResult.getSimilar() > SIMILAR_THRESHOLD) {
                             BaseApplication.getInstance().setCurrentUer(compareResult.getUser());
                             Log.d(TAG, "人脸识别成功");
-                            startActivity(new Intent(RecognizeActivity.this, UnlockActivity.class));
+                            startActivity(new Intent(RecognizeActivity.this, NewUnlockActivity.class));
                             outerImg.clearAnimation();
                             finish();
                         } else {
