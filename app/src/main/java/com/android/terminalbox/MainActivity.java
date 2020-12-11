@@ -30,15 +30,14 @@ import com.android.terminalbox.mqtt.RylaiMqttCallback;
 import com.android.terminalbox.presenter.MainPresenter;
 import com.android.terminalbox.ui.inventory.NewInvActivity;
 import com.android.terminalbox.ui.recognize.RecognizeActivity;
-import com.android.terminalbox.ui.unlock.NewUnlockActivity;
 import com.android.terminalbox.ui.unlock.UnlockActivity;
 import com.android.terminalbox.utils.ToastUtils;
+import com.android.terminalbox.utils.box.ConfigUtil;
 import com.arcsoft.face.ActiveFileInfo;
 import com.arcsoft.face.ErrorInfo;
 import com.arcsoft.face.FaceEngine;
 import com.arcsoft.face.FaceFeature;
 import com.arcsoft.face.FaceInfo;
-import com.arcsoft.face.enums.DetectFaceOrientPriority;
 import com.arcsoft.face.enums.DetectMode;
 import com.arcsoft.face.enums.RuntimeABI;
 import com.arcsoft.imageutil.ArcSoftImageFormat;
@@ -68,6 +67,8 @@ import io.reactivex.Observer;
 import io.reactivex.android.schedulers.AndroidSchedulers;
 import io.reactivex.disposables.Disposable;
 import io.reactivex.schedulers.Schedulers;
+
+import static com.arcsoft.face.enums.DetectFaceOrientPriority.ASF_OP_0_ONLY;
 
 public class MainActivity extends BaseActivity<MainPresenter> implements MainContract.View {
     private static String TAG = "MainActivity";
@@ -156,7 +157,7 @@ public class MainActivity extends BaseActivity<MainPresenter> implements MainCon
     protected void initEventAndData() {
         activeEngine();
         frEngine = new FaceEngine();
-        frEngine.init(this, DetectMode.ASF_DETECT_MODE_IMAGE, DetectFaceOrientPriority.ASF_OP_0_ONLY,
+        frEngine.init(this, DetectMode.ASF_DETECT_MODE_IMAGE, ASF_OP_0_ONLY,
                 16, 6, FaceEngine.ASF_FACE_RECOGNITION | FaceEngine.ASF_AGE | FaceEngine.ASF_FACE_DETECT | FaceEngine.ASF_GENDER | FaceEngine.ASF_FACE3DANGLE);
         mPresenter.getAllUserInfo();
         //初始化mqtt
@@ -167,9 +168,10 @@ public class MainActivity extends BaseActivity<MainPresenter> implements MainCon
         EkeyManager.getInstance().config(this, "/dev/ttyXRUSB1", 9600, null, 2000, 1);
         EkeyManager.getInstance().setShowLog(true);
         UhfManager.getInstance().confReadHostIp("172.16.63.100").setShowLog(true);
-        UhfManager.getInstance().confReadAntIndexs(new int[]{1});
+        UhfManager.getInstance().confReadAntIndexs(new int[]{1,2,3,4});
         UhfManager.getInstance().confReadTagFilter(null);
         UhfManager.getInstance().setShowLog(true);
+        ConfigUtil.setFtOrient(MainActivity.this, ASF_OP_0_ONLY);
     }
 
     @Override
@@ -191,11 +193,11 @@ public class MainActivity extends BaseActivity<MainPresenter> implements MainCon
                 break;
             case R.id.bt_change_org:
                 //mPresenter.getAllUserInfo();
-                //ConfigUtil.setFtOrient(MainActivity.this, ASF_OP_90_ONLY);
-                UserInfo userInfo = new UserInfo();
+                ConfigUtil.setFtOrient(MainActivity.this, ASF_OP_0_ONLY);
+               /* UserInfo userInfo = new UserInfo();
                 userInfo.setId(3);
                 BaseApplication.getInstance().setCurrentUer(userInfo);
-                JumpToActivity(NewUnlockActivity.class);
+                JumpToActivity(NewUnlockActivity.class);*/
                 break;
         }
     }

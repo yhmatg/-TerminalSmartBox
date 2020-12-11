@@ -5,8 +5,7 @@ import android.support.annotation.Nullable;
 import android.view.LayoutInflater;
 import android.view.View;
 import android.view.ViewGroup;
-import com.android.terminalbox.app.BaseApplication;
-import com.squareup.leakcanary.RefWatcher;
+
 import butterknife.ButterKnife;
 import butterknife.Unbinder;
 import me.yokeyword.fragmentation.SupportFragment;
@@ -45,8 +44,6 @@ public abstract class AbstractSimpleFragment extends SupportFragment {
     @Override
     public void onDestroy() {
         super.onDestroy();
-        RefWatcher refWatcher = BaseApplication.getRefWatcher(_mActivity);
-        refWatcher.watch(this);
     }
 
     @Override

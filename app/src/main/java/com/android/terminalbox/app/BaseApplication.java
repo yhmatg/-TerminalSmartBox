@@ -15,8 +15,6 @@ import com.orhanobut.logger.AndroidLogAdapter;
 import com.orhanobut.logger.DiskLogAdapter;
 import com.orhanobut.logger.Logger;
 import com.orhanobut.logger.PrettyFormatStrategy;
-import com.squareup.leakcanary.LeakCanary;
-import com.squareup.leakcanary.RefWatcher;
 import com.xuexiang.xlog.XLog;
 import com.xuexiang.xlog.crash.CrashHandler;
 
@@ -32,17 +30,12 @@ public class BaseApplication extends Application {
 
 
     private static BaseApplication instance;
-    private RefWatcher refWatcher;
     public static synchronized BaseApplication getInstance() {
         return instance;
     }
     public static String relevanceId;
     private List<UserInfo> users = new ArrayList<>();
     private UserInfo currentUer;
-    public static RefWatcher getRefWatcher(Context context) {
-        BaseApplication application = (BaseApplication) context.getApplicationContext();
-        return application.refWatcher;
-    }
 
     @Override
     protected void attachBaseContext(Context base) {
@@ -53,11 +46,6 @@ public class BaseApplication extends Application {
     @Override
     public void onCreate() {
         super.onCreate();
-        if (LeakCanary.isInAnalyzerProcess(this)) {
-            return;
-        }
-
-        refWatcher = LeakCanary.install(this);
         instance = this;
         initLogger();
         //崩溃日志保存到本地
