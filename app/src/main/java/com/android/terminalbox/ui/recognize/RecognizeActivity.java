@@ -508,7 +508,7 @@ public class RecognizeActivity extends BaseActivity<RecognizePresenter> implemen
         cameraHelper = new CameraHelper.Builder()
                 .previewViewSize(point)
                 .rotation(getWindowManager().getDefaultDisplay().getRotation())
-                .additionalRotation(270)
+                .additionalRotation(90)
                 .specificCameraId(rgbCameraID != null ? rgbCameraID : Camera.CameraInfo.CAMERA_FACING_FRONT)
                 .isMirror(false)
                 .previewOn(previewView)

@@ -46,6 +46,7 @@ import com.arcsoft.imageutil.ArcSoftImageUtilError;
 import com.bumptech.glide.Glide;
 import com.esim.rylai.smartbox.ekey.EkeyManager;
 import com.esim.rylai.smartbox.uhf.UhfManager;
+import com.esim.rylai.smartbox.uhf.UhfReader;
 import com.google.gson.Gson;
 
 import org.eclipse.paho.client.mqttv3.IMqttDeliveryToken;
@@ -55,7 +56,9 @@ import org.eclipse.paho.client.mqttv3.MqttMessage;
 import java.io.File;
 import java.util.ArrayList;
 import java.util.Calendar;
+import java.util.HashSet;
 import java.util.List;
+import java.util.Set;
 import java.util.concurrent.ExecutionException;
 
 import butterknife.BindView;
@@ -167,8 +170,12 @@ public class MainActivity extends BaseActivity<MainPresenter> implements MainCon
         timeText.setFormat24Hour("MM/dd HH:mm");
         EkeyManager.getInstance().config(this, "/dev/ttyXRUSB1", 9600, null, 2000, 1);
         EkeyManager.getInstance().setShowLog(true);
-        UhfManager.getInstance().confReadHostIp("172.16.63.100").setShowLog(true);
-        UhfManager.getInstance().confReadAntIndexs(new int[]{1,2,3,4});
+        Set<UhfReader> uhfReaders=new HashSet<>();
+        UhfReader reader1=new UhfReader("172.16.63.100");
+        UhfReader reader2=new UhfReader("172.16.63.220");
+        uhfReaders.add(reader1);
+        uhfReaders.add(reader2);
+        UhfManager.getInstance().confReaders(uhfReaders).setShowLog(true);
         UhfManager.getInstance().confReadTagFilter(null);
         UhfManager.getInstance().setShowLog(true);
         ConfigUtil.setFtOrient(MainActivity.this, ASF_OP_0_ONLY);
