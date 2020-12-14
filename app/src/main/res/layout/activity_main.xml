@@ -51,8 +51,7 @@
         android:layout_height="@dimen/dp_75"
         android:layout_above="@+id/btn_inv"
         android:layout_marginStart="@dimen/dp_20"
-        android:background="@drawable/btn_selector"
-        android:text="存取"
+        android:background="@drawable/inout_btn"
         android:textColor="@android:color/white"
         android:textSize="@dimen/sp_24" />
 
@@ -64,8 +63,7 @@
         android:layout_marginStart="@dimen/dp_20"
         android:layout_marginTop="@dimen/dp_18"
         android:layout_marginBottom="@dimen/dp_165"
-        android:background="@drawable/btn_selector"
-        android:text="盘点"
+        android:background="@drawable/inv_btn"
         android:textColor="@android:color/white"
         android:textSize="@dimen/sp_24" />
 
