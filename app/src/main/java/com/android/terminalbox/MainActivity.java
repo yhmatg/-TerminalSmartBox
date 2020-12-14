@@ -30,7 +30,7 @@ import com.android.terminalbox.mqtt.RylaiMqttCallback;
 import com.android.terminalbox.presenter.MainPresenter;
 import com.android.terminalbox.ui.inventory.NewInvActivity;
 import com.android.terminalbox.ui.recognize.RecognizeActivity;
-import com.android.terminalbox.ui.unlock.UnlockActivity;
+import com.android.terminalbox.ui.unlock.NewUnlockActivity;
 import com.android.terminalbox.utils.ToastUtils;
 import com.android.terminalbox.utils.box.ConfigUtil;
 import com.arcsoft.face.ActiveFileInfo;
@@ -130,7 +130,7 @@ public class MainActivity extends BaseActivity<MainPresenter> implements MainCon
                         break;
                     }
                 }
-                Intent intent = new Intent(MainActivity.this,UnlockActivity.class);
+                Intent intent = new Intent(MainActivity.this, NewUnlockActivity.class);
                 intent.putExtra("relevanceId", orderBody.getInstData().getRelevanceId());
                 startActivity(intent);
             }
