@@ -5,6 +5,7 @@ import android.support.v7.widget.RecyclerView;
 import android.view.LayoutInflater;
 import android.view.View;
 import android.view.ViewGroup;
+import android.widget.LinearLayout;
 import android.widget.TextView;
 
 import com.android.terminalbox.R;
@@ -36,6 +37,11 @@ public class FileBeanAdapter extends RecyclerView.Adapter <FileBeanAdapter.ViewH
         EpcFile epcFile = currentTags.get(i);
         viewHolder.tvFileName.setText(epcFile.getName());
         viewHolder.tvFileCode.setText(epcFile.getEpcCode());
+        if(i % 2 != 0){
+            viewHolder.mLayout.setBackgroundColor(mContext.getColor(R.color.inv_item_back));
+        }else {
+            viewHolder.mLayout.setBackgroundColor(mContext.getColor(R.color.transparent));
+        }
     }
 
 
@@ -49,6 +55,8 @@ public class FileBeanAdapter extends RecyclerView.Adapter <FileBeanAdapter.ViewH
         TextView tvFileName;
         @BindView(R.id.tv_filecode)
         TextView tvFileCode;
+        @BindView(R.id.ll_layout)
+        LinearLayout mLayout;
 
         ViewHolder(View view) {
             super(view);
