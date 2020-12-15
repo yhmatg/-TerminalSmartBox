@@ -44,7 +44,7 @@
     <color name="titele_color">#1076D8</color>
     <color name="search_back_color">#529CE2</color>
     <color name="search_hint">#80FFFFFF</color>
-    <color name="inv_item_back">#E3EDF7</color>
-    <color name="transparent">#00000000</color>
+    <color name="inv_item_back_one">#19ffffff</color>
+    <color name="inv_item_back_two">#32ffffff</color>
 
 </resources>

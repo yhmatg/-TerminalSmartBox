@@ -5,6 +5,7 @@
     android:background="@drawable/back_icon">
 
     <ImageView
+        android:layout_marginTop="@dimen/dp_20"
         android:id="@+id/titleLeft"
         android:layout_width="@dimen/dp_40"
         android:layout_height="@dimen/dp_40"

@@ -168,7 +168,8 @@ public class MainActivity extends BaseActivity<MainPresenter> implements MainCon
         mqttConnect.start();
         weekText.setFormat24Hour("EEEE");
         timeText.setFormat24Hour("MM/dd HH:mm");
-        EkeyManager.getInstance().config(this, "/dev/ttyXRUSB1", 9600, null, 2000, 1);
+        //EkeyManager.getInstance().config(this, "/dev/ttyXRUSB1", 9600, null, 2000, 1);
+        EkeyManager.getInstance().init(this, "/dev/ttyXRUSB1", 9600).config( null, 2000, true,1, 2);
         EkeyManager.getInstance().setShowLog(true);
         Set<UhfReader> uhfReaders=new HashSet<>();
         UhfReader reader1=new UhfReader("172.16.63.100");

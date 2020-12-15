@@ -16,7 +16,7 @@ import java.util.List;
 import butterknife.BindView;
 import butterknife.ButterKnife;
 
-public class FileBeanAdapter extends RecyclerView.Adapter <FileBeanAdapter.ViewHolder>{
+public class FileBeanAdapter extends RecyclerView.Adapter<FileBeanAdapter.ViewHolder> {
     private static final String TAG = "TagAdapter";
     private List<EpcFile> currentTags;
     private Context mContext;
@@ -27,27 +27,27 @@ public class FileBeanAdapter extends RecyclerView.Adapter <FileBeanAdapter.ViewH
     }
 
     @Override
-    public ViewHolder onCreateViewHolder( ViewGroup parent, int i) {
+    public ViewHolder onCreateViewHolder(ViewGroup parent, int i) {
         View view = LayoutInflater.from(mContext).inflate(R.layout.inv_item_layout, parent, false);
         return new FileBeanAdapter.ViewHolder(view);
     }
 
     @Override
-    public void onBindViewHolder( ViewHolder viewHolder, final int i) {
+    public void onBindViewHolder(ViewHolder viewHolder, final int i) {
         EpcFile epcFile = currentTags.get(i);
         viewHolder.tvFileName.setText(epcFile.getName());
         viewHolder.tvFileCode.setText(epcFile.getEpcCode());
-        if(i % 2 != 0){
-            viewHolder.mLayout.setBackgroundColor(mContext.getColor(R.color.inv_item_back));
-        }else {
-            viewHolder.mLayout.setBackgroundColor(mContext.getColor(R.color.transparent));
+        if (i % 2 != 0) {
+            viewHolder.mLayout.setBackgroundColor(mContext.getColor(R.color.inv_item_back_one));
+        } else {
+            viewHolder.mLayout.setBackgroundColor(mContext.getColor(R.color.inv_item_back_two));
         }
     }
 
 
     @Override
     public int getItemCount() {
-        return currentTags == null ? 0 :currentTags.size();
+        return currentTags == null ? 0 : currentTags.size();
     }
 
     class ViewHolder extends RecyclerView.ViewHolder {

@@ -13,8 +13,8 @@ import android.view.animation.RotateAnimation;
 import android.view.inputmethod.EditorInfo;
 import android.view.inputmethod.InputMethodManager;
 import android.widget.EditText;
+import android.widget.FrameLayout;
 import android.widget.ImageView;
-import android.widget.LinearLayout;
 import android.widget.RelativeLayout;
 import android.widget.TextView;
 
@@ -48,7 +48,7 @@ public class InventoryActivity extends BaseActivity {
     @BindView(R.id.edit_search)
     EditText editText;
     @BindView(R.id.number_layout)
-    LinearLayout numberLayout;
+    FrameLayout numberLayout;
     @BindView(R.id.tv_see_detail)
     TextView seeDetail;
     @BindView(R.id.detail_layout)

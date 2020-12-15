@@ -5,6 +5,7 @@
     android:background="@drawable/back_icon">
 
     <include
+        android:layout_marginTop="@dimen/dp_20"
         layout="@layout/open_layout"
         android:layout_width="wrap_content"
         android:layout_height="wrap_content"
