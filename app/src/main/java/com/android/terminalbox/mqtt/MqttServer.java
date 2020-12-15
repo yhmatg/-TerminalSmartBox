@@ -146,7 +146,7 @@ public class MqttServer {
                 int[] qos={0,0};
                 //mqttAndroidClient.subscribe("app/devices/15aa68f3183311ebb7260242ac120004_uniqueCode002/insts", 0);
                 mqttAndroidClient.subscribe(topicFilter, qos);
-            } catch (MqttException e) {
+            } catch (Exception e) {
                 e.printStackTrace();
             }
             mRylaiMqttCallback.connectComplete(reconnect,serverURI);

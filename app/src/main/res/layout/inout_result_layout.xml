@@ -81,7 +81,7 @@
         android:layout_height="@dimen/dp_200"
         android:layout_below="@+id/out_number_layout"
         android:background="@drawable/epc_files_back"
-        android:padding="@dimen/dp_10">
+        android:padding="@dimen/dp_12">
 
         <LinearLayout
             android:id="@+id/ll_out_title"
@@ -155,7 +155,7 @@
         android:layout_height="@dimen/dp_200"
         android:layout_below="@+id/in_number_layout"
         android:background="@drawable/epc_files_back"
-        android:padding="@dimen/dp_10">
+        android:padding="@dimen/dp_12">
 
         <LinearLayout
             android:id="@+id/in_title"

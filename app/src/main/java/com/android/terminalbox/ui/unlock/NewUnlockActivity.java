@@ -148,27 +148,30 @@ public class NewUnlockActivity extends BaseActivity<UnlockPresenter> implements 
         @Override
         public void onEkeyStatusChange(int ekeyAddr, EkeyStatusChange ekeyStatusChange) {
             Log.d(TAG, "onEkeyStatusChange: " + "Ekey Addr：" + ekeyAddr + "     StatusChange:" + ekeyStatusChange.getDisp());
-            runOnUiThread(() -> {
-                switch (ekeyStatusChange) {
-                    case CLOSED_TO_OPENED:
-                        Log.e(TAG, "=========ekey open============: " + Thread.currentThread().toString());
-                        if (!StringUtils.isEmpty(orderUuid)) {
-                            openReport(orderUuid);
-                        }
-                        break;
-                    case TO_CONNECTED:
-                        break;
-                    case OPENED_TO_CLOSED:
-                        Log.e(TAG, "=========ekey close============: " + Thread.currentThread().toString());
-                        openLayout.setVisibility(View.GONE);
-                        closeLayout.setVisibility(View.VISIBLE);
-                        inOutLayout.setVisibility(View.GONE);
-                        roundImg.startAnimation(mRadarAnim);
-                        if (!StringUtils.isEmpty(orderUuid)) {
-                            closeReport(orderUuid);
-                        }
-                        UhfManager.getInstance().startReadTags();
-                        break;
+            mHandler.post(new Runnable() {
+                @Override
+                public void run() {
+                    switch (ekeyStatusChange) {
+                        case CLOSED_TO_OPENED:
+                            Log.e(TAG, "=========ekey open============: " + Thread.currentThread().toString());
+                            if (!StringUtils.isEmpty(orderUuid)) {
+                                openReport(orderUuid);
+                            }
+                            break;
+                        case TO_CONNECTED:
+                            break;
+                        case OPENED_TO_CLOSED:
+                            Log.e(TAG, "=========ekey close============: " + Thread.currentThread().toString());
+                            openLayout.setVisibility(View.GONE);
+                            closeLayout.setVisibility(View.VISIBLE);
+                            inOutLayout.setVisibility(View.GONE);
+                            roundImg.startAnimation(mRadarAnim);
+                            if (!StringUtils.isEmpty(orderUuid)) {
+                                closeReport(orderUuid);
+                            }
+                            UhfManager.getInstance().startReadTags();
+                            break;
+                    }
                 }
             });
         }

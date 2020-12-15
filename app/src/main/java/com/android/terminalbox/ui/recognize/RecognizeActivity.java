@@ -297,7 +297,7 @@ public class RecognizeActivity extends BaseActivity<RecognizePresenter> implemen
             public void run() {
                 finish();
             }
-        },30000);
+        }, 30000);
         outerImg.startAnimation(mRadarAnim);
     }
 
@@ -611,14 +611,16 @@ public class RecognizeActivity extends BaseActivity<RecognizePresenter> implemen
                             outerImg.clearAnimation();
                             finish();
                         } else {
-                            faceHelper.setName(requestId, "人员未识别");
-                            retryRecognizeDelayed(requestId);
+                            if (faceHelper != null) {
+                                faceHelper.setName(requestId, "人员未识别");
+                                retryRecognizeDelayed(requestId);
+                            }
                         }
                     }
 
                     @Override
                     public void onError(Throwable e) {
-                        if(faceHelper != null){
+                        if (faceHelper != null) {
                             faceHelper.setName(requestId, getString(R.string.recognize_failed_notice, "NOT_REGISTERED"));
                             retryRecognizeDelayed(requestId);
                         }
