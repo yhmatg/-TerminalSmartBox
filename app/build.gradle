@@ -74,7 +74,7 @@ dependencies {
     implementation 'com.github.xuexiangjys.XLog:xlog-crash:1.2.1'
     implementation files('libs/arcsoft_face.jar')
     implementation files('libs/arcsoft_image_util.jar')
-    implementation files('libs/smartbox-debug.aar')
+    implementation(name: 'smartbox-debug', ext: 'aar')
     //implementation files('libs/ModuleAPI_J.jar')
     implementation 'com.annimon:stream:1.2.1'
     implementation 'cn.shorr:ez-serialport:0.1.0'
