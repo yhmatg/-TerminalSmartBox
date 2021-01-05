@@ -127,8 +127,8 @@ public class NewUnlockActivity extends BaseActivity<UnlockPresenter> implements 
         //初始化rfid
         UhfManager.getInstance().confReadListener(uhfListener);
         InventoryStrategy inventoryStrategy = new InventoryStrategy();
-        inventoryStrategy.setMaxTimesOfInv(3);
-        inventoryStrategy.setMaxTimesOfUnChange(3);
+        inventoryStrategy.setMaxTimesOfInv(4);
+        inventoryStrategy.setMaxTimesOfUnChange(8);
         UhfManager.getInstance().confInventoryStrategy(inventoryStrategy);
         EkeyManager.getInstance().openEkey(1,ekeyListener);
         initAnim();

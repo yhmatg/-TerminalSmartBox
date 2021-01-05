@@ -115,8 +115,8 @@ public class NewInvActivity extends BaseActivity {
         roundImg.startAnimation(mRadarAnim);
         UhfManager.getInstance().confReadListener(uhfListener);
         InventoryStrategy inventoryStrategy = new InventoryStrategy();
-        inventoryStrategy.setMaxTimesOfInv(3);
-        inventoryStrategy.setMaxTimesOfUnChange(3);
+        inventoryStrategy.setMaxTimesOfInv(4);
+        inventoryStrategy.setMaxTimesOfUnChange(8);
         UhfManager.getInstance().confInventoryStrategy(inventoryStrategy);
         roundImg.startAnimation(mRadarAnim);
         UhfManager.getInstance().startReadTags();

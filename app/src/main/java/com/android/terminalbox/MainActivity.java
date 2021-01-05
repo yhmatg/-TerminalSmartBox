@@ -172,8 +172,12 @@ public class MainActivity extends BaseActivity<MainPresenter> implements MainCon
         EkeyManager.getInstance().init(this, "/dev/ttyXRUSB1", 9600).config( null, 2000, true,1, 2);
         EkeyManager.getInstance().setShowLog(true);
         Set<UhfReader> uhfReaders=new HashSet<>();
+
+        int[] ants=new int[]{1,2,3,4};
         UhfReader reader1=new UhfReader("172.16.68.97");
+        reader1.setAnts(ants);
         UhfReader reader2=new UhfReader("172.16.68.98");
+        reader2.setAnts(ants);
         uhfReaders.add(reader1);
         uhfReaders.add(reader2);
         UhfManager.getInstance().confReaders(uhfReaders).setShowLog(true);
