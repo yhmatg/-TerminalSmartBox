@@ -12,6 +12,12 @@ public interface EpcFileDao extends BaseDao<EpcFile> {
     @Query("SELECT * FROM EpcFile ")
     public List<EpcFile> findAllEpcFile();
 
+    @Query("SELECT * FROM EpcFile where boxCode = :boxName")
+    public List<EpcFile> findEpcFileByBox(String boxName);
+
+    @Query("SELECT * FROM EpcFile where epcCode in (:epcCodes)")
+    public List<EpcFile> findEpcFileByEpcs(List<String> epcCodes);
+
     @Query("DELETE FROM EpcFile")
     public void deleteAllData();
 

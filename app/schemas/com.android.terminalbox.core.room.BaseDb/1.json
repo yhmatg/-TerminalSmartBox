@@ -2,7 +2,7 @@
   "formatVersion": 1,
   "database": {
     "version": 1,
-    "identityHash": "8c6b54fc7bf4e472e0c3ac3d2b42971a",
+    "identityHash": "cce53811e01a6fc708b94a231555bfc6",
     "entities": [
       {
         "tableName": "UserInfo",
@@ -74,7 +74,7 @@
       },
       {
         "tableName": "EpcFile",
-        "createSql": "CREATE TABLE IF NOT EXISTS `${TABLE_NAME}` (`name` TEXT, `epcCode` TEXT NOT NULL, PRIMARY KEY(`epcCode`))",
+        "createSql": "CREATE TABLE IF NOT EXISTS `${TABLE_NAME}` (`name` TEXT, `epcCode` TEXT NOT NULL, `AstCode` TEXT, `boxCode` TEXT, PRIMARY KEY(`epcCode`))",
         "fields": [
           {
             "fieldPath": "name",
@@ -87,6 +87,18 @@
             "columnName": "epcCode",
             "affinity": "TEXT",
             "notNull": true
+          },
+          {
+            "fieldPath": "AstCode",
+            "columnName": "AstCode",
+            "affinity": "TEXT",
+            "notNull": false
+          },
+          {
+            "fieldPath": "boxCode",
+            "columnName": "boxCode",
+            "affinity": "TEXT",
+            "notNull": false
           }
         ],
         "primaryKey": {
@@ -101,7 +113,7 @@
     ],
     "setupQueries": [
       "CREATE TABLE IF NOT EXISTS room_master_table (id INTEGER PRIMARY KEY,identity_hash TEXT)",
-      "INSERT OR REPLACE INTO room_master_table (id,identity_hash) VALUES(42, \"8c6b54fc7bf4e472e0c3ac3d2b42971a\")"
+      "INSERT OR REPLACE INTO room_master_table (id,identity_hash) VALUES(42, \"cce53811e01a6fc708b94a231555bfc6\")"
     ]
   }
 }

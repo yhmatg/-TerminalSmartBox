@@ -117,7 +117,7 @@ public class NewUnlockActivity extends BaseActivity<UnlockPresenter> implements 
             mPresenter.newOrder(deviceId, newOrderBody, currentUer.getId());
         }
 
-        localFiles = BaseDb.getInstance().getEpcFileDao().findAllEpcFile();
+        localFiles = BaseDb.getInstance().getEpcFileDao().findEpcFileByBox("box002");
         mOutAdapter = new FileBeanAdapter(outFiles, this);
         mOutRecycleView.setLayoutManager(new LinearLayoutManager(this));
         mOutRecycleView.setAdapter(mOutAdapter);
@@ -220,12 +220,13 @@ public class NewUnlockActivity extends BaseActivity<UnlockPresenter> implements 
                     return uhfTags.getEpc();
                 }
             }).collect(Collectors.toList());
-            List<EpcFile> epcToFiles = Stream.of(epcs).map(new Function<String, EpcFile>() {
+           /* List<EpcFile> epcToFiles = Stream.of(epcs).map(new Function<String, EpcFile>() {
                 @Override
                 public EpcFile apply(String s) {
                     return new EpcFile("档案Epc", s);
                 }
-            }).collect(Collectors.toList());
+            }).collect(Collectors.toList());*/
+            List<EpcFile> epcToFiles = BaseDb.getInstance().getEpcFileDao().findEpcFileByEpcs(epcs);
             files.addAll(epcToFiles);
             mHandler.post(new Runnable() {
                 @Override
@@ -236,8 +237,14 @@ public class NewUnlockActivity extends BaseActivity<UnlockPresenter> implements 
                     tempInvFiles.addAll(files);
                     //存件
                     tempInvFiles.removeAll(tempLocal);
+                    for (EpcFile tempInvFile : tempInvFiles) {
+                        tempInvFile.setBoxCode("box002");
+                    }
                     //取件
                     tempLocal.removeAll(files);
+                    for (EpcFile epcFile : tempLocal) {
+                        epcFile.setBoxCode("");
+                    }
                     if (inNumbers != null) {
                         inNumbers.setText(String.valueOf(tempInvFiles.size()));
                     }
@@ -250,8 +257,8 @@ public class NewUnlockActivity extends BaseActivity<UnlockPresenter> implements 
                     mOutAdapter.notifyDataSetChanged();
                     //数据库更新
                     BaseDb.getInstance().getEpcFileDao().insertItems(tempInvFiles);
-                    BaseDb.getInstance().getEpcFileDao().deleteItems(tempLocal);
-                    List<EpcFile> allEpcFile = BaseDb.getInstance().getEpcFileDao().findAllEpcFile();
+                    BaseDb.getInstance().getEpcFileDao().insertItems(tempLocal);
+                    List<EpcFile> allEpcFile = BaseDb.getInstance().getEpcFileDao().findEpcFileByBox("box002");
                     List<String> inEpcStrings = Stream.of(tempInvFiles).map(new Function<EpcFile, String>() {
                         @Override
                         public String apply(EpcFile epcFile) {

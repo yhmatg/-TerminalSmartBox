@@ -81,5 +81,6 @@ dependencies {
     implementation 'org.xutils:xutils:3.9.0'
     implementation 'org.eclipse.paho:org.eclipse.paho.client.mqttv3:1.2.0'
     implementation 'org.eclipse.paho:org.eclipse.paho.android.service:1.1.1'
+    implementation 'net.sourceforge.jexcelapi:jxl:2.6.12'
     //implementation 'com.esim.rylai:smartbox-release:0.0.4'
 }

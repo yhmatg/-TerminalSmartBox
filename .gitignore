@@ -9,3 +9,4 @@
 /gradle
 .externalNativeBuild
 /app/release/
+/app/schemas/

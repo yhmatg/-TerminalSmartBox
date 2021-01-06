@@ -7,6 +7,7 @@ import android.graphics.Bitmap;
 import android.graphics.BitmapFactory;
 import android.os.AsyncTask;
 import android.os.Bundle;
+import android.os.SystemClock;
 import android.support.v4.app.ActivityCompat;
 import android.util.Base64;
 import android.util.Log;
@@ -28,6 +29,7 @@ import com.android.terminalbox.core.room.BaseDb;
 import com.android.terminalbox.mqtt.MqttServer;
 import com.android.terminalbox.mqtt.RylaiMqttCallback;
 import com.android.terminalbox.presenter.MainPresenter;
+import com.android.terminalbox.ui.SettingActivity;
 import com.android.terminalbox.ui.inventory.NewInvActivity;
 import com.android.terminalbox.ui.recognize.RecognizeActivity;
 import com.android.terminalbox.ui.unlock.NewUnlockActivity;
@@ -189,11 +191,11 @@ public class MainActivity extends BaseActivity<MainPresenter> implements MainCon
     @Override
     protected void onResume() {
         super.onResume();
-        List<EpcFile> allEpcFile = BaseDb.getInstance().getEpcFileDao().findAllEpcFile();
+        List<EpcFile> allEpcFile = BaseDb.getInstance().getEpcFileDao().findEpcFileByBox("box002");
         fileNumber.setText(String.valueOf(allEpcFile.size()));
     }
 
-    @OnClick({R.id.btn_inv, R.id.btn_access, R.id.bt_change_org})
+    @OnClick({R.id.btn_inv, R.id.btn_access, R.id.bt_change_org,R.id.iv_title})
     public void onClick(View view) {
         Bundle bundle = new Bundle();
         switch (view.getId()) {
@@ -210,6 +212,9 @@ public class MainActivity extends BaseActivity<MainPresenter> implements MainCon
                 userInfo.setId(3);
                 BaseApplication.getInstance().setCurrentUer(userInfo);
                 JumpToActivity(NewUnlockActivity.class);*/
+                break;
+            case R.id.iv_title:
+               intoSettings();
                 break;
         }
     }
@@ -438,4 +443,20 @@ public class MainActivity extends BaseActivity<MainPresenter> implements MainCon
         }
         return day;
     }
+
+    // 需要点击几次 就设置几
+    long [] mHits = null;
+
+    public void intoSettings() {
+        if (mHits == null) {
+            mHits = new long[5];
+        }
+        System.arraycopy(mHits, 1, mHits, 0, mHits.length - 1);//把从第二位至最后一位之间的数字复制到第一位至倒数第一位
+        mHits[mHits.length - 1] = SystemClock.uptimeMillis();//记录一个时间
+        if (SystemClock.uptimeMillis() - mHits[0] <= 1000) {//一秒内连续点击。
+            mHits = null;	//这里说明一下，我们在进来以后需要还原状态，否则如果点击过快，第六次，第七次 都会不断进来触发该效果。重新开始计数即可
+            JumpToActivity(SettingActivity.class);
+        }
+    }
+
 }

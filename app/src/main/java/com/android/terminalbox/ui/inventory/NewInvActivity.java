@@ -22,6 +22,7 @@ import com.android.terminalbox.R;
 import com.android.terminalbox.base.activity.BaseActivity;
 import com.android.terminalbox.base.presenter.AbstractPresenter;
 import com.android.terminalbox.core.bean.user.EpcFile;
+import com.android.terminalbox.core.room.BaseDb;
 import com.annimon.stream.Collectors;
 import com.annimon.stream.Stream;
 import com.annimon.stream.function.Function;
@@ -161,12 +162,13 @@ public class NewInvActivity extends BaseActivity {
                     return uhfTags.getEpc();
                 }
             }).collect(Collectors.toList());
-            List<EpcFile> epcToFiles = Stream.of(epcs).map(new Function<String, EpcFile>() {
+           /* List<EpcFile> epcToFiles = Stream.of(epcs).map(new Function<String, EpcFile>() {
                 @Override
                 public EpcFile apply(String s) {
                     return new EpcFile("档案Epc", s);
                 }
-            }).collect(Collectors.toList());
+            }).collect(Collectors.toList());*/
+            List<EpcFile> epcToFiles = BaseDb.getInstance().getEpcFileDao().findEpcFileByEpcs(epcs);
             files.addAll(epcToFiles);//Log.d(TAG, "invTags: 本次盘点后总标签" + inBoxEpcsTemp.size() + "    " + inBoxEpcsTemp.toString());
             Log.e(TAG, files.size() + "====" + files.toString());
             mHandler.post(new Runnable() {

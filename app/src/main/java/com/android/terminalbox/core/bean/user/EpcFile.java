@@ -12,11 +12,8 @@ public class EpcFile {
     @PrimaryKey
     @NonNull
     private String epcCode;
-
-    public EpcFile(String name, String epcCode) {
-        this.name = name;
-        this.epcCode = epcCode;
-    }
+    private String AstCode;
+    private String boxCode;
 
     public String getName() {
         return name;
@@ -34,16 +31,33 @@ public class EpcFile {
         this.epcCode = epcCode;
     }
 
+    public String getAstCode() {
+        return AstCode;
+    }
+
+    public void setAstCode(String astCode) {
+        AstCode = astCode;
+    }
+
+    public String getBoxCode() {
+        return boxCode;
+    }
+
+    public void setBoxCode(String boxCode) {
+        this.boxCode = boxCode;
+    }
+
     @Override
     public boolean equals(Object o) {
         if (this == o) return true;
         if (!(o instanceof EpcFile)) return false;
         EpcFile epcFile = (EpcFile) o;
-        return getEpcCode().equals(epcFile.getEpcCode());
+        return getEpcCode().equals(epcFile.getEpcCode()) &&
+                getAstCode().equals(epcFile.getAstCode());
     }
 
     @Override
     public int hashCode() {
-        return Objects.hash(getEpcCode());
+        return Objects.hash(getEpcCode(), getAstCode());
     }
 }

@@ -17,7 +17,7 @@ import com.android.terminalbox.core.dao.UserDao;
         UserInfo.class,
         EpcFile.class
 }
-        , version = 1)
+        , version = 2)
 @TypeConverters(DateConverter.class)
 public abstract class BaseDb extends RoomDatabase {
     public static final String DB_NAME = "smartbox.db";

@@ -88,7 +88,7 @@ public class InventoryActivity extends BaseActivity {
                 List<EpcFile> epcToFiles = Stream.of(epcs).map(new Function<String, EpcFile>() {
                     @Override
                     public EpcFile apply(String s) {
-                        return new EpcFile("档案Epc", s);
+                        return new EpcFile();
                     }
                 }).collect(Collectors.toList());
                 files.addAll(epcToFiles);//Log.d(TAG, "invTags: 本次盘点后总标签" + inBoxEpcsTemp.size() + "    " + inBoxEpcsTemp.toString());
