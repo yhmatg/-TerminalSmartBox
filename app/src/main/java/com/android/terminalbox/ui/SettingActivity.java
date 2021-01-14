@@ -11,14 +11,18 @@ import android.os.Environment;
 import android.provider.DocumentsContract;
 import android.provider.MediaStore;
 import android.view.View;
+import android.widget.EditText;
 import android.widget.TextView;
 import android.widget.Toast;
 
 import com.android.terminalbox.R;
+import com.android.terminalbox.app.BaseApplication;
 import com.android.terminalbox.base.activity.BaseActivity;
 import com.android.terminalbox.base.presenter.AbstractPresenter;
 import com.android.terminalbox.core.bean.user.EpcFile;
 import com.android.terminalbox.core.room.BaseDb;
+import com.android.terminalbox.utils.StringUtils;
+import com.android.terminalbox.utils.ToastUtils;
 import com.android.terminalbox.utils.box.ExcelUtils;
 
 import java.io.File;
@@ -31,6 +35,11 @@ import butterknife.OnClick;
 public class SettingActivity extends BaseActivity {
     @BindView(R.id.title_content)
     TextView titleContent;
+    @BindView(R.id.et_mixtime)
+    EditText mixTime;
+    @BindView(R.id.et_mix_unchange)
+    EditText mixTimeUnchange;
+
     @Override
     public AbstractPresenter initPresenter() {
         return null;
@@ -51,7 +60,7 @@ public class SettingActivity extends BaseActivity {
 
     }
 
-    @OnClick({R.id.import_data})
+    @OnClick({R.id.title_back, R.id.import_data, R.id.bt_mixtime, R.id.bt_mixtime_unchange})
     public void onClick(View view) {
         switch (view.getId()) {
             case R.id.title_back:
@@ -62,6 +71,24 @@ public class SettingActivity extends BaseActivity {
                 intent.setType("*/*");//设置任意类型
                 intent.addCategory(Intent.CATEGORY_OPENABLE);
                 startActivityForResult(intent, 1);
+                break;
+            case R.id.bt_mixtime:
+                String s1 = mixTime.getText().toString();
+                if (!StringUtils.isEmpty(s1)) {
+                    BaseApplication.getInstance().setMixTime(Integer.valueOf(s1));
+                    ToastUtils.showShort("设置成功");
+                } else {
+                    ToastUtils.showShort("请输入正确的数字");
+                }
+                break;
+            case R.id.bt_mixtime_unchange:
+                String s2 = mixTimeUnchange.getText().toString();
+                if (!StringUtils.isEmpty(s2)) {
+                    BaseApplication.getInstance().setMixTimeUnchange(Integer.valueOf(s2));
+                    ToastUtils.showShort("设置成功");
+                } else {
+                    ToastUtils.showShort("请输入正确的数字");
+                }
                 break;
         }
     }

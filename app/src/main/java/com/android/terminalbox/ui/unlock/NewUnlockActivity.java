@@ -30,6 +30,7 @@ import com.android.terminalbox.presenter.UnlockPresenter;
 import com.android.terminalbox.uhf.EsimUhfHelper;
 import com.android.terminalbox.ui.inventory.FileBeanAdapter;
 import com.android.terminalbox.utils.StringUtils;
+import com.android.terminalbox.utils.ToastUtils;
 import com.annimon.stream.Collectors;
 import com.annimon.stream.Stream;
 import com.annimon.stream.function.Function;
@@ -125,10 +126,13 @@ public class NewUnlockActivity extends BaseActivity<UnlockPresenter> implements 
         mInRecycleView.setLayoutManager(new LinearLayoutManager(this));
         mInRecycleView.setAdapter(mInAdapter);
         //初始化rfid
+        int maxTime = BaseApplication.getInstance().getMixTime();
+        int maxUnchange = BaseApplication.getInstance().getMixTimeUnchange();
+        ToastUtils.showShort("maxTime===" + maxTime +"      maxUnchange===" + maxUnchange);
         UhfManager.getInstance().confReadListener(uhfListener);
         InventoryStrategy inventoryStrategy = new InventoryStrategy();
-        inventoryStrategy.setMaxTimesOfInv(4);
-        inventoryStrategy.setMaxTimesOfUnChange(8);
+        inventoryStrategy.setMaxTimesOfInv(maxTime);
+        inventoryStrategy.setMaxTimesOfUnChange(maxUnchange);
         UhfManager.getInstance().confInventoryStrategy(inventoryStrategy);
         EkeyManager.getInstance().openEkey(1,ekeyListener);
         initAnim();

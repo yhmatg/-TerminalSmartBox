@@ -3,15 +3,62 @@
     android:layout_width="match_parent"
     android:layout_height="match_parent">
 
-    <include layout="@layout/title_layout"/>
+    <include layout="@layout/title_layout" />
 
     <Button
-        android:layout_below="@id/title_layout"
         android:id="@+id/import_data"
         android:layout_width="match_parent"
         android:layout_height="wrap_content"
+        android:layout_below="@id/title_layout"
         android:layout_margin="@dimen/dp_20"
         android:background="@color/titele_color"
         android:text="导入数据"
+        android:textColor="@color/white" />
+
+    <EditText
+        android:id="@+id/et_mixtime"
+        android:layout_width="@dimen/dp_100"
+        android:layout_height="@dimen/dp_40"
+        android:layout_below="@+id/import_data"
+        android:layout_marginStart="@dimen/dp_20"
+        android:gravity="center"
+        android:hint="盘点次数"
+        android:inputType="number"
+        android:textSize="@dimen/sp_16" />
+
+    <Button
+        android:id="@+id/bt_mixtime"
+        android:layout_width="wrap_content"
+        android:layout_height="wrap_content"
+        android:layout_alignTop="@+id/et_mixtime"
+        android:layout_alignBottom="@+id/et_mixtime"
+        android:layout_marginStart="@dimen/dp_20"
+        android:layout_toEndOf="@+id/et_mixtime"
+        android:background="@color/titele_color"
+        android:text="确定"
+        android:textColor="@color/white" />
+
+    <EditText
+        android:id="@+id/et_mix_unchange"
+        android:layout_width="@dimen/dp_100"
+        android:layout_height="@dimen/dp_40"
+        android:layout_below="@+id/et_mixtime"
+        android:layout_marginStart="@dimen/dp_20"
+        android:layout_marginTop="@dimen/dp_20"
+        android:gravity="center"
+        android:hint="不变次数"
+        android:inputType="number"
+        android:textSize="@dimen/sp_16" />
+
+    <Button
+        android:id="@+id/bt_mixtime_unchange"
+        android:layout_width="wrap_content"
+        android:layout_height="wrap_content"
+        android:layout_alignTop="@+id/et_mix_unchange"
+        android:layout_alignBottom="@+id/et_mix_unchange"
+        android:layout_marginStart="@dimen/dp_20"
+        android:layout_toEndOf="@+id/et_mix_unchange"
+        android:background="@color/titele_color"
+        android:text="确定"
         android:textColor="@color/white" />
 </RelativeLayout>

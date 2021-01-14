@@ -19,10 +19,12 @@ import android.widget.RelativeLayout;
 import android.widget.TextView;
 
 import com.android.terminalbox.R;
+import com.android.terminalbox.app.BaseApplication;
 import com.android.terminalbox.base.activity.BaseActivity;
 import com.android.terminalbox.base.presenter.AbstractPresenter;
 import com.android.terminalbox.core.bean.user.EpcFile;
 import com.android.terminalbox.core.room.BaseDb;
+import com.android.terminalbox.utils.ToastUtils;
 import com.annimon.stream.Collectors;
 import com.annimon.stream.Stream;
 import com.annimon.stream.function.Function;
@@ -113,13 +115,15 @@ public class NewInvActivity extends BaseActivity {
         });
         initAnim();
         //开始盘点
+        int maxTime = BaseApplication.getInstance().getMixTime();
+        int maxUnchange = BaseApplication.getInstance().getMixTimeUnchange();
+        ToastUtils.showShort("maxTime===" + maxTime +"      maxUnchange===" + maxUnchange);
         roundImg.startAnimation(mRadarAnim);
         UhfManager.getInstance().confReadListener(uhfListener);
         InventoryStrategy inventoryStrategy = new InventoryStrategy();
-        inventoryStrategy.setMaxTimesOfInv(4);
-        inventoryStrategy.setMaxTimesOfUnChange(8);
+        inventoryStrategy.setMaxTimesOfInv(maxTime);
+        inventoryStrategy.setMaxTimesOfUnChange(maxUnchange);
         UhfManager.getInstance().confInventoryStrategy(inventoryStrategy);
-        roundImg.startAnimation(mRadarAnim);
         UhfManager.getInstance().startReadTags();
         Log.e("Thread======", Thread.currentThread().toString());
     }
@@ -141,7 +145,6 @@ public class NewInvActivity extends BaseActivity {
         @Override
         public void onReadIncrementalTotal(Collection<String> epcs) {
             Log.d(TAG, "onStartSuc:" + "=============" + epcs.size());
-            Log.e("Thread======", Thread.currentThread().toString());
             mHandler.post(new Runnable() {
                 @Override
                 public void run() {
@@ -155,7 +158,6 @@ public class NewInvActivity extends BaseActivity {
         @Override
         public void onReadFinish(Collection<UhfTag> tags) {
             Log.d(TAG, "onReadFinish:" + "=============");
-            Log.e("Thread======", Thread.currentThread().toString());
             List<String> epcs = Stream.of(tags).map(new Function<UhfTag, String>() {
                 @Override
                 public String apply(UhfTag uhfTags) {

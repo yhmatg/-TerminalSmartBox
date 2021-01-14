@@ -36,6 +36,8 @@ public class BaseApplication extends Application {
     public static String relevanceId;
     private List<UserInfo> users = new ArrayList<>();
     private UserInfo currentUer;
+    private int mixTime = 4;
+    private int mixTimeUnchange = 6;
 
     @Override
     protected void attachBaseContext(Context base) {
@@ -105,5 +107,21 @@ public class BaseApplication extends Application {
 
     public void setCurrentUer(UserInfo currentUer) {
         this.currentUer = currentUer;
+    }
+
+    public int getMixTime() {
+        return mixTime;
+    }
+
+    public void setMixTime(int mixTime) {
+        this.mixTime = mixTime;
+    }s
+
+    public int getMixTimeUnchange() {
+        return mixTimeUnchange;
+    }
+
+    public void setMixTimeUnchange(int mixTimeUnchange) {
+        this.mixTimeUnchange = mixTimeUnchange;
     }
 }
