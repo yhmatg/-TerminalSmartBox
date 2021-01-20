@@ -16,9 +16,9 @@ import android.widget.TextView;
 import android.widget.Toast;
 
 import com.android.terminalbox.R;
-import com.android.terminalbox.app.BaseApplication;
 import com.android.terminalbox.base.activity.BaseActivity;
 import com.android.terminalbox.base.presenter.AbstractPresenter;
+import com.android.terminalbox.core.DataManager;
 import com.android.terminalbox.core.bean.user.EpcFile;
 import com.android.terminalbox.core.room.BaseDb;
 import com.android.terminalbox.utils.StringUtils;
@@ -28,6 +28,7 @@ import com.android.terminalbox.utils.box.ExcelUtils;
 import java.io.File;
 import java.util.ArrayList;
 import java.util.List;
+import java.util.regex.Pattern;
 
 import butterknife.BindView;
 import butterknife.OnClick;
@@ -39,6 +40,11 @@ public class SettingActivity extends BaseActivity {
     EditText mixTime;
     @BindView(R.id.et_mix_unchange)
     EditText mixTimeUnchange;
+    @BindView(R.id.et_ip_one)
+    EditText ipOne;
+    @BindView(R.id.et_ip_two)
+    EditText ipTwo;
+    private String ipRegex = "((2(5[0-5]|[0-4]\\d))|[0-1]?\\d{1,2})(\\.((2(5[0-5]|[0-4]\\d))|[0-1]?\\d{1,2})){3}";
 
     @Override
     public AbstractPresenter initPresenter() {
@@ -60,7 +66,7 @@ public class SettingActivity extends BaseActivity {
 
     }
 
-    @OnClick({R.id.title_back, R.id.import_data, R.id.bt_mixtime, R.id.bt_mixtime_unchange})
+    @OnClick({R.id.title_back, R.id.import_data, R.id.bt_mixtime, R.id.bt_mixtime_unchange, R.id.bt_ip_one, R.id.bt_ip_two})
     public void onClick(View view) {
         switch (view.getId()) {
             case R.id.title_back:
@@ -75,7 +81,7 @@ public class SettingActivity extends BaseActivity {
             case R.id.bt_mixtime:
                 String s1 = mixTime.getText().toString();
                 if (!StringUtils.isEmpty(s1)) {
-                    BaseApplication.getInstance().setMixTime(Integer.valueOf(s1));
+                    DataManager.getInstance().saveMixTime(Integer.valueOf(s1));
                     ToastUtils.showShort("设置成功");
                 } else {
                     ToastUtils.showShort("请输入正确的数字");
@@ -84,10 +90,28 @@ public class SettingActivity extends BaseActivity {
             case R.id.bt_mixtime_unchange:
                 String s2 = mixTimeUnchange.getText().toString();
                 if (!StringUtils.isEmpty(s2)) {
-                    BaseApplication.getInstance().setMixTimeUnchange(Integer.valueOf(s2));
+                    DataManager.getInstance().saveMixTimeUnchange(Integer.valueOf(s2));
                     ToastUtils.showShort("设置成功");
                 } else {
                     ToastUtils.showShort("请输入正确的数字");
+                }
+                break;
+            case R.id.bt_ip_one:
+                String ipOneStr = ipOne.getText().toString();
+                if (!StringUtils.isEmpty(ipOneStr) && Pattern.matches(ipRegex, ipOneStr)) {
+                    DataManager.getInstance().saveIpOne(ipOneStr);
+                    ToastUtils.showShort("设置ip1成功,退出重启app生效");
+                } else {
+                    ToastUtils.showShort("请输入正确的ip地址");
+                }
+                break;
+            case R.id.bt_ip_two:
+                String ipTwoStr = ipTwo.getText().toString();
+                if (!StringUtils.isEmpty(ipTwoStr) && Pattern.matches(ipRegex, ipTwoStr)) {
+                    DataManager.getInstance().saveIpTwo(ipTwoStr);
+                    ToastUtils.showShort("设置ip2成功,退出重启app生效");
+                } else {
+                    ToastUtils.showShort("请输入正确的ip地址");
                 }
                 break;
         }

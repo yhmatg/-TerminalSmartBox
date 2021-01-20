@@ -19,9 +19,9 @@ import android.widget.RelativeLayout;
 import android.widget.TextView;
 
 import com.android.terminalbox.R;
-import com.android.terminalbox.app.BaseApplication;
 import com.android.terminalbox.base.activity.BaseActivity;
 import com.android.terminalbox.base.presenter.AbstractPresenter;
+import com.android.terminalbox.core.DataManager;
 import com.android.terminalbox.core.bean.user.EpcFile;
 import com.android.terminalbox.core.room.BaseDb;
 import com.android.terminalbox.utils.ToastUtils;
@@ -115,8 +115,8 @@ public class NewInvActivity extends BaseActivity {
         });
         initAnim();
         //开始盘点
-        int maxTime = BaseApplication.getInstance().getMixTime();
-        int maxUnchange = BaseApplication.getInstance().getMixTimeUnchange();
+        int maxTime = DataManager.getInstance().getMixTime();
+        int maxUnchange = DataManager.getInstance().getMixTimeUnchange();
         ToastUtils.showShort("maxTime===" + maxTime +"      maxUnchange===" + maxUnchange);
         roundImg.startAnimation(mRadarAnim);
         UhfManager.getInstance().confReadListener(uhfListener);

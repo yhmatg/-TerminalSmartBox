@@ -17,6 +17,7 @@ import com.android.terminalbox.R;
 import com.android.terminalbox.app.BaseApplication;
 import com.android.terminalbox.base.activity.BaseActivity;
 import com.android.terminalbox.contract.UnlockContract;
+import com.android.terminalbox.core.DataManager;
 import com.android.terminalbox.core.bean.BaseResponse;
 import com.android.terminalbox.core.bean.user.EpcFile;
 import com.android.terminalbox.core.bean.user.NewOrderBody;
@@ -126,8 +127,8 @@ public class NewUnlockActivity extends BaseActivity<UnlockPresenter> implements 
         mInRecycleView.setLayoutManager(new LinearLayoutManager(this));
         mInRecycleView.setAdapter(mInAdapter);
         //初始化rfid
-        int maxTime = BaseApplication.getInstance().getMixTime();
-        int maxUnchange = BaseApplication.getInstance().getMixTimeUnchange();
+        int maxTime = DataManager.getInstance().getMixTime();
+        int maxUnchange = DataManager.getInstance().getMixTimeUnchange();
         ToastUtils.showShort("maxTime===" + maxTime +"      maxUnchange===" + maxUnchange);
         UhfManager.getInstance().confReadListener(uhfListener);
         InventoryStrategy inventoryStrategy = new InventoryStrategy();

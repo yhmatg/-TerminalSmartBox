@@ -19,6 +19,7 @@ import com.android.terminalbox.app.BaseApplication;
 import com.android.terminalbox.base.activity.BaseActivity;
 import com.android.terminalbox.common.Constants;
 import com.android.terminalbox.contract.MainContract;
+import com.android.terminalbox.core.DataManager;
 import com.android.terminalbox.core.bean.BaseResponse;
 import com.android.terminalbox.core.bean.box.IotDevice;
 import com.android.terminalbox.core.bean.user.EpcFile;
@@ -171,15 +172,16 @@ public class MainActivity extends BaseActivity<MainPresenter> implements MainCon
         mqttConnect.start();
         weekText.setFormat24Hour("EEEE");
         timeText.setFormat24Hour("MM/dd HH:mm");
-        //EkeyManager.getInstance().config(this, "/dev/ttyXRUSB1", 9600, null, 2000, 1);
         EkeyManager.getInstance().init(this, "/dev/ttyXRUSB1", 9600).config( null, 2000, true,1, 2);
         EkeyManager.getInstance().setShowLog(true);
         Set<UhfReader> uhfReaders=new HashSet<>();
-
         int[] ants=new int[]{1,2,3,4};
-        UhfReader reader1=new UhfReader("172.16.68.97");
+        String ipOne = DataManager.getInstance().getIpOne();
+        String ipTwo = DataManager.getInstance().getIpTwo();
+        ToastUtils.showShort("ipOne===" + ipOne +"      ipTwo===" + ipTwo);
+        UhfReader reader1=new UhfReader(ipOne);
         reader1.setAnts(ants);
-        UhfReader reader2=new UhfReader("172.16.68.98");
+        UhfReader reader2=new UhfReader(ipTwo);
         reader2.setAnts(ants);
         uhfReaders.add(reader1);
         uhfReaders.add(reader2);
@@ -231,7 +233,7 @@ public class MainActivity extends BaseActivity<MainPresenter> implements MainCon
     @Override
     public void handleUpdateFeature(BaseResponse<List<UserInfo>> userInfos) {
         if(200000 == userInfos.getCode()){
-            ToastUtils.showShort("更新特征值成功");
+            //ToastUtils.showShort("更新特征值成功");
         }else {
             ToastUtils.showShort("更新特征值失败：" + userInfos.getMessage());
         }

@@ -1,4 +1,5 @@
 package com.android.terminalbox.core;
+
 import com.android.terminalbox.core.bean.user.NewOrderBody;
 import com.android.terminalbox.core.bean.user.OrderResponse;
 import com.android.terminalbox.core.bean.BaseResponse;
@@ -56,6 +57,46 @@ public class DataManager implements HttpHelper, PreferenceHelper {
     }
 
     @Override
+    public void saveMixTime(int mixTime) {
+        mPreferenceHelper.saveMixTime(mixTime);
+    }
+
+    @Override
+    public int getMixTime() {
+        return mPreferenceHelper.getMixTime();
+    }
+
+    @Override
+    public void saveMixTimeUnchange(int mixTimeUnchange) {
+        mPreferenceHelper.saveMixTimeUnchange(mixTimeUnchange);
+    }
+
+    @Override
+    public int getMixTimeUnchange() {
+        return mPreferenceHelper.getMixTimeUnchange();
+    }
+
+    @Override
+    public void saveIpOne(String ipOne) {
+        mPreferenceHelper.saveIpOne(ipOne);
+    }
+
+    @Override
+    public String getIpOne() {
+        return mPreferenceHelper.getIpOne();
+    }
+
+    @Override
+    public void saveIpTwo(String ipTwo) {
+        mPreferenceHelper.saveIpTwo(ipTwo);
+    }
+
+    @Override
+    public String getIpTwo() {
+        return mPreferenceHelper.getIpTwo();
+    }
+
+    @Override
     public void setToken(String token) {
         mPreferenceHelper.setToken(token);
     }
@@ -86,8 +127,8 @@ public class DataManager implements HttpHelper, PreferenceHelper {
     }
 
     @Override
-    public Observable<BaseResponse<OrderResponse>> newOrder(String devId, NewOrderBody newOrderBody,int userId) {
-        return mHttpHelper.newOrder(devId, newOrderBody,userId);
+    public Observable<BaseResponse<OrderResponse>> newOrder(String devId, NewOrderBody newOrderBody, int userId) {
+        return mHttpHelper.newOrder(devId, newOrderBody, userId);
     }
 
 

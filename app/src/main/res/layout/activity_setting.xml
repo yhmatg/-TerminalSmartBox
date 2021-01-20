@@ -61,4 +61,50 @@
         android:background="@color/titele_color"
         android:text="确定"
         android:textColor="@color/white" />
+
+    <EditText
+        android:id="@+id/et_ip_one"
+        android:layout_width="@dimen/dp_190"
+        android:layout_height="@dimen/dp_40"
+        android:layout_below="@+id/et_mix_unchange"
+        android:layout_marginStart="@dimen/dp_20"
+        android:layout_marginTop="@dimen/dp_20"
+        android:gravity="center"
+        android:hint="读写器ip"
+        android:textSize="@dimen/sp_16" />
+
+    <Button
+        android:id="@+id/bt_ip_one"
+        android:layout_width="wrap_content"
+        android:layout_height="wrap_content"
+        android:layout_alignTop="@+id/et_ip_one"
+        android:layout_alignBottom="@+id/et_ip_one"
+        android:layout_marginStart="@dimen/dp_20"
+        android:layout_toEndOf="@+id/et_ip_one"
+        android:background="@color/titele_color"
+        android:text="确定"
+        android:textColor="@color/white" />
+
+    <EditText
+        android:id="@+id/et_ip_two"
+        android:layout_width="@dimen/dp_190"
+        android:layout_height="@dimen/dp_40"
+        android:layout_below="@+id/et_ip_one"
+        android:layout_marginStart="@dimen/dp_20"
+        android:layout_marginTop="@dimen/dp_20"
+        android:gravity="center"
+        android:hint="读写器ip"
+        android:textSize="@dimen/sp_16" />
+
+    <Button
+        android:id="@+id/bt_ip_two"
+        android:layout_width="wrap_content"
+        android:layout_height="wrap_content"
+        android:layout_alignTop="@+id/et_ip_two"
+        android:layout_alignBottom="@+id/et_ip_two"
+        android:layout_marginStart="@dimen/dp_20"
+        android:layout_toEndOf="@+id/et_ip_two"
+        android:background="@color/titele_color"
+        android:text="确定"
+        android:textColor="@color/white" />
 </RelativeLayout>
