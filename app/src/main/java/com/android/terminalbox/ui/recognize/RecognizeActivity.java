@@ -292,12 +292,6 @@ public class RecognizeActivity extends BaseActivity<RecognizePresenter> implemen
         FaceServer.getInstance().init(this);
         //在布局结束后才做初始化操作
         previewView.getViewTreeObserver().addOnGlobalLayoutListener(this);
-        new Handler().postDelayed(new Runnable() {
-            @Override
-            public void run() {
-                finish();
-            }
-        }, 30000);
         outerImg.startAnimation(mRadarAnim);
     }
 
@@ -773,5 +767,13 @@ public class RecognizeActivity extends BaseActivity<RecognizePresenter> implemen
         }
     }
 
-
+    @Override
+    public void goHomeActivity() {
+        new Handler().postDelayed(new Runnable() {
+            @Override
+            public void run() {
+                finish();
+            }
+        }, 5000);
+    }
 }

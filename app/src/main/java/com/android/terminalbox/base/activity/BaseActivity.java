@@ -4,11 +4,13 @@ import android.content.DialogInterface;
 import android.content.Intent;
 import android.content.pm.PackageManager;
 import android.os.Bundle;
+import android.os.Handler;
 import android.support.annotation.Nullable;
 import android.support.v4.content.ContextCompat;
 import android.support.v7.app.AppCompatDelegate;
 import android.view.KeyEvent;
 import com.afollestad.materialdialogs.MaterialDialog;
+import com.android.terminalbox.MainActivity;
 import com.android.terminalbox.R;
 import com.android.terminalbox.base.presenter.AbstractPresenter;
 import com.android.terminalbox.base.view.AbstractView;
@@ -34,6 +36,7 @@ public abstract class BaseActivity<T extends AbstractPresenter> extends Abstract
         mPresenter = initPresenter();
         onViewCreated();
         initEventAndData();
+        goHomeActivity();
     }
 
     public abstract T initPresenter();
@@ -188,4 +191,14 @@ public abstract class BaseActivity<T extends AbstractPresenter> extends Abstract
     public void afterRequestPermission(int requestCode, boolean isAllGranted){
 
      };
+
+    public void goHomeActivity(){
+        new Handler().postDelayed(new Runnable() {
+            @Override
+            public void run() {
+                startActivity(new Intent(BaseActivity.this, MainActivity.class));
+                finish();
+            }
+        }, 300000);
+    }
 }

@@ -115,7 +115,7 @@ public class BaseApplication extends Application {
 
     public void setMixTime(int mixTime) {
         this.mixTime = mixTime;
-    }s
+    }
 
     public int getMixTimeUnchange() {
         return mixTimeUnchange;
