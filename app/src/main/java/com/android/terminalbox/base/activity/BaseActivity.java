@@ -4,11 +4,13 @@ import android.content.DialogInterface;
 import android.content.Intent;
 import android.content.pm.PackageManager;
 import android.os.Bundle;
-import android.os.Handler;
+import android.os.CountDownTimer;
 import android.support.annotation.Nullable;
 import android.support.v4.content.ContextCompat;
 import android.support.v7.app.AppCompatDelegate;
 import android.view.KeyEvent;
+import android.view.MotionEvent;
+
 import com.afollestad.materialdialogs.MaterialDialog;
 import com.android.terminalbox.MainActivity;
 import com.android.terminalbox.R;
@@ -29,6 +31,8 @@ public abstract class BaseActivity<T extends AbstractPresenter> extends Abstract
     protected T mPresenter;
 
     private MaterialDialog dialog;
+    private CountDownTimer countDownTimer;
+    private boolean mNeedGoHome = true;
 
     @Override
     protected void onCreate(@Nullable Bundle savedInstanceState) {
@@ -36,8 +40,24 @@ public abstract class BaseActivity<T extends AbstractPresenter> extends Abstract
         mPresenter = initPresenter();
         onViewCreated();
         initEventAndData();
-        goHomeActivity();
+        initCountDownTimer();
     }
+
+    private void initCountDownTimer() {
+        countDownTimer = new CountDownTimer(300000, 1000) {
+            @Override
+            public void onTick(long millisUntilFinished) {
+
+            }
+
+            @Override
+            public void onFinish() {
+                startActivity(new Intent(BaseActivity.this, MainActivity.class));
+                finish();
+            }
+        };
+    }
+
 
     public abstract T initPresenter();
 
@@ -164,12 +184,12 @@ public abstract class BaseActivity<T extends AbstractPresenter> extends Abstract
     protected abstract void initEventAndData();
 
     @Override
-    public void startLoginActivity(){
+    public void startLoginActivity() {
     }
 
     public void JumpToActivity(Class activityClass, Bundle bundle) {
         Intent intent = new Intent(this, activityClass);
-        intent.putExtra("bundle",bundle);
+        intent.putExtra("bundle", bundle);
         startActivity(intent);
     }
 
@@ -188,17 +208,47 @@ public abstract class BaseActivity<T extends AbstractPresenter> extends Abstract
         return allGranted;
     }
 
-    public void afterRequestPermission(int requestCode, boolean isAllGranted){
+    public void afterRequestPermission(int requestCode, boolean isAllGranted) {
 
-     };
+    }
 
-    public void goHomeActivity(){
-        new Handler().postDelayed(new Runnable() {
-            @Override
-            public void run() {
-                startActivity(new Intent(BaseActivity.this, MainActivity.class));
-                finish();
+    ;
+
+    public void isNeedGoHomeActivity(boolean isNeedGoHome) {
+        mNeedGoHome = isNeedGoHome;
+    }
+
+    @Override
+    protected void onResume() {
+        super.onResume();
+        if(mNeedGoHome){
+            countDownTimer.start();
+        }
+    }
+
+    @Override
+    protected void onPause() {
+        super.onPause();
+        if(mNeedGoHome){
+            countDownTimer.cancel();
+        }
+
+    }
+
+    @Override
+    public boolean dispatchTouchEvent(MotionEvent ev) {
+        if(mNeedGoHome){
+            switch (ev.getAction()) {
+                //获取触摸动作，如果ACTION_UP，计时开始。
+                case MotionEvent.ACTION_UP:
+                    countDownTimer.start();
+                    break;
+                //否则其他动作计时取消
+                default:
+                    countDownTimer.cancel();
+                    break;
             }
-        }, 300000);
+        }
+        return super.dispatchTouchEvent(ev);
     }
 }

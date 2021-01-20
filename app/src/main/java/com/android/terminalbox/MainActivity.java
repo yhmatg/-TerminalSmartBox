@@ -160,6 +160,7 @@ public class MainActivity extends BaseActivity<MainPresenter> implements MainCon
 
     @Override
     protected void initEventAndData() {
+        isNeedGoHomeActivity(false);
         activeEngine();
         frEngine = new FaceEngine();
         frEngine.init(this, DetectMode.ASF_DETECT_MODE_IMAGE, ASF_OP_0_ONLY,
@@ -457,10 +458,5 @@ public class MainActivity extends BaseActivity<MainPresenter> implements MainCon
             mHits = null;	//这里说明一下，我们在进来以后需要还原状态，否则如果点击过快，第六次，第七次 都会不断进来触发该效果。重新开始计数即可
             JumpToActivity(SettingActivity.class);
         }
-    }
-
-    @Override
-    public void goHomeActivity() {
-
     }
 }

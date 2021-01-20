@@ -6,7 +6,6 @@ import android.content.pm.ActivityInfo;
 import android.graphics.Point;
 import android.hardware.Camera;
 import android.os.Build;
-import android.os.Handler;
 import android.support.v4.app.ActivityCompat;
 import android.util.DisplayMetrics;
 import android.util.Log;
@@ -278,6 +277,7 @@ public class RecognizeActivity extends BaseActivity<RecognizePresenter> implemen
     @Override
     protected void initEventAndData() {
         //保持亮屏
+        isNeedGoHomeActivity(false);
         getWindow().addFlags(WindowManager.LayoutParams.FLAG_KEEP_SCREEN_ON);
         initAnim();
         if (Build.VERSION.SDK_INT >= Build.VERSION_CODES.KITKAT) {
@@ -765,15 +765,5 @@ public class RecognizeActivity extends BaseActivity<RecognizePresenter> implemen
                 finish();
                 break;
         }
-    }
-
-    @Override
-    public void goHomeActivity() {
-        new Handler().postDelayed(new Runnable() {
-            @Override
-            public void run() {
-                finish();
-            }
-        }, 5000);
     }
 }
