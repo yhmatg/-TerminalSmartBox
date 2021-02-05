@@ -167,6 +167,9 @@ public class NewUnlockActivity extends BaseActivity<UnlockPresenter> implements 
                             break;
                         case OPENED_TO_CLOSED:
                             Log.e(TAG, "=========ekey close============: " + Thread.currentThread().toString());
+                            if(openLayout == null || closeLayout == null || inOutLayout == null){
+                                return;
+                            }
                             openLayout.setVisibility(View.GONE);
                             closeLayout.setVisibility(View.VISIBLE);
                             inOutLayout.setVisibility(View.GONE);
