@@ -83,4 +83,5 @@ dependencies {
     implementation 'org.eclipse.paho:org.eclipse.paho.android.service:1.1.1'
     implementation 'net.sourceforge.jexcelapi:jxl:2.6.12'
     //implementation 'com.esim.rylai:smartbox-release:0.0.4'
+    implementation 'org.apache.commons:commons-collections4:4.4'
 }

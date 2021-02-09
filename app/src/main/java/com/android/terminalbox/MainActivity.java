@@ -12,7 +12,6 @@ import android.support.v4.app.ActivityCompat;
 import android.util.Base64;
 import android.util.Log;
 import android.view.View;
-import android.widget.TextClock;
 import android.widget.TextView;
 
 import com.android.terminalbox.app.BaseApplication;
@@ -30,6 +29,11 @@ import com.android.terminalbox.core.room.BaseDb;
 import com.android.terminalbox.mqtt.MqttServer;
 import com.android.terminalbox.mqtt.RylaiMqttCallback;
 import com.android.terminalbox.presenter.MainPresenter;
+import com.android.terminalbox.rs485.RS485Manager;
+import com.android.terminalbox.rs485.humiture.HumiturePackageCmd;
+import com.android.terminalbox.rs485.humiture.HumitureReadListener;
+import com.android.terminalbox.rs485.humiture.HumitureRs485PackageHandleFilter;
+import com.android.terminalbox.rs485.humiture.HumitureType;
 import com.android.terminalbox.ui.SettingActivity;
 import com.android.terminalbox.ui.inventory.NewInvActivity;
 import com.android.terminalbox.ui.recognize.RecognizeActivity;
@@ -47,7 +51,6 @@ import com.arcsoft.imageutil.ArcSoftImageFormat;
 import com.arcsoft.imageutil.ArcSoftImageUtil;
 import com.arcsoft.imageutil.ArcSoftImageUtilError;
 import com.bumptech.glide.Glide;
-import com.esim.rylai.smartbox.ekey.EkeyManager;
 import com.esim.rylai.smartbox.uhf.UhfManager;
 import com.esim.rylai.smartbox.uhf.UhfReader;
 import com.google.gson.Gson;
@@ -78,12 +81,12 @@ import static com.arcsoft.face.enums.DetectFaceOrientPriority.ASF_OP_0_ONLY;
 
 public class MainActivity extends BaseActivity<MainPresenter> implements MainContract.View {
     private static String TAG = "MainActivity";
-    @BindView(R.id.week_text)
-    TextClock weekText;
-    @BindView(R.id.time_text)
-    TextClock timeText;
     @BindView(R.id.file_number)
     TextView fileNumber;
+    @BindView(R.id.tv_temp_num)
+    TextView temperatureNum;
+    @BindView(R.id.tv_hum_num)
+    TextView humidityNum;
     private List<UserInfo> users = new ArrayList<>();
     /**
      * 用于特征提取的引擎
@@ -128,7 +131,7 @@ public class MainActivity extends BaseActivity<MainPresenter> implements MainCon
                 int userId = orderBody.getInstData().getUserId();
                 List<UserInfo> users = BaseApplication.getInstance().getUsers();
                 for (UserInfo user : users) {
-                    if(userId == user.getId()){
+                    if (userId == user.getId()) {
                         BaseApplication.getInstance().setCurrentUer(user);
                         break;
                     }
@@ -143,6 +146,23 @@ public class MainActivity extends BaseActivity<MainPresenter> implements MainCon
         }
 
     };
+    private RS485Manager rs485Manager;
+    String strSerialPort = "/dev/ttyS4";
+    int intHumiAddr = 1;
+    private final HumitureReadListener humitureReadListener = (ekeyAddr, humitureType, value) -> updateHumiUI(humitureType, value);
+
+    private void updateHumiUI(HumitureType humitureType, int value) {
+        runOnUiThread(() -> {
+            switch (humitureType) {
+                case HUMIDITY:
+                    humidityNum.setText(String.valueOf(value));
+                    break;
+                case TEMPRATURE:
+                    temperatureNum.setText(String.valueOf(value));
+                    break;
+            }
+        });
+    }
 
     @Override
     protected int getLayoutId() {
@@ -170,18 +190,21 @@ public class MainActivity extends BaseActivity<MainPresenter> implements MainCon
         //初始化mqtt
         MqttConnect mqttConnect = new MqttConnect();
         mqttConnect.start();
-        weekText.setFormat24Hour("EEEE");
-        timeText.setFormat24Hour("MM/dd HH:mm");
-        EkeyManager.getInstance().init(this, "/dev/ttyXRUSB1", 9600).config( null, 2000, true,1, 2);
-        EkeyManager.getInstance().setShowLog(true);
-        Set<UhfReader> uhfReaders=new HashSet<>();
-        int[] ants=new int[]{1,2,3,4};
+        //初始化温度，湿度，锁
+        //EkeyManager.getInstance().init(this, "/dev/ttyXRUSB1", 9600).config( null, 2000, true,1, 2);
+        //EkeyManager.getInstance().setShowLog(true);
+        rs485Manager = new RS485Manager.Builder().context(this).baudrate(9600).serialPort(strSerialPort).build();
+        BaseApplication.getInstance().setRs485Manager(rs485Manager);
+        HumitureRs485PackageHandleFilter humitureRs485PackageHandleFilter = new HumitureRs485PackageHandleFilter.Builder().humitureReadListener(humitureReadListener).build();
+        rs485Manager.addFilters(humitureRs485PackageHandleFilter);
+        Set<UhfReader> uhfReaders = new HashSet<>();
+        int[] ants = new int[]{1, 2, 3, 4};
         String ipOne = DataManager.getInstance().getIpOne();
         String ipTwo = DataManager.getInstance().getIpTwo();
-        ToastUtils.showShort("ipOne===" + ipOne +"      ipTwo===" + ipTwo);
-        UhfReader reader1=new UhfReader(ipOne);
+        ToastUtils.showShort("ipOne===" + ipOne + "      ipTwo===" + ipTwo);
+        UhfReader reader1 = new UhfReader(ipOne);
         reader1.setAnts(ants);
-        UhfReader reader2=new UhfReader(ipTwo);
+        UhfReader reader2 = new UhfReader(ipTwo);
         reader2.setAnts(ants);
         uhfReaders.add(reader1);
         uhfReaders.add(reader2);
@@ -196,9 +219,18 @@ public class MainActivity extends BaseActivity<MainPresenter> implements MainCon
         super.onResume();
         List<EpcFile> allEpcFile = BaseDb.getInstance().getEpcFileDao().findEpcFileByBox("box002");
         fileNumber.setText(String.valueOf(allEpcFile.size()));
+        rs485Manager.send(HumiturePackageCmd.packReadHumidity((byte) intHumiAddr));
+        rs485Manager.send(HumiturePackageCmd.packReadTemperature((byte) intHumiAddr));
     }
 
-    @OnClick({R.id.btn_inv, R.id.btn_access, R.id.bt_change_org,R.id.iv_title})
+    @Override
+    protected void onPause() {
+        super.onPause();
+        rs485Manager.stopAuto(HumiturePackageCmd.packReadHumidity((byte) intHumiAddr));
+        rs485Manager.stopAuto(HumiturePackageCmd.packReadTemperature((byte) intHumiAddr));
+    }
+
+    @OnClick({R.id.btn_inv, R.id.btn_access, R.id.bt_change_org, R.id.iv_title})
     public void onClick(View view) {
         Bundle bundle = new Bundle();
         switch (view.getId()) {
@@ -217,7 +249,7 @@ public class MainActivity extends BaseActivity<MainPresenter> implements MainCon
                 JumpToActivity(NewUnlockActivity.class);*/
                 break;
             case R.id.iv_title:
-               intoSettings();
+                intoSettings();
                 break;
         }
     }
@@ -232,9 +264,9 @@ public class MainActivity extends BaseActivity<MainPresenter> implements MainCon
 
     @Override
     public void handleUpdateFeature(BaseResponse<List<UserInfo>> userInfos) {
-        if(200000 == userInfos.getCode()){
+        if (200000 == userInfos.getCode()) {
             //ToastUtils.showShort("更新特征值成功");
-        }else {
+        } else {
             ToastUtils.showShort("更新特征值失败：" + userInfos.getMessage());
         }
 
@@ -249,7 +281,7 @@ public class MainActivity extends BaseActivity<MainPresenter> implements MainCon
                 try {
                     //要在子线程中使用，否则会报错
                     for (UserInfo userInfo : userInfos) {
-                        if("0".equals(userInfo.getFaceStatus())){
+                        if ("0".equals(userInfo.getFaceStatus())) {
                             processImage(userInfo);
                             FaceFeatureBody faceFeatureBody = new FaceFeatureBody();
                             faceFeatureBody.setFaceFeature(userInfo.getFaceFeature());
@@ -344,6 +376,7 @@ public class MainActivity extends BaseActivity<MainPresenter> implements MainCon
 
     };
     private static final int ACTION_REQUEST_PERMISSIONS = 0x001;
+
     public void activeEngine() {
         if (!checkPermissions(NEEDED_PERMISSIONS)) {
             ActivityCompat.requestPermissions(this, NEEDED_PERMISSIONS, ACTION_REQUEST_PERMISSIONS);
@@ -410,7 +443,7 @@ public class MainActivity extends BaseActivity<MainPresenter> implements MainCon
                 iotDevice.setMqttPort("20008");
                 iotDevice.setPordId("15aa68f3183311ebb7260242ac120004");
                 iotDevice.setDevVerify("uniqueCode002");
-                iotDevice.setDevId(iotDevice.getPordId()+"_"+iotDevice.getDevVerify());
+                iotDevice.setDevId(iotDevice.getPordId() + "_" + iotDevice.getDevVerify());
                 iotDevice.setDevPassword("smartbox");
             }
             MqttServer.getInstance().init(MainActivity.this, iotDevice, rylaiMqttCallback);
@@ -418,10 +451,10 @@ public class MainActivity extends BaseActivity<MainPresenter> implements MainCon
     }
     //yhm end 1105
 
-    public String getWeekDay(){
+    public String getWeekDay() {
         int weekDay = Calendar.getInstance().get(Calendar.DAY_OF_WEEK);
         String day = "";
-        switch (weekDay){
+        switch (weekDay) {
             case 1:
                 day = "Sunday";
                 break;
@@ -448,7 +481,7 @@ public class MainActivity extends BaseActivity<MainPresenter> implements MainCon
     }
 
     // 需要点击几次 就设置几
-    long [] mHits = null;
+    long[] mHits = null;
 
     public void intoSettings() {
         if (mHits == null) {
@@ -457,7 +490,7 @@ public class MainActivity extends BaseActivity<MainPresenter> implements MainCon
         System.arraycopy(mHits, 1, mHits, 0, mHits.length - 1);//把从第二位至最后一位之间的数字复制到第一位至倒数第一位
         mHits[mHits.length - 1] = SystemClock.uptimeMillis();//记录一个时间
         if (SystemClock.uptimeMillis() - mHits[0] <= 1000) {//一秒内连续点击。
-            mHits = null;	//这里说明一下，我们在进来以后需要还原状态，否则如果点击过快，第六次，第七次 都会不断进来触发该效果。重新开始计数即可
+            mHits = null;    //这里说明一下，我们在进来以后需要还原状态，否则如果点击过快，第六次，第七次 都会不断进来触发该效果。重新开始计数即可
             JumpToActivity(SettingActivity.class);
         }
     }

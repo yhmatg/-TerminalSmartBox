@@ -28,6 +28,10 @@ import com.android.terminalbox.mqtt.MqttServer;
 import com.android.terminalbox.mqtt.own.Props;
 import com.android.terminalbox.mqtt.own.ResultProp;
 import com.android.terminalbox.presenter.UnlockPresenter;
+import com.android.terminalbox.rs485.RS485Manager;
+import com.android.terminalbox.rs485.ekey.EkeyRs485PackageHandleFilter;
+import com.android.terminalbox.rs485.ekey.EkeyStatusChange;
+import com.android.terminalbox.rs485.ekey.EkeyStatusListener;
 import com.android.terminalbox.uhf.EsimUhfHelper;
 import com.android.terminalbox.ui.inventory.FileBeanAdapter;
 import com.android.terminalbox.utils.StringUtils;
@@ -35,9 +39,6 @@ import com.android.terminalbox.utils.ToastUtils;
 import com.annimon.stream.Collectors;
 import com.annimon.stream.Stream;
 import com.annimon.stream.function.Function;
-import com.esim.rylai.smartbox.ekey.EkeyFailStatusEnum;
-import com.esim.rylai.smartbox.ekey.EkeyManager;
-import com.esim.rylai.smartbox.ekey.EkeyStatusChange;
 import com.esim.rylai.smartbox.uhf.InventoryStrategy;
 import com.esim.rylai.smartbox.uhf.ReaderResult;
 import com.esim.rylai.smartbox.uhf.UhfManager;
@@ -85,6 +86,41 @@ public class NewUnlockActivity extends BaseActivity<UnlockPresenter> implements 
     private Animation mRadarAnim;
     private String orderUuid;
     private UserInfo currentUer;
+    private RS485Manager rs485Manager;
+    private EkeyStatusListener ekeyStatusListener = (ekeyAddr, ekeyStatusChange) ->updateEkeyUI(ekeyAddr,ekeyStatusChange);
+
+    private void updateEkeyUI(int ekeyAddr, EkeyStatusChange ekeyStatusChange) {
+        runOnUiThread(() -> {
+            Log.d(TAG, "onEkeyStatusChange: " + "Ekey Addr：" + ekeyAddr + "     StatusChange:" + ekeyStatusChange.getDisp());
+            mHandler.post(new Runnable() {
+                @Override
+                public void run() {
+                    switch (ekeyStatusChange) {
+                        case OPENED:
+                            Log.e(TAG, "=========ekey open============: " + Thread.currentThread().toString());
+                            if (!StringUtils.isEmpty(orderUuid)) {
+                                openReport(orderUuid);
+                            }
+                            break;
+                        case CLOSED:
+                            Log.e(TAG, "=========ekey close============: " + Thread.currentThread().toString());
+                            if(openLayout == null || closeLayout == null || inOutLayout == null){
+                                return;
+                            }
+                            openLayout.setVisibility(View.GONE);
+                            closeLayout.setVisibility(View.VISIBLE);
+                            inOutLayout.setVisibility(View.GONE);
+                            roundImg.startAnimation(mRadarAnim);
+                            if (!StringUtils.isEmpty(orderUuid)) {
+                                closeReport(orderUuid);
+                            }
+                            UhfManager.getInstance().startReadTags();
+                            break;
+                    }
+                }
+            });
+        });
+    }
 
     private void initAnim() {
         mRadarAnim = new RotateAnimation(0f, 360f, Animation.RELATIVE_TO_SELF, 0.5f, Animation.RELATIVE_TO_SELF, 0.5f);
@@ -102,6 +138,9 @@ public class NewUnlockActivity extends BaseActivity<UnlockPresenter> implements 
 
     @Override
     protected void initEventAndData() {
+        EkeyRs485PackageHandleFilter ekeyRs485PackageHandleFilter=new EkeyRs485PackageHandleFilter.Builder().ekeyStatusListener(ekeyStatusListener).build();
+        rs485Manager = BaseApplication.getInstance().getRs485Manager();
+        rs485Manager.addFilters(ekeyRs485PackageHandleFilter);
         currentUer = BaseApplication.getInstance().getCurrentUer();
         openLayout.setVisibility(View.VISIBLE);
         closeLayout.setVisibility(View.GONE);
@@ -135,7 +174,6 @@ public class NewUnlockActivity extends BaseActivity<UnlockPresenter> implements 
         inventoryStrategy.setMaxTimesOfInv(maxTime);
         inventoryStrategy.setMaxTimesOfUnChange(maxUnchange);
         UhfManager.getInstance().confInventoryStrategy(inventoryStrategy);
-        EkeyManager.getInstance().openEkey(1,ekeyListener);
         initAnim();
     }
 
@@ -148,47 +186,6 @@ public class NewUnlockActivity extends BaseActivity<UnlockPresenter> implements 
     protected void initToolbar() {
 
     }
-
-    private final EkeyManager.EkeyStatusListener ekeyListener = new EkeyManager.EkeyStatusListener() {
-        @Override
-        public void onEkeyStatusChange(int ekeyAddr, EkeyStatusChange ekeyStatusChange) {
-            Log.d(TAG, "onEkeyStatusChange: " + "Ekey Addr：" + ekeyAddr + "     StatusChange:" + ekeyStatusChange.getDisp());
-            mHandler.post(new Runnable() {
-                @Override
-                public void run() {
-                    switch (ekeyStatusChange) {
-                        case CLOSED_TO_OPENED:
-                            Log.e(TAG, "=========ekey open============: " + Thread.currentThread().toString());
-                            if (!StringUtils.isEmpty(orderUuid)) {
-                                openReport(orderUuid);
-                            }
-                            break;
-                        case TO_CONNECTED:
-                            break;
-                        case OPENED_TO_CLOSED:
-                            Log.e(TAG, "=========ekey close============: " + Thread.currentThread().toString());
-                            if(openLayout == null || closeLayout == null || inOutLayout == null){
-                                return;
-                            }
-                            openLayout.setVisibility(View.GONE);
-                            closeLayout.setVisibility(View.VISIBLE);
-                            inOutLayout.setVisibility(View.GONE);
-                            roundImg.startAnimation(mRadarAnim);
-                            if (!StringUtils.isEmpty(orderUuid)) {
-                                closeReport(orderUuid);
-                            }
-                            UhfManager.getInstance().startReadTags();
-                            break;
-                    }
-                }
-            });
-        }
-
-        @Override
-        public void onFail(int ekeyAddr, EkeyFailStatusEnum ekeyFailStatusEnum) {
-
-        }
-    };
 
     private final UhfManager.EsimUhfReadListener uhfListener = new UhfManager.EsimUhfReadListener() {
         private long startTime = 0;

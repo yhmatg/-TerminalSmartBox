@@ -7,6 +7,7 @@ import android.support.multidex.MultiDex;
 import com.android.terminalbox.BuildConfig;
 import com.android.terminalbox.R;
 import com.android.terminalbox.core.bean.user.UserInfo;
+import com.android.terminalbox.rs485.RS485Manager;
 import com.android.terminalbox.utils.Utils;
 import com.android.terminalbox.utils.logger.MyCrashListener;
 import com.android.terminalbox.utils.logger.TxtFormatStrategy;
@@ -36,8 +37,7 @@ public class BaseApplication extends Application {
     public static String relevanceId;
     private List<UserInfo> users = new ArrayList<>();
     private UserInfo currentUer;
-    private int mixTime = 4;
-    private int mixTimeUnchange = 6;
+    private RS485Manager rs485Manager;
 
     @Override
     protected void attachBaseContext(Context base) {
@@ -109,19 +109,11 @@ public class BaseApplication extends Application {
         this.currentUer = currentUer;
     }
 
-    public int getMixTime() {
-        return mixTime;
+    public RS485Manager getRs485Manager() {
+        return rs485Manager;
     }
 
-    public void setMixTime(int mixTime) {
-        this.mixTime = mixTime;
-    }
-
-    public int getMixTimeUnchange() {
-        return mixTimeUnchange;
-    }
-
-    public void setMixTimeUnchange(int mixTimeUnchange) {
-        this.mixTimeUnchange = mixTimeUnchange;
+    public void setRs485Manager(RS485Manager rs485Manager) {
+        this.rs485Manager = rs485Manager;
     }
 }

@@ -21,29 +21,67 @@
         android:layout_marginTop="10dp"
         android:src="@drawable/title_icon" />
 
-    <TextClock
-        android:id="@+id/week_text"
+    <TextView
+        android:id="@+id/tv_temperature"
         android:layout_width="wrap_content"
         android:layout_height="wrap_content"
         android:layout_below="@+id/iv_title"
-        android:layout_marginStart="@dimen/dp_35"
-        android:layout_marginTop="@dimen/dp_45"
-        android:text="Monday"
-        android:textColor="#10C7F6"
-        android:format24Hour="EEEE"
-        android:textSize="@dimen/sp_28" />
+        android:layout_marginStart="@dimen/dp_40"
+        android:layout_marginTop="@dimen/dp_17"
+        android:text="@string/temperature_str"
+        android:textColor="#ff10c7f6"
+        android:textSize="@dimen/sp_10" />
 
-    <TextClock
-        android:id="@+id/time_text"
+    <TextView
+        android:id="@+id/tv_temp_num"
         android:layout_width="wrap_content"
         android:layout_height="wrap_content"
-        android:layout_below="@+id/week_text"
-        android:layout_marginStart="@dimen/dp_35"
-        android:layout_marginTop="@dimen/dp_8"
-        android:text="10/26 09:00"
-        android:format24Hour="EEEEE"
+        android:layout_below="@+id/tv_temperature"
+        android:layout_alignStart="@+id/tv_temperature"
+        android:text="23.0"
         android:textColor="@color/white"
-        android:textSize="@dimen/sp_19" />
+        android:textSize="@dimen/sp_30" />
+
+    <TextView
+        android:id="@+id/tv_temp_tag"
+        android:layout_width="wrap_content"
+        android:layout_height="wrap_content"
+        android:layout_alignTop="@+id/tv_temp_num"
+        android:layout_marginTop="@dimen/dp_6"
+        android:layout_toEndOf="@+id/tv_temp_num"
+        android:text="℃"
+        android:textColor="@color/white" />
+
+    <TextView
+        android:id="@+id/tv_humidity"
+        android:layout_width="wrap_content"
+        android:layout_height="wrap_content"
+        android:layout_alignTop="@+id/tv_temperature"
+        android:layout_marginStart="@dimen/dp_40"
+        android:layout_toEndOf="@+id/tv_temp_tag"
+        android:text="相对湿度"
+        android:textColor="#ff10c7f6"
+        android:textSize="@dimen/sp_10" />
+
+    <TextView
+        android:id="@+id/tv_hum_num"
+        android:layout_width="wrap_content"
+        android:layout_height="wrap_content"
+        android:layout_below="@+id/tv_temperature"
+        android:layout_alignStart="@+id/tv_humidity"
+        android:text="36.2"
+        android:textColor="@color/white"
+        android:textSize="@dimen/sp_30" />
+
+    <TextView
+        android:layout_width="wrap_content"
+        android:layout_height="wrap_content"
+        android:layout_alignTop="@+id/tv_temp_num"
+        android:layout_marginTop="@dimen/dp_6"
+        android:layout_toEndOf="@+id/tv_hum_num"
+        android:text="%"
+        android:textColor="@color/white" />
+
 
     <Button
         android:id="@+id/btn_access"
@@ -72,9 +110,9 @@
         android:layout_width="@dimen/dp_158"
         android:layout_height="@dimen/dp_75"
         android:layout_below="@+id/btn_access"
-        android:layout_marginLeft="@dimen/dp_20"
-        android:layout_marginRight="16dp"
+        android:layout_marginStart="@dimen/dp_20"
         android:layout_marginTop="@dimen/dp_100"
+        android:layout_marginEnd="16dp"
         android:background="@drawable/btn_selector"
         android:text="换方向"
         android:textColor="@android:color/white"

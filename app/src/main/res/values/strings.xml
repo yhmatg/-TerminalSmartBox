@@ -105,6 +105,7 @@
     <string name="name">Name：</string>
     <string name="face_register">Save</string>
     <string name="clear_register">Clear</string>
-    <string name="md_choose_label" />
+    <string name="md_choose_label">Choose</string>
+    <string name="temperature_str">温度</string>
 
 </resources>
