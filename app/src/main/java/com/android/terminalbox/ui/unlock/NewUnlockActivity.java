@@ -87,38 +87,40 @@ public class NewUnlockActivity extends BaseActivity<UnlockPresenter> implements 
     private String orderUuid;
     private UserInfo currentUer;
     private RS485Manager rs485Manager;
-    private EkeyStatusListener ekeyStatusListener = (ekeyAddr, ekeyStatusChange) ->updateEkeyUI(ekeyAddr,ekeyStatusChange);
+    private EkeyStatusListener ekeyStatusListener = (ekeyAddr, ekeyStatusChange) -> updateEkeyUI(ekeyAddr, ekeyStatusChange);
+    private boolean isDestroy;
 
     private void updateEkeyUI(int ekeyAddr, EkeyStatusChange ekeyStatusChange) {
-        runOnUiThread(() -> {
-            Log.d(TAG, "onEkeyStatusChange: " + "Ekey Addr：" + ekeyAddr + "     StatusChange:" + ekeyStatusChange.getDisp());
-            mHandler.post(new Runnable() {
-                @Override
-                public void run() {
-                    switch (ekeyStatusChange) {
-                        case OPENED:
-                            Log.e(TAG, "=========ekey open============: " + Thread.currentThread().toString());
-                            if (!StringUtils.isEmpty(orderUuid)) {
-                                openReport(orderUuid);
-                            }
-                            break;
-                        case CLOSED:
-                            Log.e(TAG, "=========ekey close============: " + Thread.currentThread().toString());
-                            if(openLayout == null || closeLayout == null || inOutLayout == null){
-                                return;
-                            }
-                            openLayout.setVisibility(View.GONE);
-                            closeLayout.setVisibility(View.VISIBLE);
-                            inOutLayout.setVisibility(View.GONE);
-                            roundImg.startAnimation(mRadarAnim);
-                            if (!StringUtils.isEmpty(orderUuid)) {
-                                closeReport(orderUuid);
-                            }
-                            UhfManager.getInstance().startReadTags();
-                            break;
-                    }
+        Log.d(TAG, "onEkeyStatusChange: " + "Ekey Addr：" + ekeyAddr + "     StatusChange:" + ekeyStatusChange.getDisp());
+        mHandler.post(new Runnable() {
+            @Override
+            public void run() {
+                if (isDestroy) {
+                    return;
                 }
-            });
+                switch (ekeyStatusChange) {
+                    case OPENED:
+                        Log.e(TAG, "=========ekey open============: " + Thread.currentThread().toString());
+                        if (!StringUtils.isEmpty(orderUuid)) {
+                            openReport(orderUuid);
+                        }
+                        break;
+                    case CLOSED:
+                        Log.e(TAG, "=========ekey close============: " + Thread.currentThread().toString());
+                        if (openLayout == null || closeLayout == null || inOutLayout == null) {
+                            return;
+                        }
+                        openLayout.setVisibility(View.GONE);
+                        closeLayout.setVisibility(View.VISIBLE);
+                        inOutLayout.setVisibility(View.GONE);
+                        roundImg.startAnimation(mRadarAnim);
+                        if (!StringUtils.isEmpty(orderUuid)) {
+                            closeReport(orderUuid);
+                        }
+                        UhfManager.getInstance().startReadTags();
+                        break;
+                }
+            }
         });
     }
 
@@ -138,7 +140,7 @@ public class NewUnlockActivity extends BaseActivity<UnlockPresenter> implements 
 
     @Override
     protected void initEventAndData() {
-        EkeyRs485PackageHandleFilter ekeyRs485PackageHandleFilter=new EkeyRs485PackageHandleFilter.Builder().ekeyStatusListener(ekeyStatusListener).build();
+        EkeyRs485PackageHandleFilter ekeyRs485PackageHandleFilter = new EkeyRs485PackageHandleFilter.Builder().ekeyStatusListener(ekeyStatusListener).build();
         rs485Manager = BaseApplication.getInstance().getRs485Manager();
         rs485Manager.addFilters(ekeyRs485PackageHandleFilter);
         currentUer = BaseApplication.getInstance().getCurrentUer();
@@ -168,7 +170,7 @@ public class NewUnlockActivity extends BaseActivity<UnlockPresenter> implements 
         //初始化rfid
         int maxTime = DataManager.getInstance().getMixTime();
         int maxUnchange = DataManager.getInstance().getMixTimeUnchange();
-        ToastUtils.showShort("maxTime===" + maxTime +"      maxUnchange===" + maxUnchange);
+        ToastUtils.showShort("maxTime===" + maxTime + "      maxUnchange===" + maxUnchange);
         UhfManager.getInstance().confReadListener(uhfListener);
         InventoryStrategy inventoryStrategy = new InventoryStrategy();
         inventoryStrategy.setMaxTimesOfInv(maxTime);
@@ -208,6 +210,9 @@ public class NewUnlockActivity extends BaseActivity<UnlockPresenter> implements 
             mHandler.post(new Runnable() {
                 @Override
                 public void run() {
+                    if (isDestroy) {
+                        return;
+                    }
                     if (allNumbers != null) {
                         allNumbers.setText(String.valueOf(epcs.size()));
                     }
@@ -236,6 +241,9 @@ public class NewUnlockActivity extends BaseActivity<UnlockPresenter> implements 
             mHandler.post(new Runnable() {
                 @Override
                 public void run() {
+                    if (isDestroy) {
+                        return;
+                    }
                     ArrayList<EpcFile> tempLocal = new ArrayList<>();
                     ArrayList<EpcFile> tempInvFiles = new ArrayList<>();
                     tempLocal.addAll(localFiles);
@@ -362,8 +370,9 @@ public class NewUnlockActivity extends BaseActivity<UnlockPresenter> implements 
 
     @Override
     protected void onDestroy() {
-        mHandler.removeMessages(0);
         super.onDestroy();
+        mHandler.removeMessages(0);
+        isDestroy = true;
     }
 
     @Override

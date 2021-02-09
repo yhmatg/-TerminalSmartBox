@@ -65,6 +65,7 @@ public class NewInvActivity extends BaseActivity {
     private FileBeanAdapter mAdapter;
     private Animation mRadarAnim;
     private Handler mHandler = new Handler();
+    private boolean isDestroy;
 
     private void initAnim() {
         mRadarAnim = new RotateAnimation(0f, 360f, Animation.RELATIVE_TO_SELF, 0.5f, Animation.RELATIVE_TO_SELF, 0.5f);
@@ -117,7 +118,7 @@ public class NewInvActivity extends BaseActivity {
         //开始盘点
         int maxTime = DataManager.getInstance().getMixTime();
         int maxUnchange = DataManager.getInstance().getMixTimeUnchange();
-        ToastUtils.showShort("maxTime===" + maxTime +"      maxUnchange===" + maxUnchange);
+        ToastUtils.showShort("maxTime===" + maxTime + "      maxUnchange===" + maxUnchange);
         roundImg.startAnimation(mRadarAnim);
         UhfManager.getInstance().confReadListener(uhfListener);
         InventoryStrategy inventoryStrategy = new InventoryStrategy();
@@ -148,7 +149,10 @@ public class NewInvActivity extends BaseActivity {
             mHandler.post(new Runnable() {
                 @Override
                 public void run() {
-                    if(numberText != null){
+                    if (isDestroy) {
+                        return;
+                    }
+                    if (numberText != null) {
                         numberText.setText(String.valueOf(epcs.size()));
                     }
                 }
@@ -176,6 +180,9 @@ public class NewInvActivity extends BaseActivity {
             mHandler.post(new Runnable() {
                 @Override
                 public void run() {
+                    if (isDestroy) {
+                        return;
+                    }
                     if (numberText != null) {
                         numberText.setText("" + files.size());
                         invStatus.setText("盘点完成");
@@ -218,8 +225,9 @@ public class NewInvActivity extends BaseActivity {
 
     @Override
     protected void onDestroy() {
-        mHandler.removeMessages(0);
         super.onDestroy();
+        mHandler.removeMessages(0);
+        isDestroy = true;
     }
 
     @Override
