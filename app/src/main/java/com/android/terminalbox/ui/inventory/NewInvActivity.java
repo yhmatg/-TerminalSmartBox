@@ -65,7 +65,7 @@ public class NewInvActivity extends BaseActivity {
     private FileBeanAdapter mAdapter;
     private Animation mRadarAnim;
     private Handler mHandler = new Handler();
-
+    private boolean isDestroy;
     private void initAnim() {
         mRadarAnim = new RotateAnimation(0f, 360f, Animation.RELATIVE_TO_SELF, 0.5f, Animation.RELATIVE_TO_SELF, 0.5f);
         mRadarAnim.setFillAfter(true); // 设置保持动画最后的状态
@@ -148,6 +148,9 @@ public class NewInvActivity extends BaseActivity {
             mHandler.post(new Runnable() {
                 @Override
                 public void run() {
+                    if (isDestroy){
+                        return;
+                    }
                     if(numberText != null){
                         numberText.setText(String.valueOf(epcs.size()));
                     }
@@ -176,6 +179,9 @@ public class NewInvActivity extends BaseActivity {
             mHandler.post(new Runnable() {
                 @Override
                 public void run() {
+                    if (isDestroy){
+                        return;
+                    }
                     if (numberText != null) {
                         numberText.setText("" + files.size());
                         invStatus.setText("盘点完成");
@@ -218,8 +224,9 @@ public class NewInvActivity extends BaseActivity {
 
     @Override
     protected void onDestroy() {
-        mHandler.removeMessages(0);
         super.onDestroy();
+        mHandler.removeMessages(0);
+        isDestroy = true;
     }
 
     @Override

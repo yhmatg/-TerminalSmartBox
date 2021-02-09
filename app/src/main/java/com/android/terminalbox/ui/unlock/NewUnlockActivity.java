@@ -85,6 +85,7 @@ public class NewUnlockActivity extends BaseActivity<UnlockPresenter> implements 
     private Animation mRadarAnim;
     private String orderUuid;
     private UserInfo currentUer;
+    private boolean isDestroy;
 
     private void initAnim() {
         mRadarAnim = new RotateAnimation(0f, 360f, Animation.RELATIVE_TO_SELF, 0.5f, Animation.RELATIVE_TO_SELF, 0.5f);
@@ -156,6 +157,9 @@ public class NewUnlockActivity extends BaseActivity<UnlockPresenter> implements 
             mHandler.post(new Runnable() {
                 @Override
                 public void run() {
+                    if (isDestroy){
+                        return;
+                    }
                     switch (ekeyStatusChange) {
                         case CLOSED_TO_OPENED:
                             Log.e(TAG, "=========ekey open============: " + Thread.currentThread().toString());
@@ -211,6 +215,9 @@ public class NewUnlockActivity extends BaseActivity<UnlockPresenter> implements 
             mHandler.post(new Runnable() {
                 @Override
                 public void run() {
+                    if (isDestroy){
+                        return;
+                    }
                     if (allNumbers != null) {
                         allNumbers.setText(String.valueOf(epcs.size()));
                     }
@@ -239,6 +246,9 @@ public class NewUnlockActivity extends BaseActivity<UnlockPresenter> implements 
             mHandler.post(new Runnable() {
                 @Override
                 public void run() {
+                    if (isDestroy){
+                        return;
+                    }
                     ArrayList<EpcFile> tempLocal = new ArrayList<>();
                     ArrayList<EpcFile> tempInvFiles = new ArrayList<>();
                     tempLocal.addAll(localFiles);
@@ -365,8 +375,9 @@ public class NewUnlockActivity extends BaseActivity<UnlockPresenter> implements 
 
     @Override
     protected void onDestroy() {
-        mHandler.removeMessages(0);
         super.onDestroy();
+        mHandler.removeMessages(0);
+        isDestroy = true;
     }
 
     @Override
