@@ -6,7 +6,6 @@
 /build
 /captures
 /app/build
-/gradle
 .externalNativeBuild
 /app/release/
 /app/schemas/
