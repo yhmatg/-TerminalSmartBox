@@ -3,6 +3,8 @@ package com.android.terminalbox.contract;
 import com.android.terminalbox.base.presenter.AbstractPresenter;
 import com.android.terminalbox.base.view.AbstractView;
 import com.android.terminalbox.core.bean.BaseResponse;
+import com.android.terminalbox.core.bean.cmb.TerminalInfo;
+import com.android.terminalbox.core.bean.cmb.TerminalLoginPara;
 import com.android.terminalbox.core.bean.user.FaceFeatureBody;
 import com.android.terminalbox.core.bean.user.UserInfo;
 
@@ -16,15 +18,11 @@ import java.util.List;
 public interface MainContract {
 
     interface View extends AbstractView {
-        void handelAllUserInfo(BaseResponse<List<UserInfo>> userInfos);
-
-        void handleUpdateFeature(BaseResponse<List<UserInfo>> userInfos);
-
+        void handleTerminalLogin(BaseResponse<TerminalInfo> terminalInfo);
     }
 
     interface Presenter extends AbstractPresenter<View> {
-        void getAllUserInfo();
 
-        void updateFeatures(List<FaceFeatureBody> faceFeatures);
+        void terminalLogin( TerminalLoginPara terminalLoginPara);
     }
 }

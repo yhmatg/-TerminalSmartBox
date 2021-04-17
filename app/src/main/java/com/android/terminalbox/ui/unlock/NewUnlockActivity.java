@@ -18,10 +18,9 @@ import com.android.terminalbox.app.BaseApplication;
 import com.android.terminalbox.base.activity.BaseActivity;
 import com.android.terminalbox.contract.UnlockContract;
 import com.android.terminalbox.core.DataManager;
-import com.android.terminalbox.core.bean.BaseResponse;
+import com.android.terminalbox.core.bean.cmb.AssetFilterParameter;
+import com.android.terminalbox.core.bean.cmb.AssetsListItemInfo;
 import com.android.terminalbox.core.bean.user.EpcFile;
-import com.android.terminalbox.core.bean.user.NewOrderBody;
-import com.android.terminalbox.core.bean.user.OrderResponse;
 import com.android.terminalbox.core.bean.user.UserInfo;
 import com.android.terminalbox.core.room.BaseDb;
 import com.android.terminalbox.mqtt.MqttServer;
@@ -46,9 +45,10 @@ import com.google.gson.Gson;
 
 import java.util.ArrayList;
 import java.util.Collection;
+import java.util.HashMap;
 import java.util.List;
-import java.util.UUID;
 
+import butterknife.BindString;
 import butterknife.BindView;
 import butterknife.OnClick;
 
@@ -75,17 +75,24 @@ public class NewUnlockActivity extends BaseActivity<UnlockPresenter> implements 
     RelativeLayout closeLayout;
     @BindView(R.id.inout_layout)
     RelativeLayout inOutLayout;
+    @BindString(R.string.loc_id)
+    String locId;
+    @BindString(R.string.loc_name)
+    String locName;
     private Handler mHandler = new Handler();
-    private List<EpcFile> files = new ArrayList<>();
-    private List<EpcFile> localFiles = new ArrayList<>();
-    private List<EpcFile> inFiles = new ArrayList<>();
-    private List<EpcFile> outFiles = new ArrayList<>();
+    private List<AssetsListItemInfo> files = new ArrayList<>();
+    private List<AssetsListItemInfo> inFiles = new ArrayList<>();
+    private List<AssetsListItemInfo> outFiles = new ArrayList<>();
     private FileBeanAdapter mOutAdapter;
     private FileBeanAdapter mInAdapter;
     private Animation mRadarAnim;
-    private String orderUuid;
     private UserInfo currentUer;
     private boolean isDestroy;
+    private int currentPage = 1;
+    private int pageSize = 100;
+    private AssetFilterParameter conditions = new AssetFilterParameter();
+    private HashMap<String, AssetsListItemInfo> epcToolMap = new HashMap<>();
+    private List<AssetsListItemInfo> toolList = new ArrayList<>();
 
     private void initAnim() {
         mRadarAnim = new RotateAnimation(0f, 360f, Animation.RELATIVE_TO_SELF, 0.5f, Animation.RELATIVE_TO_SELF, 0.5f);
@@ -107,24 +114,10 @@ public class NewUnlockActivity extends BaseActivity<UnlockPresenter> implements 
         openLayout.setVisibility(View.VISIBLE);
         closeLayout.setVisibility(View.GONE);
         inOutLayout.setVisibility(View.GONE);
-        Intent intent = getIntent();
-        if (intent != null) {
-            orderUuid = intent.getStringExtra("relevanceId");
-        }
-        if (StringUtils.isEmpty(orderUuid)) {
-            NewOrderBody newOrderBody = new NewOrderBody();
-            newOrderBody.setActType("存取");
-            orderUuid = UUID.randomUUID().toString();
-            newOrderBody.setRelevanceId(orderUuid);
-            newOrderBody.setRemark("remarkOne");
-            mPresenter.newOrder(deviceId, newOrderBody, currentUer.getId());
-        }
-
-        localFiles = BaseDb.getInstance().getEpcFileDao().findEpcFileByBox("box002");
-        mOutAdapter = new FileBeanAdapter(outFiles, this);
+        mOutAdapter = new FileBeanAdapter(outFiles, this,false);
         mOutRecycleView.setLayoutManager(new LinearLayoutManager(this));
         mOutRecycleView.setAdapter(mOutAdapter);
-        mInAdapter = new FileBeanAdapter(inFiles, this);
+        mInAdapter = new FileBeanAdapter(inFiles, this,false);
         mInRecycleView.setLayoutManager(new LinearLayoutManager(this));
         mInRecycleView.setAdapter(mInAdapter);
         //初始化rfid
@@ -163,9 +156,6 @@ public class NewUnlockActivity extends BaseActivity<UnlockPresenter> implements 
                     switch (ekeyStatusChange) {
                         case CLOSED_TO_OPENED:
                             Log.e(TAG, "=========ekey open============: " + Thread.currentThread().toString());
-                            if (!StringUtils.isEmpty(orderUuid)) {
-                                openReport(orderUuid);
-                            }
                             break;
                         case TO_CONNECTED:
                             break;
@@ -178,9 +168,6 @@ public class NewUnlockActivity extends BaseActivity<UnlockPresenter> implements 
                             closeLayout.setVisibility(View.VISIBLE);
                             inOutLayout.setVisibility(View.GONE);
                             roundImg.startAnimation(mRadarAnim);
-                            if (!StringUtils.isEmpty(orderUuid)) {
-                                closeReport(orderUuid);
-                            }
                             UhfManager.getInstance().startReadTags();
                             break;
                     }
@@ -229,40 +216,26 @@ public class NewUnlockActivity extends BaseActivity<UnlockPresenter> implements 
         public void onReadFinish(Collection<UhfTag> tags) {
             Log.d(TAG, "onReadFinish:" + "=============");
             Log.e("Thread======", Thread.currentThread().toString());
-            List<String> epcs = Stream.of(tags).map(new Function<UhfTag, String>() {
-                @Override
-                public String apply(UhfTag uhfTags) {
-                    return uhfTags.getEpc();
+            for (UhfTag tag : tags) {
+                AssetsListItemInfo assetsListItemInfo = epcToolMap.get(tag.getEpc());
+                if(assetsListItemInfo != null && !files.contains(assetsListItemInfo)){
+                    files.add(assetsListItemInfo);
                 }
-            }).collect(Collectors.toList());
-           /* List<EpcFile> epcToFiles = Stream.of(epcs).map(new Function<String, EpcFile>() {
-                @Override
-                public EpcFile apply(String s) {
-                    return new EpcFile("档案Epc", s);
-                }
-            }).collect(Collectors.toList());*/
-            List<EpcFile> epcToFiles = BaseDb.getInstance().getEpcFileDao().findEpcFileByEpcs(epcs);
-            files.addAll(epcToFiles);
+            }
             mHandler.post(new Runnable() {
                 @Override
                 public void run() {
                     if (isDestroy){
                         return;
                     }
-                    ArrayList<EpcFile> tempLocal = new ArrayList<>();
-                    ArrayList<EpcFile> tempInvFiles = new ArrayList<>();
-                    tempLocal.addAll(localFiles);
+                    ArrayList<AssetsListItemInfo> tempLocal = new ArrayList<>();
+                    ArrayList<AssetsListItemInfo> tempInvFiles = new ArrayList<>();
                     tempInvFiles.addAll(files);
+                    tempLocal.addAll(toolList);
                     //存件
                     tempInvFiles.removeAll(tempLocal);
-                    for (EpcFile tempInvFile : tempInvFiles) {
-                        tempInvFile.setBoxCode("box002");
-                    }
                     //取件
                     tempLocal.removeAll(files);
-                    for (EpcFile epcFile : tempLocal) {
-                        epcFile.setBoxCode("");
-                    }
                     if (inNumbers != null) {
                         inNumbers.setText(String.valueOf(tempInvFiles.size()));
                     }
@@ -273,23 +246,6 @@ public class NewUnlockActivity extends BaseActivity<UnlockPresenter> implements 
                     outFiles.addAll(tempLocal);
                     mInAdapter.notifyDataSetChanged();
                     mOutAdapter.notifyDataSetChanged();
-                    //数据库更新
-                    BaseDb.getInstance().getEpcFileDao().insertItems(tempInvFiles);
-                    BaseDb.getInstance().getEpcFileDao().insertItems(tempLocal);
-                    List<EpcFile> allEpcFile = BaseDb.getInstance().getEpcFileDao().findEpcFileByBox("box002");
-                    List<String> inEpcStrings = Stream.of(tempInvFiles).map(new Function<EpcFile, String>() {
-                        @Override
-                        public String apply(EpcFile epcFile) {
-                            return epcFile.getEpcCode();
-                        }
-                    }).collect(Collectors.toList());
-                    List<String> outEpcStrings = Stream.of(tempLocal).map(new Function<EpcFile, String>() {
-                        @Override
-                        public String apply(EpcFile epcFile) {
-                            return epcFile.getEpcCode();
-                        }
-                    }).collect(Collectors.toList());
-                    invReport(orderUuid, inEpcStrings, outEpcStrings, allEpcFile.size());
                     if (openLayout != null) {
                         openLayout.setVisibility(View.GONE);
                     }
@@ -316,60 +272,18 @@ public class NewUnlockActivity extends BaseActivity<UnlockPresenter> implements 
         }
     }
 
-    public void openReport(String relevanceId) {
-        Props props = new Props();
-        ArrayList<ResultProp> resultProps = new ArrayList<>();
-        ResultProp resultProp = new ResultProp();
-        resultProp.setCap_id("id1");
-        resultProp.setRelevance_id(relevanceId);
-        resultProp.setData_event_time(System.currentTimeMillis());
-        ResultProp.Prop prop = new ResultProp.Prop();
-        prop.setOpenEkey(true);
-        prop.setOpenType("remote");
-        resultProp.setProp(prop);
-        resultProps.add(resultProp);
-        props.setProps(resultProps);
-        MqttServer.getInstance().reportProperties(new Gson().toJson(props));
-    }
-
-    public void closeReport(String relevanceId) {
-        Props props = new Props();
-        ArrayList<ResultProp> resultProps = new ArrayList<>();
-        ResultProp resultProp = new ResultProp();
-        resultProp.setCap_id("id2");
-        resultProp.setRelevance_id(relevanceId);
-        resultProp.setData_event_time(System.currentTimeMillis());
-        ResultProp.Prop prop = new ResultProp.Prop();
-        prop.setCloseEkey(true);
-        resultProp.setProp(prop);
-        resultProps.add(resultProp);
-        props.setProps(resultProps);
-        MqttServer.getInstance().reportProperties(new Gson().toJson(props));
-    }
-
-    public void invReport(String relevanceId, List<String> inList, List<String> outList, int allFileNum) {
-        Props props = new Props();
-        ArrayList<ResultProp> resultProps = new ArrayList<>();
-        ResultProp resultProp = new ResultProp();
-        resultProp.setCap_id("id3");
-        resultProp.setRelevance_id(relevanceId);
-        resultProp.setData_event_time(System.currentTimeMillis());
-        ResultProp.Prop prop = new ResultProp.Prop();
-        prop.setRfid_in(inList);
-        prop.setRfid_out(outList);
-        prop.setRfid_inbox(allFileNum);
-        resultProp.setProp(prop);
-        resultProps.add(resultProp);
-        props.setProps(resultProps);
-        MqttServer.getInstance().reportProperties(new Gson().toJson(props));
-    }
-
     @Override
-    public void handleNewOrder(BaseResponse<OrderResponse> NewOrderResponse) {
-        if (200000 == NewOrderResponse.getCode()) {
-            orderUuid = NewOrderResponse.getData().getRelevanceId();
-        } else {
-            orderUuid = null;
+    public void handleFetchPageAssetsList(List<AssetsListItemInfo> assetsInfos) {
+        Log.e(TAG, "page资产数量是=====" + assetsInfos.size());
+        epcToolMap.clear();
+        toolList.clear();
+        for (AssetsListItemInfo tool : assetsInfos) {
+            if (locName.equals(tool.getLoc_name())) {
+                if (tool.getAst_used_status() == 0) {
+                    epcToolMap.put(tool.getAst_epc_code(), tool);
+                    toolList.add(tool);
+                }
+            }
         }
     }
 

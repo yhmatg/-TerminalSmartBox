@@ -28,19 +28,11 @@
             </intent-filter>
         </activity>
         <activity android:name=".ui.MqttActivity"></activity>
-        <activity
-            android:name=".ui.inventory.InventoryActivity"
-            android:launchMode="singleTop"
-            android:screenOrientation="portrait"></activity>
 
         <service android:name="org.eclipse.paho.android.service.MqttService" />
 
         <activity
             android:name=".ui.recognize.RecognizeActivity"
-            android:launchMode="singleTop"
-            android:screenOrientation="portrait"></activity>
-        <activity
-            android:name=".ui.unlock.UnlockActivity"
             android:launchMode="singleTop"
             android:screenOrientation="portrait"></activity>
         <activity

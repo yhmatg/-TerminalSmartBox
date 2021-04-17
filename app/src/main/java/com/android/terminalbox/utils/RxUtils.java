@@ -66,12 +66,12 @@ public class RxUtils {
                     @Override
                     public Observable<T> apply(BaseResponse<T> baseResponse) throws Exception {
                         if (baseResponse.isSuccess()
-                                && baseResponse.getData() != null) {
-                            return createData(baseResponse.getData());
+                                && baseResponse.getResult() != null) {
+                            return createData(baseResponse.getResult());
                         } else {
                             if("2000A0".equals(baseResponse.getCode())){
                                 return Observable.error(new TokenException());
-                            }else if(baseResponse.getData() == null){
+                            }else if(baseResponse.getResult() == null){
                                 return Observable.error(new ResultIsNullException());
                             }else{
                                 return Observable.error(new OtherException());

@@ -41,7 +41,7 @@
         android:layout_marginStart="@dimen/dp_35"
         android:layout_marginTop="@dimen/dp_8"
         android:text="10/26 09:00"
-        android:format24Hour="EEEEE"
+        android:format24Hour="MM/dd HH:mm"
         android:textColor="@color/white"
         android:textSize="@dimen/sp_19" />
 

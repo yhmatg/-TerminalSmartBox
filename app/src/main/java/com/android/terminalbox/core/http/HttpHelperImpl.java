@@ -1,5 +1,9 @@
 package com.android.terminalbox.core.http;
 
+import com.android.terminalbox.core.bean.cmb.AssetsListPage;
+import com.android.terminalbox.core.bean.cmb.NewBorrowBackPara;
+import com.android.terminalbox.core.bean.cmb.TerminalInfo;
+import com.android.terminalbox.core.bean.cmb.TerminalLoginPara;
 import com.android.terminalbox.core.bean.user.NewOrderBody;
 import com.android.terminalbox.core.bean.user.OrderResponse;
 import com.android.terminalbox.core.bean.BaseResponse;
@@ -69,6 +73,26 @@ public class HttpHelperImpl implements HttpHelper {
     @Override
     public Observable<BaseResponse<OrderResponse>> newOrder(String devId, NewOrderBody newOrderBody,int userId) {
         return mGeeksApis.newOrder(devId, newOrderBody,userId);
+    }
+
+    @Override
+    public Observable<BaseResponse<TerminalInfo>> terminalLogin(TerminalLoginPara terminalLoginPara) {
+        return mGeeksApis.terminalLogin(terminalLoginPara);
+    }
+
+    @Override
+    public Observable<BaseResponse<AssetsListPage>> fetchPageAssetsList(Integer size, Integer page, String patternName, String userRealName, String conditions) {
+        return mGeeksApis.fetchPageAssetsList(size, page, patternName, userRealName, conditions);
+    }
+
+    @Override
+    public Observable<BaseResponse> borrowTools(NewBorrowBackPara borrowPara) {
+        return mGeeksApis.borrowTools(borrowPara);
+    }
+
+    @Override
+    public Observable<BaseResponse> backTools(NewBorrowBackPara backPara) {
+        return mGeeksApis.backTools(backPara);
     }
 
 }

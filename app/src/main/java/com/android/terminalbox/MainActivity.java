@@ -22,6 +22,8 @@ import com.android.terminalbox.contract.MainContract;
 import com.android.terminalbox.core.DataManager;
 import com.android.terminalbox.core.bean.BaseResponse;
 import com.android.terminalbox.core.bean.box.IotDevice;
+import com.android.terminalbox.core.bean.cmb.TerminalInfo;
+import com.android.terminalbox.core.bean.cmb.TerminalLoginPara;
 import com.android.terminalbox.core.bean.user.EpcFile;
 import com.android.terminalbox.core.bean.user.FaceFeatureBody;
 import com.android.terminalbox.core.bean.user.OrderBody;
@@ -85,64 +87,6 @@ public class MainActivity extends BaseActivity<MainPresenter> implements MainCon
     @BindView(R.id.file_number)
     TextView fileNumber;
     private List<UserInfo> users = new ArrayList<>();
-    /**
-     * 用于特征提取的引擎
-     */
-    private FaceEngine frEngine;
-    private IotDevice iotDevice;
-    private RylaiMqttCallback rylaiMqttCallback = new RylaiMqttCallback() {
-        @Override
-        public void onSuccess(IMqttToken asyncActionToken) {
-            Log.e(TAG, "Mqtt Message onSuccess");
-        }
-
-        @Override
-        public void onFailure(IMqttToken asyncActionToken, Throwable exception) {
-            Log.e(TAG, "Mqtt Message onFailure");
-            Log.d(TAG, "Mqtt Message Action==============失败");
-        }
-
-        @Override
-        public void connectComplete(boolean reconnect, String serverURI) {
-            Log.e(TAG, "Mqtt Message connectComplete");
-        }
-
-        @Override
-        public void connectionLost(Throwable cause) {
-            Log.e(TAG, "Mqtt Message connectionLost");
-        }
-
-
-        @Override
-        public void deliveryComplete(IMqttDeliveryToken token) {
-            Log.e(TAG, "Mqtt Message deliveryComplete");
-            Log.d(TAG, "Mqtt Message==============消息上传完成");
-
-        }
-
-        @Override
-        public void messageArrived(String topic, MqttMessage message) throws Exception {
-            Log.e(TAG, "Mqtt Message messageArrived");
-            if ("app/devices/15aa68f3183311ebb7260242ac120004_uniqueCode002/insts".equals(topic)) {
-                OrderBody orderBody = new Gson().fromJson(new String(message.getPayload()), OrderBody.class);
-                int userId = orderBody.getInstData().getUserId();
-                List<UserInfo> users = BaseApplication.getInstance().getUsers();
-                for (UserInfo user : users) {
-                    if(userId == user.getId()){
-                        BaseApplication.getInstance().setCurrentUer(user);
-                        break;
-                    }
-                }
-                Intent intent = new Intent(MainActivity.this, NewUnlockActivity.class);
-                intent.putExtra("relevanceId", orderBody.getInstData().getRelevanceId());
-                startActivity(intent);
-            }
-            if ("app/userface/update".equals(topic)) {
-                mPresenter.getAllUserInfo();
-            }
-        }
-
-    };
 
     @Override
     protected int getLayoutId() {
@@ -163,13 +107,6 @@ public class MainActivity extends BaseActivity<MainPresenter> implements MainCon
     protected void initEventAndData() {
         isNeedGoHomeActivity(false);
         activeEngine();
-        frEngine = new FaceEngine();
-        frEngine.init(this, DetectMode.ASF_DETECT_MODE_IMAGE, ASF_OP_0_ONLY,
-                16, 6, FaceEngine.ASF_FACE_RECOGNITION | FaceEngine.ASF_AGE | FaceEngine.ASF_FACE_DETECT | FaceEngine.ASF_GENDER | FaceEngine.ASF_FACE3DANGLE);
-        mPresenter.getAllUserInfo();
-        //初始化mqtt
-        MqttConnect mqttConnect = new MqttConnect();
-        mqttConnect.start();
         weekText.setFormat24Hour("EEEE");
         timeText.setFormat24Hour("MM/dd HH:mm");
         EkeyManager.getInstance().init(this, "/dev/ttyXRUSB1", 9600).config( null, 2000, true,1, 2);
@@ -203,18 +140,13 @@ public class MainActivity extends BaseActivity<MainPresenter> implements MainCon
         Bundle bundle = new Bundle();
         switch (view.getId()) {
             case R.id.btn_inv:
-                JumpToActivity(NewInvActivity.class);
+                mPresenter.terminalLogin(new TerminalLoginPara("esim07","123456"));
                 break;
             case R.id.btn_access:
                 JumpToActivity(RecognizeActivity.class);
                 break;
             case R.id.bt_change_org:
-                //mPresenter.getAllUserInfo();
                 ConfigUtil.setFtOrient(MainActivity.this, ASF_OP_0_ONLY);
-               /* UserInfo userInfo = new UserInfo();
-                userInfo.setId(3);
-                BaseApplication.getInstance().setCurrentUer(userInfo);
-                JumpToActivity(NewUnlockActivity.class);*/
                 break;
             case R.id.iv_title:
                intoSettings();
@@ -223,115 +155,10 @@ public class MainActivity extends BaseActivity<MainPresenter> implements MainCon
     }
 
     @Override
-    public void handelAllUserInfo(BaseResponse<List<UserInfo>> userInfos) {
-        if (200000 == userInfos.getCode()) {
-            //获取所有用户，解析人脸特征值
-            registerFaceAndGetFeature(userInfos.getData());
-        }
-    }
-
-    @Override
-    public void handleUpdateFeature(BaseResponse<List<UserInfo>> userInfos) {
-        if(200000 == userInfos.getCode()){
-            //ToastUtils.showShort("更新特征值成功");
-        }else {
-            ToastUtils.showShort("更新特征值失败：" + userInfos.getMessage());
-        }
-
-    }
-
-    @SuppressLint("StaticFieldLeak")
-    public void registerFaceAndGetFeature(final List<UserInfo> userInfos) {
-        new AsyncTask<Void, Void, List<UserInfo>>() {
-            @Override
-            protected List<UserInfo> doInBackground(Void... params) {
-                ArrayList<FaceFeatureBody> faceFeatureBodys = new ArrayList<>();
-                try {
-                    //要在子线程中使用，否则会报错
-                    for (UserInfo userInfo : userInfos) {
-                        if("0".equals(userInfo.getFaceStatus())){
-                            processImage(userInfo);
-                            FaceFeatureBody faceFeatureBody = new FaceFeatureBody();
-                            faceFeatureBody.setFaceFeature(userInfo.getFaceFeature());
-                            faceFeatureBody.setId(userInfo.getId());
-                            faceFeatureBodys.add(faceFeatureBody);
-                        }
-                    }
-                    //提取完人脸特征值后将用户提交的后端,本地数据库,内存
-                    BaseApplication.getInstance().getUsers().clear();
-                    BaseApplication.getInstance().getUsers().addAll(userInfos);
-                    BaseDb.getInstance().getUserDao().insertItems(userInfos);
-                    mPresenter.updateFeatures(faceFeatureBodys);
-                } catch (Exception e) {
-                    e.printStackTrace();
-                }
-                return userInfos;
-            }
-
-            @Override
-            protected void onPostExecute(List<UserInfo> files) {
-
-            }
-        }.execute();
-    }
-
-    public void processImage(UserInfo userInfo) {
-        if (userInfo.getFaceImg() == null) {
-            return;
-        }
-        File file = null;
-        try {
-            file = Glide.with(MainActivity.this).downloadOnly().load(userInfo.getFaceImg()).submit().get();
-        } catch (ExecutionException e) {
-            e.printStackTrace();
-        } catch (InterruptedException e) {
-            e.printStackTrace();
-        }
-        Bitmap bitmap = null;
-        if (file != null) {
-            bitmap = BitmapFactory.decodeFile(file.getAbsolutePath());
-        }
-        if (bitmap == null) {
-            return;
-        }
-        if (frEngine == null) {
-            return;
-        }
-        // 接口需要的bgr24宽度必须为4的倍数
-        bitmap = ArcSoftImageUtil.getAlignedBitmap(bitmap, true);
-        if (bitmap == null) {
-            return;
-        }
-        int width = bitmap.getWidth();
-        int height = bitmap.getHeight();
-        // bitmap转bgr24
-        byte[] bgr24 = ArcSoftImageUtil.createImageData(bitmap.getWidth(), bitmap.getHeight(), ArcSoftImageFormat.BGR24);
-        int transformCode = ArcSoftImageUtil.bitmapToImageData(bitmap, bgr24, ArcSoftImageFormat.BGR24);
-        if (transformCode != ArcSoftImageUtilError.CODE_SUCCESS) {
-            Log.e(TAG, "failed to transform bitmap to imageData, code is " + transformCode);
-            return;
-        }
-        List<FaceInfo> faceInfoList = new ArrayList<>();
-        //人脸检测
-        int detectCode = frEngine.detectFaces(bgr24, width, height, FaceEngine.CP_PAF_BGR24, faceInfoList);
-        if (detectCode != 0 || faceInfoList.size() == 0) {
-            Log.e(TAG, "face detection finished, code is " + detectCode + ", face num is " + faceInfoList.size());
-            return;
-        }
-        FaceFeature mainFeature = new FaceFeature();
-        int code = frEngine.extractFaceFeature(bgr24, width, height, FaceEngine.CP_PAF_BGR24, faceInfoList.get(0), mainFeature);
-        if (code != ErrorInfo.MOK) {
-            mainFeature = null;
-            Log.e(TAG, "code === " + code);
-        }
-        if (mainFeature != null) {
-            try {
-                String featureStr = Base64.encodeToString(mainFeature.getFeatureData(), Base64.DEFAULT);
-                userInfo.setFaceFeature(featureStr);
-                userInfo.setFaceStatus("2");
-            } catch (Exception e) {
-                e.printStackTrace();
-            }
+    public void handleTerminalLogin(BaseResponse<TerminalInfo> terminalInfo) {
+        if ("200000".equals(terminalInfo.getCode())) {
+            DataManager.getInstance().setToken(terminalInfo.getResult().getId());
+            JumpToActivity(NewInvActivity.class);
         }
     }
 
@@ -397,54 +224,6 @@ public class MainActivity extends BaseActivity<MainPresenter> implements MainCon
                     }
                 });
 
-    }
-
-    //yhm start 1105
-    class MqttConnect extends Thread {
-        @Override
-        public void run() {
-            super.run();
-            if (iotDevice == null) {
-                iotDevice = new IotDevice();
-                iotDevice.setIotHost("117.34.118.157");
-                iotDevice.setMqttPort("20008");
-                iotDevice.setPordId("15aa68f3183311ebb7260242ac120004");
-                iotDevice.setDevVerify("uniqueCode002");
-                iotDevice.setDevId(iotDevice.getPordId()+"_"+iotDevice.getDevVerify());
-                iotDevice.setDevPassword("smartbox");
-            }
-            MqttServer.getInstance().init(MainActivity.this, iotDevice, rylaiMqttCallback);
-        }
-    }
-    //yhm end 1105
-
-    public String getWeekDay(){
-        int weekDay = Calendar.getInstance().get(Calendar.DAY_OF_WEEK);
-        String day = "";
-        switch (weekDay){
-            case 1:
-                day = "Sunday";
-                break;
-            case 2:
-                day = "Monday";
-                break;
-            case 3:
-                day = "Tuesday";
-                break;
-            case 4:
-                day = "Wednesday";
-                break;
-            case 5:
-                day = "Thursday";
-                break;
-            case 6:
-                day = "Friday";
-                break;
-            case 7:
-                day = "Saturday";
-                break;
-        }
-        return day;
     }
 
     // 需要点击几次 就设置几

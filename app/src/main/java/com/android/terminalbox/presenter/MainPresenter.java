@@ -5,6 +5,8 @@ import com.android.terminalbox.contract.MainContract;
 import com.android.terminalbox.contract.RecognizeContract;
 import com.android.terminalbox.core.DataManager;
 import com.android.terminalbox.core.bean.BaseResponse;
+import com.android.terminalbox.core.bean.cmb.TerminalInfo;
+import com.android.terminalbox.core.bean.cmb.TerminalLoginPara;
 import com.android.terminalbox.core.bean.user.FaceFeatureBody;
 import com.android.terminalbox.core.bean.user.UserInfo;
 import com.android.terminalbox.core.http.widget.BaseObserver;
@@ -25,56 +27,14 @@ public class MainPresenter extends BasePresenter<MainContract.View> implements M
     }
 
     @Override
-    public void getAllUserInfo() {
-        addSubscribe(DataManager.getInstance().getAllUserInfo()
+    public void terminalLogin(TerminalLoginPara terminalLoginPara) {
+        addSubscribe(DataManager.getInstance().terminalLogin(terminalLoginPara)
                 .compose(RxUtils.rxSchedulerHelper())
-                .subscribeWith(new BaseObserver<BaseResponse<List<UserInfo>>>(mView, false) {
+                .subscribeWith(new BaseObserver<BaseResponse<TerminalInfo>>(mView, false) {
                     @Override
-                    public void onNext(BaseResponse<List<UserInfo>> listBaseResponse) {
-                        mView.handelAllUserInfo(listBaseResponse);
-                    }
-
-                    @Override
-                    public void onError(Throwable e) {
-                        super.onError(e);
+                    public void onNext(BaseResponse<TerminalInfo> terminalInfoBaseResponse) {
+                        mView.handleTerminalLogin(terminalInfoBaseResponse);
                     }
                 }));
     }
-
-    public Observable<BaseResponse<List<UserInfo>>> getLocalUsers(){
-        Observable<BaseResponse<List<UserInfo>>> baseResponseObservable = Observable.create(new ObservableOnSubscribe<BaseResponse<List<UserInfo>>>() {
-            @Override
-            public void subscribe(ObservableEmitter<BaseResponse<List<UserInfo>>> emitter) throws Exception {
-                if (CommonUtils.isNetworkConnected()) {
-                    emitter.onComplete();
-                } else {
-                    List<UserInfo> allUsers = BaseDb.getInstance().getUserDao().findAllUsers();
-                    BaseResponse<List<UserInfo>> listBaseResponse = new BaseResponse<>();
-                    listBaseResponse.setCode(200000);
-                    listBaseResponse.setData(allUsers);
-                    listBaseResponse.setMessage("获取所有用户成功");
-                }
-            }
-        });
-        return baseResponseObservable;
-    }
-
-    @Override
-    public void updateFeatures(List<FaceFeatureBody> faceFeatures) {
-        addSubscribe(DataManager.getInstance().updateFeatures(faceFeatures)
-        .compose(RxUtils.rxSchedulerHelper())
-        .subscribeWith(new BaseObserver<BaseResponse<List<UserInfo>>>(mView, false) {
-            @Override
-            public void onNext(BaseResponse<List<UserInfo>> listBaseResponse) {
-                mView.handleUpdateFeature(listBaseResponse);
-            }
-
-            @Override
-            public void onError(Throwable e) {
-                super.onError(e);
-            }
-        }));
-    }
-
-
 }

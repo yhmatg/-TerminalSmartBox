@@ -6,25 +6,25 @@ package com.android.terminalbox.core.bean;
  * 该类仅供参考，实际业务返回的固定字段, 根据需求来定义，
  */
 public class BaseResponse<T> {
-    private Integer code;
+    private String code;
     private String message;
-    private T data;
+    private T result;
     private boolean success;
 
-    public Integer getCode() {
+    public T getResult() {
+        return result;
+    }
+
+    public void setResult(T result) {
+        this.result = result;
+    }
+
+    public String getCode() {
         return code;
     }
 
-    public void setCode(Integer code) {
+    public void setCode(String code) {
         this.code = code;
-    }
-
-    public T getData() {
-        return data;
-    }
-
-    public void setData(T data) {
-        this.data = data;
     }
 
     public String getMessage() {

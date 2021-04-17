@@ -20,10 +20,13 @@ import android.widget.TextView;
 
 import com.android.terminalbox.R;
 import com.android.terminalbox.base.activity.BaseActivity;
-import com.android.terminalbox.base.presenter.AbstractPresenter;
+import com.android.terminalbox.contract.NewInvContract;
 import com.android.terminalbox.core.DataManager;
+import com.android.terminalbox.core.bean.cmb.AssetFilterParameter;
+import com.android.terminalbox.core.bean.cmb.AssetsListItemInfo;
 import com.android.terminalbox.core.bean.user.EpcFile;
 import com.android.terminalbox.core.room.BaseDb;
+import com.android.terminalbox.presenter.NewInvPresenter;
 import com.android.terminalbox.utils.ToastUtils;
 import com.annimon.stream.Collectors;
 import com.annimon.stream.Stream;
@@ -33,15 +36,18 @@ import com.esim.rylai.smartbox.uhf.InventoryStrategy;
 import com.esim.rylai.smartbox.uhf.ReaderResult;
 import com.esim.rylai.smartbox.uhf.UhfManager;
 import com.esim.rylai.smartbox.uhf.UhfTag;
+import com.multilevel.treelist.Node;
 
 import java.util.ArrayList;
 import java.util.Collection;
+import java.util.HashMap;
 import java.util.List;
 
+import butterknife.BindString;
 import butterknife.BindView;
 import butterknife.OnClick;
 
-public class NewInvActivity extends BaseActivity {
+public class NewInvActivity extends BaseActivity<NewInvPresenter> implements NewInvContract.View {
     String TAG = "InventoryActivity";
     @BindView(R.id.tv_number)
     TextView numberText;
@@ -59,13 +65,24 @@ public class NewInvActivity extends BaseActivity {
     TextView seeDetail;
     @BindView(R.id.detail_layout)
     RelativeLayout detailLayout;
-    private List<EpcFile> files = new ArrayList<>();
+    @BindString(R.string.loc_id)
+    String locId;
+    @BindString(R.string.loc_name)
+    String locName;
+    private List<AssetsListItemInfo> files = new ArrayList<>();
     //存储一次盘点的数据
-    private List<EpcFile> allFiles = new ArrayList<>();
+    private List<AssetsListItemInfo> allFiles = new ArrayList<>();
     private FileBeanAdapter mAdapter;
     private Animation mRadarAnim;
     private Handler mHandler = new Handler();
     private boolean isDestroy;
+    private int currentPage = 1;
+    private int pageSize = 100;
+    private AssetFilterParameter conditions = new AssetFilterParameter();
+    //闲置的工具
+    private HashMap<String, AssetsListItemInfo> epcToolMap = new HashMap<>();
+    private List<String> epcList = new ArrayList<>();
+
     private void initAnim() {
         mRadarAnim = new RotateAnimation(0f, 360f, Animation.RELATIVE_TO_SELF, 0.5f, Animation.RELATIVE_TO_SELF, 0.5f);
         mRadarAnim.setFillAfter(true); // 设置保持动画最后的状态
@@ -76,18 +93,21 @@ public class NewInvActivity extends BaseActivity {
     }
 
     @Override
-    public AbstractPresenter initPresenter() {
-        return null;
+    public NewInvPresenter initPresenter() {
+        return new NewInvPresenter();
     }
 
     @Override
     protected void initEventAndData() {
+        List<Node> mSelectAssetsLocations = new ArrayList<>();
+        mSelectAssetsLocations.add(new Node(locId, "-1", locName));
+        conditions.setmSelectAssetsLocations(mSelectAssetsLocations);
         numberLayout.setVisibility(View.VISIBLE);
         roundImg.setVisibility(View.VISIBLE);
         seeDetail.setVisibility(View.VISIBLE);
         detailLayout.setVisibility(View.GONE);
         editText.setVisibility(View.GONE);
-        mAdapter = new FileBeanAdapter(files, this);
+        mAdapter = new FileBeanAdapter(files, this, false);
         mRecycleView.setLayoutManager(new LinearLayoutManager(this));
         mRecycleView.setAdapter(mAdapter);
         editText.setOnEditorActionListener(new TextView.OnEditorActionListener() {
@@ -98,10 +118,10 @@ public class NewInvActivity extends BaseActivity {
                     imm.toggleSoftInput(0, InputMethodManager.HIDE_NOT_ALWAYS);
                     String assetsId = editText.getText().toString();
                     editText.setSelection(assetsId.length());
-                    List<EpcFile> filterList = Stream.of(allFiles).filter(new Predicate<EpcFile>() {
+                    List<AssetsListItemInfo> filterList = Stream.of(allFiles).filter(new Predicate<AssetsListItemInfo>() {
                         @Override
-                        public boolean test(EpcFile value) {
-                            int i = value.getEpcCode().indexOf(assetsId);
+                        public boolean test(AssetsListItemInfo value) {
+                            int i = value.getAst_epc_code().indexOf(assetsId);
                             return i != -1;
                         }
                     }).collect(Collectors.toList());
@@ -117,7 +137,7 @@ public class NewInvActivity extends BaseActivity {
         //开始盘点
         int maxTime = DataManager.getInstance().getMixTime();
         int maxUnchange = DataManager.getInstance().getMixTimeUnchange();
-        ToastUtils.showShort("maxTime===" + maxTime +"      maxUnchange===" + maxUnchange);
+        ToastUtils.showShort("maxTime===" + maxTime + "      maxUnchange===" + maxUnchange);
         roundImg.startAnimation(mRadarAnim);
         UhfManager.getInstance().confReadListener(uhfListener);
         InventoryStrategy inventoryStrategy = new InventoryStrategy();
@@ -126,6 +146,7 @@ public class NewInvActivity extends BaseActivity {
         UhfManager.getInstance().confInventoryStrategy(inventoryStrategy);
         UhfManager.getInstance().startReadTags();
         Log.e("Thread======", Thread.currentThread().toString());
+        mPresenter.fetchPageAssetsList(pageSize, currentPage, "", "", conditions.toString());
     }
 
     private final UhfManager.EsimUhfReadListener uhfListener = new UhfManager.EsimUhfReadListener() {
@@ -148,10 +169,11 @@ public class NewInvActivity extends BaseActivity {
             mHandler.post(new Runnable() {
                 @Override
                 public void run() {
-                    if (isDestroy){
+                    if (isDestroy) {
                         return;
                     }
-                    if(numberText != null){
+                    if (numberText != null) {
+                        epcs.retainAll(epcList);
                         numberText.setText(String.valueOf(epcs.size()));
                     }
                 }
@@ -161,25 +183,17 @@ public class NewInvActivity extends BaseActivity {
         @Override
         public void onReadFinish(Collection<UhfTag> tags) {
             Log.d(TAG, "onReadFinish:" + "=============");
-            List<String> epcs = Stream.of(tags).map(new Function<UhfTag, String>() {
-                @Override
-                public String apply(UhfTag uhfTags) {
-                    return uhfTags.getEpc();
+            for (UhfTag tag : tags) {
+                AssetsListItemInfo assetsListItemInfo = epcToolMap.get(tag.getEpc());
+                if (assetsListItemInfo != null && !files.contains(assetsListItemInfo)) {
+                    files.add(assetsListItemInfo);
                 }
-            }).collect(Collectors.toList());
-           /* List<EpcFile> epcToFiles = Stream.of(epcs).map(new Function<String, EpcFile>() {
-                @Override
-                public EpcFile apply(String s) {
-                    return new EpcFile("档案Epc", s);
-                }
-            }).collect(Collectors.toList());*/
-            List<EpcFile> epcToFiles = BaseDb.getInstance().getEpcFileDao().findEpcFileByEpcs(epcs);
-            files.addAll(epcToFiles);//Log.d(TAG, "invTags: 本次盘点后总标签" + inBoxEpcsTemp.size() + "    " + inBoxEpcsTemp.toString());
+            }
             Log.e(TAG, files.size() + "====" + files.toString());
             mHandler.post(new Runnable() {
                 @Override
                 public void run() {
-                    if (isDestroy){
+                    if (isDestroy) {
                         return;
                     }
                     if (numberText != null) {
@@ -232,5 +246,20 @@ public class NewInvActivity extends BaseActivity {
     @Override
     protected void onPause() {
         super.onPause();
+    }
+
+    @Override
+    public void handleFetchPageAssetsList(List<AssetsListItemInfo> assetsInfos) {
+        Log.e(TAG, "page资产数量是=====" + assetsInfos.size());
+        epcToolMap.clear();
+        epcList.clear();
+        for (AssetsListItemInfo tool : assetsInfos) {
+            if (locName.equals(tool.getLoc_name())) {
+                if (tool.getAst_used_status() == 0) {
+                    epcToolMap.put(tool.getAst_epc_code(), tool);
+                    epcList.add(tool.getAst_epc_code());
+                }
+            }
+        }
     }
 }

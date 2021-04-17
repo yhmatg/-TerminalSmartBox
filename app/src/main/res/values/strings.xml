@@ -106,5 +106,9 @@
     <string name="face_register">Save</string>
     <string name="clear_register">Clear</string>
     <string name="md_choose_label" />
+    <string name="ast_loc">存放位置</string>
+    <string name="tool_type">工具分类</string>
+    <string name="mode_type">规格型号</string>
+    <string name="assets_id">工具编号</string>
 
 </resources>

@@ -46,5 +46,10 @@
     <color name="search_hint">#80FFFFFF</color>
     <color name="inv_item_back_one">#19ffffff</color>
     <color name="inv_item_back_two">#32ffffff</color>
-
+    <color name="home_text_one">#333333</color>
+    <color name="divide_color">#E8EBF2</color>
+    <color name="in_use_color">#FEB837</color>
+    <color name="free_color">#4F77E1</color>
+    <color name="home_text_two">#3D3D3D</color>
+    <color name="setting_text_one">#666666</color>
 </resources>
