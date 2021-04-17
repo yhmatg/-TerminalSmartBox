@@ -1,11 +1,8 @@
 package com.android.terminalbox.core.bean.user;
 
-import android.arch.persistence.room.ColumnInfo;
 import android.arch.persistence.room.Entity;
 import android.arch.persistence.room.PrimaryKey;
 import android.support.annotation.NonNull;
-
-import java.io.Serializable;
 
 /**
  * Auto-generated: 2019-03-05 16:34:54
@@ -13,7 +10,6 @@ import java.io.Serializable;
  * @author bejson.com (i@bejson.com)
  * @website http://www.bejson.com/java2pojo/
  */
-@Entity
 public class UserInfo {
 
     /**
@@ -23,22 +19,30 @@ public class UserInfo {
      * flag : 1
      * gmtModified : 1605167665000
      * id : 1
-     * password : e10adc3949ba59abbe56e057f20f883e
+     * user_password : e10adc3949ba59abbe56e057f20f883e
      * token : code-generator_token_ae2b22d2-2cdb-4140-afed-2f61fc210046
      * username : manager
      */
-
+    private String user_name;
+    private String user_password;
     private String faceFeature;
-    private String faceImg;
-    private String faceStatus;
-    private String flag;
-    private long gmtModified;
-    @PrimaryKey
-    @NonNull
-    private int id;
-    private String password;
-    private String token;
-    private String username;
+    private int managerClient = 1;
+
+    public String getUser_name() {
+        return user_name;
+    }
+
+    public void setUser_name(String user_name) {
+        this.user_name = user_name;
+    }
+
+    public String getUser_password() {
+        return user_password;
+    }
+
+    public void setUser_password(String user_password) {
+        this.user_password = user_password;
+    }
 
     public String getFaceFeature() {
         return faceFeature;
@@ -48,67 +52,11 @@ public class UserInfo {
         this.faceFeature = faceFeature;
     }
 
-    public String getFaceImg() {
-        return faceImg;
+    public int getManagerClient() {
+        return managerClient;
     }
 
-    public void setFaceImg(String faceImg) {
-        this.faceImg = faceImg;
-    }
-
-    public String getFaceStatus() {
-        return faceStatus;
-    }
-
-    public void setFaceStatus(String faceStatus) {
-        this.faceStatus = faceStatus;
-    }
-
-    public String getFlag() {
-        return flag;
-    }
-
-    public void setFlag(String flag) {
-        this.flag = flag;
-    }
-
-    public long getGmtModified() {
-        return gmtModified;
-    }
-
-    public void setGmtModified(long gmtModified) {
-        this.gmtModified = gmtModified;
-    }
-
-    public int getId() {
-        return id;
-    }
-
-    public void setId(int id) {
-        this.id = id;
-    }
-
-    public String getPassword() {
-        return password;
-    }
-
-    public void setPassword(String password) {
-        this.password = password;
-    }
-
-    public String getToken() {
-        return token;
-    }
-
-    public void setToken(String token) {
-        this.token = token;
-    }
-
-    public String getUsername() {
-        return username;
-    }
-
-    public void setUsername(String username) {
-        this.username = username;
+    public void setManagerClient(int managerClient) {
+        this.managerClient = managerClient;
     }
 }

@@ -7,6 +7,7 @@ import com.android.terminalbox.base.view.AbstractView;
 import com.android.terminalbox.core.bean.BaseResponse;
 import com.android.terminalbox.core.bean.user.FaceFeatureBody;
 import com.android.terminalbox.core.bean.user.UserInfo;
+import com.android.terminalbox.core.bean.user.UserLoginResponse;
 
 import java.util.List;
 
@@ -20,15 +21,11 @@ import retrofit2.http.Body;
 public interface RecognizeContract {
 
     interface View extends AbstractView {
-        void handelAllUserInfo(BaseResponse<List<UserInfo>> userInfos);
-
-        void handleUpdateFeature(BaseResponse<UserInfo> userInfo);
-
+        void handleLogin(UserLoginResponse userLoginResponse);
     }
 
     interface Presenter extends AbstractPresenter<View> {
-        void getAllUserInfo();
 
-        void updateFeature( FaceFeatureBody faceFeatureBody);
+        void login(UserInfo userInfo);
     }
 }

@@ -14,7 +14,6 @@ import com.android.terminalbox.core.dao.EpcFileDao;
 import com.android.terminalbox.core.dao.UserDao;
 
 @Database(entities = {
-        UserInfo.class,
         EpcFile.class
 }
         , version = 2)
@@ -51,8 +50,6 @@ public abstract class BaseDb extends RoomDatabase {
                 .build();
         return build;
     }
-
-    public abstract UserDao getUserDao();
 
     public abstract EpcFileDao getEpcFileDao();
 }

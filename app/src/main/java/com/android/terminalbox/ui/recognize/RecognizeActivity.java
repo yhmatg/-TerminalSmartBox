@@ -21,13 +21,15 @@ import com.android.terminalbox.R;
 import com.android.terminalbox.app.BaseApplication;
 import com.android.terminalbox.base.activity.BaseActivity;
 import com.android.terminalbox.contract.RecognizeContract;
-import com.android.terminalbox.core.bean.BaseResponse;
+import com.android.terminalbox.core.DataManager;
 import com.android.terminalbox.core.bean.user.UserInfo;
+import com.android.terminalbox.core.bean.user.UserLoginResponse;
 import com.android.terminalbox.faceserver.FaceServer;
 import com.android.terminalbox.model.DrawInfo;
 import com.android.terminalbox.model.FacePreviewInfo;
 import com.android.terminalbox.presenter.RecognizePresenter;
 import com.android.terminalbox.ui.unlock.NewUnlockActivity;
+import com.android.terminalbox.utils.Md5Util;
 import com.android.terminalbox.utils.box.ConfigUtil;
 import com.android.terminalbox.utils.box.DrawHelper;
 import com.android.terminalbox.utils.camera.CameraHelper;
@@ -599,11 +601,14 @@ public class RecognizeActivity extends BaseActivity<RecognizePresenter> implemen
                     @Override
                     public void onNext(RecognizeUser compareResult) {
                         if (compareResult != null && compareResult.getSimilar() > SIMILAR_THRESHOLD) {
-                            BaseApplication.getInstance().setCurrentUer(compareResult.getUser());
+                            UserInfo currentUser = compareResult.getUser();
+                            BaseApplication.getInstance().setCurrentUer(currentUser);
                             Log.d(TAG, "人脸识别成功");
-                            startActivity(new Intent(RecognizeActivity.this, NewUnlockActivity.class));
+                            UserInfo userInfo = new UserInfo();
+                            userInfo.setUser_name(currentUser.getUser_name());
+                            userInfo.setUser_password(currentUser.getUser_password());
+                            mPresenter.login(userInfo);
                             outerImg.clearAnimation();
-                            finish();
                         } else {
                             if (faceHelper != null) {
                                 faceHelper.setName(requestId, "人员未识别");
@@ -735,18 +740,6 @@ public class RecognizeActivity extends BaseActivity<RecognizePresenter> implemen
                 });
     }
 
-
-    @Override
-    public void handelAllUserInfo(BaseResponse<List<UserInfo>> userInfos) {
-
-    }
-
-    @Override
-    public void handleUpdateFeature(BaseResponse<UserInfo> userInfo) {
-
-    }
-
-
     @Override
     public void afterRequestPermission(int requestCode, boolean isAllGranted) {
         if (requestCode == ACTION_REQUEST_PERMISSIONS) {
@@ -765,5 +758,15 @@ public class RecognizeActivity extends BaseActivity<RecognizePresenter> implemen
                 finish();
                 break;
         }
+    }
+
+    @Override
+    public void handleLogin(UserLoginResponse userLoginResponse) {
+        if(userLoginResponse != null){
+            DataManager.getInstance().setToken(userLoginResponse.getToken());
+            startActivity(new Intent(RecognizeActivity.this, NewUnlockActivity.class));
+            finish();
+        }
+
     }
 }

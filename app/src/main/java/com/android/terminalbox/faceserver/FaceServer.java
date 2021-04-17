@@ -681,7 +681,7 @@ public class FaceServer {
         for (int i = 0; i < users.size(); i++) {
             UserInfo userInfo = users.get(i);
             if(!StringUtils.isEmpty(userInfo.getFaceFeature())){
-                byte[] decode = Base64.decode(userInfo.getFaceFeature(), Base64.DEFAULT);
+                byte[] decode = Base64.decode(userInfo.getFaceFeature().replaceAll("\r|\n", ""), Base64.DEFAULT);
                 tempFaceFeature.setFeatureData(decode);
                 faceEngine.compareFaceFeature(faceFeature, tempFaceFeature, faceSimilar);
                 if (faceSimilar.getScore() > maxSimilar) {
