@@ -22,6 +22,8 @@ import com.android.terminalbox.contract.MainContract;
 import com.android.terminalbox.core.DataManager;
 import com.android.terminalbox.core.bean.BaseResponse;
 import com.android.terminalbox.core.bean.box.IotDevice;
+import com.android.terminalbox.core.bean.cmb.AssetFilterParameter;
+import com.android.terminalbox.core.bean.cmb.AssetsListItemInfo;
 import com.android.terminalbox.core.bean.cmb.TerminalInfo;
 import com.android.terminalbox.core.bean.cmb.TerminalLoginPara;
 import com.android.terminalbox.core.bean.user.EpcFile;
@@ -53,6 +55,7 @@ import com.esim.rylai.smartbox.ekey.EkeyManager;
 import com.esim.rylai.smartbox.uhf.UhfManager;
 import com.esim.rylai.smartbox.uhf.UhfReader;
 import com.google.gson.Gson;
+import com.multilevel.treelist.Node;
 
 import org.eclipse.paho.client.mqttv3.IMqttDeliveryToken;
 import org.eclipse.paho.client.mqttv3.IMqttToken;
@@ -66,6 +69,7 @@ import java.util.List;
 import java.util.Set;
 import java.util.concurrent.ExecutionException;
 
+import butterknife.BindString;
 import butterknife.BindView;
 import butterknife.OnClick;
 import io.reactivex.Observable;
@@ -86,7 +90,15 @@ public class MainActivity extends BaseActivity<MainPresenter> implements MainCon
     TextClock timeText;
     @BindView(R.id.file_number)
     TextView fileNumber;
+    @BindString(R.string.loc_id)
+    String locId;
+    @BindString(R.string.loc_name)
+    String locName;
     private List<UserInfo> users = new ArrayList<>();
+    private int currentPage = 1;
+    private int pageSize = 100;
+    private AssetFilterParameter conditions = new AssetFilterParameter();
+    private boolean isLogin;
 
     @Override
     protected int getLayoutId() {
@@ -105,6 +117,9 @@ public class MainActivity extends BaseActivity<MainPresenter> implements MainCon
 
     @Override
     protected void initEventAndData() {
+        List<Node> mSelectAssetsLocations = new ArrayList<>();
+        mSelectAssetsLocations.add(new Node(locId, "-1", locName));
+        conditions.setmSelectAssetsLocations(mSelectAssetsLocations);
         isNeedGoHomeActivity(false);
         activeEngine();
         weekText.setFormat24Hour("EEEE");
@@ -126,13 +141,13 @@ public class MainActivity extends BaseActivity<MainPresenter> implements MainCon
         UhfManager.getInstance().confReadTagFilter(null);
         UhfManager.getInstance().setShowLog(true);
         ConfigUtil.setFtOrient(MainActivity.this, ASF_OP_0_ONLY);
+        mPresenter.terminalLogin(new TerminalLoginPara("esim07","123456"));
     }
 
     @Override
     protected void onResume() {
         super.onResume();
-        List<EpcFile> allEpcFile = BaseDb.getInstance().getEpcFileDao().findEpcFileByBox("box002");
-        fileNumber.setText(String.valueOf(allEpcFile.size()));
+        mPresenter.fetchPageAssetsList(pageSize, currentPage, "", "", conditions.toString());
     }
 
     @OnClick({R.id.btn_inv, R.id.btn_access, R.id.bt_change_org,R.id.iv_title})
@@ -140,7 +155,9 @@ public class MainActivity extends BaseActivity<MainPresenter> implements MainCon
         Bundle bundle = new Bundle();
         switch (view.getId()) {
             case R.id.btn_inv:
-                mPresenter.terminalLogin(new TerminalLoginPara("esim07","123456"));
+                if(isLogin){
+                    JumpToActivity(NewInvActivity.class);
+                }
                 break;
             case R.id.btn_access:
                 JumpToActivity(RecognizeActivity.class);
@@ -158,8 +175,21 @@ public class MainActivity extends BaseActivity<MainPresenter> implements MainCon
     public void handleTerminalLogin(BaseResponse<TerminalInfo> terminalInfo) {
         if ("200000".equals(terminalInfo.getCode())) {
             DataManager.getInstance().setToken(terminalInfo.getResult().getId());
-            JumpToActivity(NewInvActivity.class);
+            isLogin = true;
         }
+    }
+
+    @Override
+    public void handleFetchPageAssetsList(List<AssetsListItemInfo> assetsInfos) {
+        int i = 0;
+        for (AssetsListItemInfo tool : assetsInfos) {
+            if (locName.equals(tool.getLoc_name())) {
+                if (tool.getAst_used_status() == 0) {
+                    i ++;
+                }
+            }
+        }
+        fileNumber.setText(String.valueOf(i));
     }
 
     /**
