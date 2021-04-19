@@ -57,8 +57,9 @@ public class BaseApplication extends Application {
         XLog.init(this);
         Utils.init(this);
         CrashHandler.getInstance().setOnCrashListener(new MyCrashListener());
+        //殷浩淼
         UserInfo sh0001 = new UserInfo();
-        sh0001.setUser_name("sh0002");
+        sh0001.setUser_name("sh0001");
         sh0001.setUser_password("123456");
         sh0001.setFaceFeature("AID6RAAAoEGIa928fRqAPaZXtbxOjO29x7yiPUVP9rxmwqO8UZGCPIRtuj0tTra9btZhuz6S4T0Q" +
                 "VHy98SW7vLkuqj2NCIS99lIWvpsbbrxW9n69Niv2PRxkwj0PtDE9OKwGPPdRRb1KXNQ8J/aWvFql" +
@@ -79,8 +80,9 @@ public class BaseApplication extends Application {
                 "MM+UPM8/H7wybS66cgE6vf3VsD0JixO8029DvWE8JzzawIs9SzrEO1MO0T3jXYW75TgBPaHDQj1X" +
                 "SBA+zLwBPREDQb3XuWq9bOmhvNE5Dz0IhCA96z6rutkFVT0Ew808Z+IUPSKwxLyB1yg+cHGyPGvA" +
                 "oDutD4m8");
+        //张平
         UserInfo sh0002 = new UserInfo();
-        sh0002.setUser_name("sh0001");
+        sh0002.setUser_name("sh0002");
         sh0002.setUser_password("123456");
         sh0002.setFaceFeature("AID6RAAAoEFE7wG9f6KOPehxNb1uZyy9zb2SPXyZDr31Fgu+pGYYPFZH2Ly8jLS7ZwhsPVY3VrxZ" +
                 "2JW8HDHMPNXa7LyjMbS9fCaWvfWbbLyRvM88d7GsPfDB1r2JtOK94WWqvX/RCz5UHxK7AlVvvJwV" +
@@ -101,6 +103,28 @@ public class BaseApplication extends Application {
                 "JfG1vTg3/byiRvu7YnFuPWTaUj0eQ+O98AxqPDz5RT205oO7n1oQvn7LBryQXu2835JLvUAkrb1U" +
                 "w809esfuvSBVXT1Fi8c9jEEOvlA8pbsYwE29vLUvPQsyQL3Fm8K9rQbFvOMIkL1KMiA9nbdvPUVy" +
                 "EjzIgIG9");
+        UserInfo sh0003 = new UserInfo();
+        sh0003.setUser_name("sh0003");
+        sh0003.setUser_password("123456");
+        sh0003.setFaceFeature("AID6RAAAoEFWdQu9aqLhPGvtLL11r029b4kzvU1svD11gRW9e/CQvVhWXzxKA7Q90UwPvNViHzyH" +
+                "rgm8ugiSvUrSJj5ifK06UVcivMVYoDz1a1a9LxJrvaxgBr785XW90/uJvZJ75TzXL5s9hklcvXYa" +
+                "aryv5qA8lMqXvdcI3r3q7AM839NLPfLN8TypCr88Ws47vfK+3bwA9ie9GHNDPVfUSz2tq806a0DR" +
+                "vZkQlb2PA0G8kOIQvLARNDyYz3w9RQraPdCF77zmagM+w+zoPSzFqb2uQbg8tk+PPZDY67shHFe9" +
+                "+h9fvTmqnbw4SL68pvz3O7NHaztckZC9U4aLPQr/2r19unw9gcg9PUpqHL0a1Xk95ndSvY/zzrsb" +
+                "ZMk8JrcXvPNGlDtMeRy+a+GLPZdrFz0v33m9pDfBPBSvbT3otFs7OkbsPIyhBr16paS8IR7tvMBw" +
+                "Hz1aVGQ9Daa8PUHqDT540JA7C3+9vJMsOL0S2gU+OWqOvedhAz32zQy8YpcoPfvUrDxeNHu8zqzI" +
+                "vPpRNzztW8Q84dKbvbvErjvz7ew9eVg8vegx3r1aO4C8LMAevi2+hT01ekq8G3QKvQaskT2LY/K9" +
+                "bLS/uwNMQL3bsNu9D6qLvAyoKL0gifS7OBSYPbmNFT3hIHa9EYLDvXFSpTwy24u9bf5uvRgtC76A" +
+                "OJ08J6CcPFZY4Tsz4Ne9gDfMvdBbkT1nERq9VQdcvStMAL3MnMM9RT/MO58hAj12qQm8msagPfc6" +
+                "FTyUiGS9qSIFPn0/KjztN0A9mw5RPOwtezzoZSw9d10YPaOhXb4tPIy93wtaPfhXLLyu7EG81EkP" +
+                "PbjALDyQAs09X/OgvT6NQzwGP1a8SeYEPh/Iz711Sxe+pkXHPMtN1D36gqO8RzTbvONUgj3fJvC8" +
+                "DFiBPfci9j1AbQw9f4scPpVwlDzRP+67kqbVPDAJKr1sYwU8X33qvUhS4bwiawI9p+cdvah+Lb0L" +
+                "cVC9BixuvaJinryXSyI9ObbtvN8RnL1SQIS8zh+0vYPggjyRn0Q77lusvYCXYr06wPK7G7NBPRL6" +
+                "iD2Jdoa9kJe+PRNQczysltK9x45nO2Czsj3dshy9J5HZvFJLjT2Mtt68/0N4vWMoO72FjTq9USrg" +
+                "OsLozT0AxIu9y+IsPSm8tz2CIP+9H85DvG2yKb1f5pu8JAFXvTTe0z373XC9Mt2mO0DJFj62DQS+" +
+                "7RSUPQWxpz0Q8NS97XYLvjt+ib2JGWm87KkVvPbo0LziUI+8vWxUPRV4bD3MU2Y9YV8tPZvxnbzX" +
+                "lxk9865hvYGqbj0faoE6txiquxDOh73dRTg810XyvG+bar2Q0Ow8OSugvHrYML3sTQQ7l08wvdy+" +
+                "7rxo5AK9");
         users.add(sh0001);
         users.add(sh0002);
     }
