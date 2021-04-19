@@ -1,6 +1,5 @@
 package com.android.terminalbox.ui.unlock;
 
-import android.content.Intent;
 import android.os.Handler;
 import android.support.v7.widget.LinearLayoutManager;
 import android.support.v7.widget.RecyclerView;
@@ -18,22 +17,17 @@ import com.android.terminalbox.app.BaseApplication;
 import com.android.terminalbox.base.activity.BaseActivity;
 import com.android.terminalbox.contract.UnlockContract;
 import com.android.terminalbox.core.DataManager;
+import com.android.terminalbox.core.bean.BaseResponse;
+import com.android.terminalbox.core.bean.cmb.AssetBackPara;
+import com.android.terminalbox.core.bean.cmb.AssetBorrowPara;
 import com.android.terminalbox.core.bean.cmb.AssetFilterParameter;
 import com.android.terminalbox.core.bean.cmb.AssetsListItemInfo;
-import com.android.terminalbox.core.bean.user.EpcFile;
+import com.android.terminalbox.core.bean.cmb.NewBorrowBackPara;
 import com.android.terminalbox.core.bean.user.UserInfo;
-import com.android.terminalbox.core.room.BaseDb;
-import com.android.terminalbox.mqtt.MqttServer;
-import com.android.terminalbox.mqtt.own.Props;
-import com.android.terminalbox.mqtt.own.ResultProp;
 import com.android.terminalbox.presenter.UnlockPresenter;
 import com.android.terminalbox.uhf.EsimUhfHelper;
 import com.android.terminalbox.ui.inventory.FileBeanAdapter;
-import com.android.terminalbox.utils.StringUtils;
 import com.android.terminalbox.utils.ToastUtils;
-import com.annimon.stream.Collectors;
-import com.annimon.stream.Stream;
-import com.annimon.stream.function.Function;
 import com.esim.rylai.smartbox.ekey.EkeyFailStatusEnum;
 import com.esim.rylai.smartbox.ekey.EkeyManager;
 import com.esim.rylai.smartbox.ekey.EkeyStatusChange;
@@ -41,10 +35,11 @@ import com.esim.rylai.smartbox.uhf.InventoryStrategy;
 import com.esim.rylai.smartbox.uhf.ReaderResult;
 import com.esim.rylai.smartbox.uhf.UhfManager;
 import com.esim.rylai.smartbox.uhf.UhfTag;
-import com.google.gson.Gson;
+import com.multilevel.treelist.Node;
 
 import java.util.ArrayList;
 import java.util.Collection;
+import java.util.Date;
 import java.util.HashMap;
 import java.util.List;
 
@@ -86,7 +81,7 @@ public class NewUnlockActivity extends BaseActivity<UnlockPresenter> implements 
     private FileBeanAdapter mOutAdapter;
     private FileBeanAdapter mInAdapter;
     private Animation mRadarAnim;
-    private UserInfo currentUer;
+    private UserInfo currentUser;
     private boolean isDestroy;
     private int currentPage = 1;
     private int pageSize = 100;
@@ -110,7 +105,10 @@ public class NewUnlockActivity extends BaseActivity<UnlockPresenter> implements 
 
     @Override
     protected void initEventAndData() {
-        currentUer = BaseApplication.getInstance().getCurrentUer();
+        List<Node> mSelectAssetsLocations = new ArrayList<>();
+        mSelectAssetsLocations.add(new Node(locId, "-1", locName));
+        conditions.setmSelectAssetsLocations(mSelectAssetsLocations);
+        currentUser = BaseApplication.getInstance().getCurrentUer();
         openLayout.setVisibility(View.VISIBLE);
         closeLayout.setVisibility(View.GONE);
         inOutLayout.setVisibility(View.GONE);
@@ -131,6 +129,8 @@ public class NewUnlockActivity extends BaseActivity<UnlockPresenter> implements 
         UhfManager.getInstance().confInventoryStrategy(inventoryStrategy);
         EkeyManager.getInstance().openEkey(1,ekeyListener);
         initAnim();
+        mPresenter.fetchPageAssetsList(pageSize, currentPage, "", "", conditions.toString());
+
     }
 
     @Override
@@ -258,6 +258,38 @@ public class NewUnlockActivity extends BaseActivity<UnlockPresenter> implements 
                     if (roundImg != null) {
                         roundImg.clearAnimation();
                     }
+                    Date today = new Date();
+                    AssetBorrowPara assetBorrowPara = new AssetBorrowPara();
+                    assetBorrowPara.setOdr_transactor_id(currentUser.getId());
+                    assetBorrowPara.setBor_user_id(currentUser.getId());
+                    assetBorrowPara.setExpect_rever_date(new Date(today.getTime() + 604800000));
+                    assetBorrowPara.setBor_date(today);
+                    assetBorrowPara.setOdr_remark("");
+                    assetBorrowPara.setUser_mobile(currentUser.getUser_mobile());
+                    assetBorrowPara.setTra_user_name(currentUser.getUser_real_name());
+                    assetBorrowPara.setBor_user_name(currentUser.getUser_real_name());
+
+                    AssetBackPara assetBackPara = new AssetBackPara();
+                    assetBackPara.setRev_user_id(currentUser.getId());
+                    assetBackPara.setRev_user_name(currentUser.getUser_real_name());
+                    assetBackPara.setActual_rever_date(today);
+                    assetBackPara.setOdr_remark("back");
+                    for (AssetsListItemInfo assetsListItemInfo : tempLocal) {
+                        assetBorrowPara.getAstids().add(assetsListItemInfo.getId());
+                    }
+                    for (AssetsListItemInfo tempInvFile : tempInvFiles) {
+                        assetBackPara.getAst_ids().add(tempInvFile.getId());
+                    }
+                    if (assetBackPara.getAst_ids().size() > 0) {
+                        String formData = assetBackPara.toString();
+                        String title = currentUser.getUser_real_name() + "提交的归还申请";
+                        mPresenter.backTools(new NewBorrowBackPara(formData, "[]", title));
+                    }
+                    if (assetBorrowPara.getAstids().size() > 0) {
+                        String formData = assetBorrowPara.toString();
+                        String title = currentUser.getUser_real_name() + "提交的借用申请";
+                        mPresenter.borrowTools(new NewBorrowBackPara(formData, "[]", title));
+                    }
                 }
             });
         }
@@ -279,11 +311,38 @@ public class NewUnlockActivity extends BaseActivity<UnlockPresenter> implements 
         toolList.clear();
         for (AssetsListItemInfo tool : assetsInfos) {
             if (locName.equals(tool.getLoc_name())) {
+                epcToolMap.put(tool.getAst_epc_code(), tool);
                 if (tool.getAst_used_status() == 0) {
-                    epcToolMap.put(tool.getAst_epc_code(), tool);
                     toolList.add(tool);
                 }
             }
+        }
+        openLayout.setVisibility(View.GONE);
+        closeLayout.setVisibility(View.VISIBLE);
+        inOutLayout.setVisibility(View.GONE);
+        roundImg.startAnimation(mRadarAnim);
+        UhfManager.getInstance().startReadTags();
+    }
+
+    @Override
+    public void handleBorrowTools(BaseResponse borrowToolsResponse) {
+        if ("200000".equals(borrowToolsResponse.getCode())) {
+            ToastUtils.showShort("借用工具成功");
+        } else if ("200002".equals(borrowToolsResponse.getCode())) {
+            ToastUtils.showShort("请求参数异常");
+        } else {
+            ToastUtils.showShort("借用失败:" + borrowToolsResponse.getMessage() + borrowToolsResponse.getCode());
+        }
+    }
+
+    @Override
+    public void handleBackTools(BaseResponse backToolsResponse) {
+        if ("200000".equals(backToolsResponse.getCode())) {
+            ToastUtils.showShort("归还工具成功");
+        } else if ("200002".equals(backToolsResponse.getCode())) {
+            ToastUtils.showShort("请求参数异常");
+        } else {
+            ToastUtils.showShort("归还失败:" + backToolsResponse.getMessage() + backToolsResponse.getCode());
         }
     }
 

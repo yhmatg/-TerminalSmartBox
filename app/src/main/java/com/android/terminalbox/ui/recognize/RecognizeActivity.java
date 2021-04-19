@@ -602,11 +602,10 @@ public class RecognizeActivity extends BaseActivity<RecognizePresenter> implemen
                     public void onNext(RecognizeUser compareResult) {
                         if (compareResult != null && compareResult.getSimilar() > SIMILAR_THRESHOLD) {
                             UserInfo currentUser = compareResult.getUser();
-                            BaseApplication.getInstance().setCurrentUer(currentUser);
                             Log.d(TAG, "人脸识别成功");
                             UserInfo userInfo = new UserInfo();
                             userInfo.setUser_name(currentUser.getUser_name());
-                            userInfo.setUser_password(currentUser.getUser_password());
+                            userInfo.setUser_password(Md5Util.getMD5(currentUser.getUser_password()));
                             mPresenter.login(userInfo);
                             outerImg.clearAnimation();
                         } else {
@@ -764,6 +763,7 @@ public class RecognizeActivity extends BaseActivity<RecognizePresenter> implemen
     public void handleLogin(UserLoginResponse userLoginResponse) {
         if(userLoginResponse != null){
             DataManager.getInstance().setToken(userLoginResponse.getToken());
+            BaseApplication.getInstance().setCurrentUer(userLoginResponse.getUserinfo());
             startActivity(new Intent(RecognizeActivity.this, NewUnlockActivity.class));
             finish();
         }

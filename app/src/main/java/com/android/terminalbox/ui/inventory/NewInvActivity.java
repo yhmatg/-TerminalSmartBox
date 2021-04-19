@@ -255,8 +255,8 @@ public class NewInvActivity extends BaseActivity<NewInvPresenter> implements New
         epcList.clear();
         for (AssetsListItemInfo tool : assetsInfos) {
             if (locName.equals(tool.getLoc_name())) {
+                epcToolMap.put(tool.getAst_epc_code(), tool);
                 if (tool.getAst_used_status() == 0) {
-                    epcToolMap.put(tool.getAst_epc_code(), tool);
                     epcList.add(tool.getAst_epc_code());
                 }
             }

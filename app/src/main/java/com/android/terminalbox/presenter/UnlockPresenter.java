@@ -3,6 +3,7 @@ package com.android.terminalbox.presenter;
 
 import com.android.terminalbox.base.presenter.BasePresenter;
 import com.android.terminalbox.core.bean.cmb.AssetsListPage;
+import com.android.terminalbox.core.bean.cmb.NewBorrowBackPara;
 import com.android.terminalbox.core.bean.user.NewOrderBody;
 import com.android.terminalbox.core.bean.user.OrderResponse;
 import com.android.terminalbox.contract.UnlockContract;
@@ -35,6 +36,30 @@ public class UnlockPresenter extends BasePresenter<UnlockContract.View> implemen
                         } else {
                             mView.handleFetchPageAssetsList(new ArrayList<>());
                         }
+                    }
+                }));
+    }
+
+    @Override
+    public void borrowTools(NewBorrowBackPara borrowPara) {
+        addSubscribe(DataManager.getInstance().borrowTools(borrowPara)
+                .compose(RxUtils.rxSchedulerHelper())
+                .subscribeWith(new BaseObserver<BaseResponse>(mView, false) {
+                    @Override
+                    public void onNext(BaseResponse baseResponse) {
+                        mView.handleBorrowTools(baseResponse);
+                    }
+                }));
+    }
+
+    @Override
+    public void backTools(NewBorrowBackPara backPara) {
+        addSubscribe(DataManager.getInstance().backTools(backPara)
+                .compose(RxUtils.rxSchedulerHelper())
+                .subscribeWith(new BaseObserver<BaseResponse>(mView, false) {
+                    @Override
+                    public void onNext(BaseResponse baseResponse) {
+                        mView.handleBackTools(baseResponse);
                     }
                 }));
     }

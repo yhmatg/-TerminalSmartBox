@@ -58,8 +58,8 @@ public class BaseApplication extends Application {
         Utils.init(this);
         CrashHandler.getInstance().setOnCrashListener(new MyCrashListener());
         UserInfo sh0001 = new UserInfo();
-        sh0001.setUser_name("sh0001");
-        sh0001.setUser_password("e10adc3949ba59abbe56e057f20f883e");
+        sh0001.setUser_name("sh0002");
+        sh0001.setUser_password("123456");
         sh0001.setFaceFeature("AID6RAAAoEGIa928fRqAPaZXtbxOjO29x7yiPUVP9rxmwqO8UZGCPIRtuj0tTra9btZhuz6S4T0Q" +
                 "VHy98SW7vLkuqj2NCIS99lIWvpsbbrxW9n69Niv2PRxkwj0PtDE9OKwGPPdRRb1KXNQ8J/aWvFql" +
                 "0LyJpL29j/pIPTO7m73tcTE9vyo4vRHnF71Yq4A8RKgWvLLYZT3C+UI9jeeGvXu8Ob3raM69l9OR" +
@@ -80,8 +80,8 @@ public class BaseApplication extends Application {
                 "SBA+zLwBPREDQb3XuWq9bOmhvNE5Dz0IhCA96z6rutkFVT0Ew808Z+IUPSKwxLyB1yg+cHGyPGvA" +
                 "oDutD4m8");
         UserInfo sh0002 = new UserInfo();
-        sh0002.setUser_name("sh0002");
-        sh0002.setUser_password("e10adc3949ba59abbe56e057f20f883e");
+        sh0002.setUser_name("sh0001");
+        sh0002.setUser_password("123456");
         sh0002.setFaceFeature("AID6RAAAoEFE7wG9f6KOPehxNb1uZyy9zb2SPXyZDr31Fgu+pGYYPFZH2Ly8jLS7ZwhsPVY3VrxZ" +
                 "2JW8HDHMPNXa7LyjMbS9fCaWvfWbbLyRvM88d7GsPfDB1r2JtOK94WWqvX/RCz5UHxK7AlVvvJwV" +
                 "ij2dZLi8/X0zPauB8r2im309KLOHvKWdoT1WrSS9Zb/RvfFkPDs3onA7IFQaPdlPBr2NGVe9HH4N" +

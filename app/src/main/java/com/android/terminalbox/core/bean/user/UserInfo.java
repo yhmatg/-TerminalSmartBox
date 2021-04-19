@@ -23,8 +23,11 @@ public class UserInfo {
      * token : code-generator_token_ae2b22d2-2cdb-4140-afed-2f61fc210046
      * username : manager
      */
+    private String id;
     private String user_name;
+    private String user_real_name;
     private String user_password;
+    private String user_mobile;
     private String faceFeature;
     private int managerClient = 1;
 
@@ -58,5 +61,29 @@ public class UserInfo {
 
     public void setManagerClient(int managerClient) {
         this.managerClient = managerClient;
+    }
+
+    public String getId() {
+        return id;
+    }
+
+    public void setId(String id) {
+        this.id = id;
+    }
+
+    public String getUser_real_name() {
+        return user_real_name;
+    }
+
+    public void setUser_real_name(String user_real_name) {
+        this.user_real_name = user_real_name;
+    }
+
+    public String getUser_mobile() {
+        return user_mobile;
+    }
+
+    public void setUser_mobile(String user_mobile) {
+        this.user_mobile = user_mobile;
     }
 }
