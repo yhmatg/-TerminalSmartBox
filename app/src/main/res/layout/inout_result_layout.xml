@@ -48,13 +48,14 @@
         android:layout_width="wrap_content"
         android:layout_height="wrap_content"
         android:layout_below="@+id/inv_number_layout"
+        android:layout_centerHorizontal="true"
         android:gravity="center"
         android:orientation="horizontal">
 
         <TextView
-            android:layout_marginStart="@dimen/dp_10"
             android:layout_width="wrap_content"
             android:layout_height="wrap_content"
+            android:layout_marginStart="@dimen/dp_10"
             android:text="取出"
             android:textColor="@color/white"
             android:textSize="@dimen/sp_16" />
@@ -73,62 +74,11 @@
             android:text="件"
             android:textColor="@color/white"
             android:textSize="@dimen/sp_16" />
-    </LinearLayout>
-
-    <RelativeLayout
-        android:id="@+id/out_relative"
-        android:layout_width="match_parent"
-        android:layout_height="@dimen/dp_200"
-        android:layout_below="@+id/out_number_layout"
-        android:background="@drawable/epc_files_back"
-        android:padding="@dimen/dp_12">
-
-        <LinearLayout
-            android:id="@+id/ll_out_title"
-            android:layout_width="match_parent"
-            android:layout_height="wrap_content"
-            android:layout_marginTop="@dimen/dp_14">
-
-            <TextView
-                android:layout_marginStart="@dimen/dp_10"
-                android:id="@+id/tv_out_file_name"
-                android:layout_width="0dp"
-                android:layout_height="wrap_content"
-                android:layout_weight="1"
-                android:gravity="center"
-                android:text="名称"
-                android:textColor="@color/white"
-                android:textSize="@dimen/sp_12" />
-
-            <TextView
-                android:layout_width="0dp"
-                android:layout_height="wrap_content"
-                android:layout_weight="1"
-                android:gravity="center"
-                android:text="编号"
-                android:textColor="@color/white"
-                android:textSize="@dimen/sp_12" />
-        </LinearLayout>
-
-        <android.support.v7.widget.RecyclerView
-            android:id="@+id/rv_out_items"
-            android:layout_width="match_parent"
-            android:layout_height="match_parent"
-            android:layout_below="@+id/ll_out_title" />
-    </RelativeLayout>
-
-    <LinearLayout
-        android:id="@+id/in_number_layout"
-        android:layout_width="wrap_content"
-        android:layout_height="wrap_content"
-        android:layout_below="@+id/out_relative"
-        android:gravity="center"
-        android:orientation="horizontal">
 
         <TextView
-            android:layout_marginStart="@dimen/dp_10"
             android:layout_width="wrap_content"
             android:layout_height="wrap_content"
+            android:layout_marginStart="@dimen/dp_30"
             android:text="存入"
             android:textColor="@color/white"
             android:textSize="@dimen/sp_16" />
@@ -150,44 +100,17 @@
     </LinearLayout>
 
     <RelativeLayout
-        android:id="@+id/in_relative"
+        android:id="@+id/out_relative"
         android:layout_width="match_parent"
-        android:layout_height="@dimen/dp_200"
-        android:layout_below="@+id/in_number_layout"
-        android:background="@drawable/epc_files_back"
+        android:layout_height="match_parent"
+        android:layout_below="@+id/out_number_layout"
         android:padding="@dimen/dp_12">
 
-        <LinearLayout
-            android:id="@+id/in_title"
-            android:layout_width="match_parent"
-            android:layout_height="wrap_content"
-            android:layout_marginTop="@dimen/dp_14">
-
-            <TextView
-                android:id="@+id/in_file_name"
-                android:layout_width="0dp"
-                android:layout_height="wrap_content"
-                android:layout_weight="1"
-                android:gravity="center"
-                android:text="名称"
-                android:textColor="@color/white"
-                android:textSize="@dimen/sp_12" />
-
-            <TextView
-                android:layout_width="0dp"
-                android:layout_height="wrap_content"
-                android:layout_weight="1"
-                android:gravity="center"
-                android:text="编号"
-                android:textColor="@color/white"
-                android:textSize="@dimen/sp_12" />
-        </LinearLayout>
-
         <android.support.v7.widget.RecyclerView
-            android:id="@+id/in_inv_items"
+            android:id="@+id/rv_out_items"
             android:layout_width="match_parent"
             android:layout_height="match_parent"
-            android:layout_below="@+id/in_title" />
+            android:layout_marginTop="@dimen/dp_14" />
     </RelativeLayout>
 
 </RelativeLayout>

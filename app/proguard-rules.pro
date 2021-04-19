@@ -138,3 +138,31 @@
 -dontwarn kotlin.coroutines.Continuation
 
 -keep class kotlin.coroutines.Continuation { *; }
+
+-dontwarn javax.**
+
+-keep class javax.** { *; }
+
+-dontwarn java.awt.**
+
+-keep class java.awt.** { *; }
+
+-dontwarn java.beans.**
+
+-keep class java.beans.** { *; }
+
+-dontwarn com.sun.jdmk.comm.**
+
+-keep class com.sun.jdmk.comm.** { *; }
+
+-dontwarn com.esim.rylai.smartbox.**
+
+-keep class com.esim.rylai.smartbox.** { *; }
+
+-dontwarn com.esim.rylai.smartbox.**
+
+-keep class com.esim.rylai.smartbox.** { *; }
+
+-dontwarn  com.arcsoft.face.**
+
+-keep class  com.arcsoft.face.** { *; }

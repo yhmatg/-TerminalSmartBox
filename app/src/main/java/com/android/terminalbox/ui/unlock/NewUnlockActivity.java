@@ -62,8 +62,6 @@ public class NewUnlockActivity extends BaseActivity<UnlockPresenter> implements 
     ImageView roundImg;
     @BindView(R.id.rv_out_items)
     RecyclerView mOutRecycleView;
-    @BindView(R.id.in_inv_items)
-    RecyclerView mInRecycleView;
     @BindView(R.id.open_layout)
     RelativeLayout openLayout;
     @BindView(R.id.close_layout)
@@ -76,10 +74,10 @@ public class NewUnlockActivity extends BaseActivity<UnlockPresenter> implements 
     String locName;
     private Handler mHandler = new Handler();
     private List<AssetsListItemInfo> files = new ArrayList<>();
-    private List<AssetsListItemInfo> inFiles = new ArrayList<>();
-    private List<AssetsListItemInfo> outFiles = new ArrayList<>();
+    //private List<AssetsListItemInfo> inFiles = new ArrayList<>();
+    //private List<AssetsListItemInfo> outFiles = new ArrayList<>();
+    private List<AssetsListItemInfo> inOutFiles = new ArrayList<>();
     private FileBeanAdapter mOutAdapter;
-    private FileBeanAdapter mInAdapter;
     private Animation mRadarAnim;
     private UserInfo currentUser;
     private boolean isDestroy;
@@ -112,13 +110,9 @@ public class NewUnlockActivity extends BaseActivity<UnlockPresenter> implements 
         openLayout.setVisibility(View.VISIBLE);
         closeLayout.setVisibility(View.GONE);
         inOutLayout.setVisibility(View.GONE);
-        mOutAdapter = new FileBeanAdapter(outFiles, this,false);
+        mOutAdapter = new FileBeanAdapter(inOutFiles, this,false);
         mOutRecycleView.setLayoutManager(new LinearLayoutManager(this));
         mOutRecycleView.setAdapter(mOutAdapter);
-        mInAdapter = new FileBeanAdapter(inFiles, this,false);
-        mInRecycleView.setLayoutManager(new LinearLayoutManager(this));
-        mInRecycleView.setAdapter(mInAdapter);
-        //初始化rfid
         int maxTime = DataManager.getInstance().getMixTime();
         int maxUnchange = DataManager.getInstance().getMixTimeUnchange();
         ToastUtils.showShort("maxTime===" + maxTime +"      maxUnchange===" + maxUnchange);
@@ -242,9 +236,10 @@ public class NewUnlockActivity extends BaseActivity<UnlockPresenter> implements 
                     if (outNumbers != null) {
                         outNumbers.setText(String.valueOf(tempLocal.size()));
                     }
-                    inFiles.addAll(tempInvFiles);
-                    outFiles.addAll(tempLocal);
-                    mInAdapter.notifyDataSetChanged();
+                    /*inFiles.addAll(tempInvFiles);
+                    outFiles.addAll(tempLocal);*/
+                    inOutFiles.addAll(tempInvFiles);
+                    inOutFiles.addAll(tempLocal);
                     mOutAdapter.notifyDataSetChanged();
                     if (openLayout != null) {
                         openLayout.setVisibility(View.GONE);
@@ -317,11 +312,11 @@ public class NewUnlockActivity extends BaseActivity<UnlockPresenter> implements 
                 }
             }
         }
-        openLayout.setVisibility(View.GONE);
+        /*openLayout.setVisibility(View.GONE);
         closeLayout.setVisibility(View.VISIBLE);
         inOutLayout.setVisibility(View.GONE);
         roundImg.startAnimation(mRadarAnim);
-        UhfManager.getInstance().startReadTags();
+        UhfManager.getInstance().startReadTags();*/
     }
 
     @Override
