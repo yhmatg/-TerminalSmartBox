@@ -18,13 +18,13 @@ public class AppendUrlIntercepter implements Interceptor {
     public Response intercept(Chain chain) throws IOException {
         String token = DataManager.getInstance().getToken();
         String cacheHost= DataManager.getInstance().getHostUrl();
-
         Request oldRequest = chain.request();
         HttpUrl.Builder builder = oldRequest
                 .url()
                 .newBuilder();
         //add 20190729 start
         builder.addQueryParameter("token",token);
+        builder.addQueryParameter("rnd",String.valueOf(System.currentTimeMillis()));
         //add 20190729 start
         Log.e("AppendUrlIntercepter","builder.build()===" + builder.build());
         Request newRequest = oldRequest
