@@ -59,7 +59,7 @@ public class BaseApplication extends Application {
         CrashHandler.getInstance().setOnCrashListener(new MyCrashListener());
         //殷浩淼
         UserInfo sh0001 = new UserInfo();
-        sh0001.setUser_name("sh0001");
+        sh0001.setUser_name("yhm0001");
         sh0001.setUser_password("123456");
         sh0001.setFaceFeature("AID6RAAAoEGIa928fRqAPaZXtbxOjO29x7yiPUVP9rxmwqO8UZGCPIRtuj0tTra9btZhuz6S4T0Q" +
                 "VHy98SW7vLkuqj2NCIS99lIWvpsbbrxW9n69Niv2PRxkwj0PtDE9OKwGPPdRRb1KXNQ8J/aWvFql" +
@@ -82,7 +82,7 @@ public class BaseApplication extends Application {
                 "oDutD4m8");
         //张平
         UserInfo sh0002 = new UserInfo();
-        sh0002.setUser_name("sh0002");
+        sh0002.setUser_name("zp0001");
         sh0002.setUser_password("123456");
         sh0002.setFaceFeature("AID6RAAAoEFE7wG9f6KOPehxNb1uZyy9zb2SPXyZDr31Fgu+pGYYPFZH2Ly8jLS7ZwhsPVY3VrxZ" +
                 "2JW8HDHMPNXa7LyjMbS9fCaWvfWbbLyRvM88d7GsPfDB1r2JtOK94WWqvX/RCz5UHxK7AlVvvJwV" +
@@ -103,8 +103,9 @@ public class BaseApplication extends Application {
                 "JfG1vTg3/byiRvu7YnFuPWTaUj0eQ+O98AxqPDz5RT205oO7n1oQvn7LBryQXu2835JLvUAkrb1U" +
                 "w809esfuvSBVXT1Fi8c9jEEOvlA8pbsYwE29vLUvPQsyQL3Fm8K9rQbFvOMIkL1KMiA9nbdvPUVy" +
                 "EjzIgIG9");
+        //周克
         UserInfo sh0003 = new UserInfo();
-        sh0003.setUser_name("sh0003");
+        sh0003.setUser_name("zk0001");
         sh0003.setUser_password("123456");
         sh0003.setFaceFeature("AID6RAAAoEFWdQu9aqLhPGvtLL11r029b4kzvU1svD11gRW9e/CQvVhWXzxKA7Q90UwPvNViHzyH" +
                 "rgm8ugiSvUrSJj5ifK06UVcivMVYoDz1a1a9LxJrvaxgBr785XW90/uJvZJ75TzXL5s9hklcvXYa" +
@@ -125,8 +126,33 @@ public class BaseApplication extends Application {
                 "7RSUPQWxpz0Q8NS97XYLvjt+ib2JGWm87KkVvPbo0LziUI+8vWxUPRV4bD3MU2Y9YV8tPZvxnbzX" +
                 "lxk9865hvYGqbj0faoE6txiquxDOh73dRTg810XyvG+bar2Q0Ow8OSugvHrYML3sTQQ7l08wvdy+" +
                 "7rxo5AK9");
+        //曹水波
+        UserInfo sh0004 = new UserInfo();
+        sh0004.setUser_name("csb0001");
+        sh0004.setUser_password("123456");
+        sh0004.setFaceFeature("AID6RAAAoEFyERo9lPrdvUUmpjxWfOO72O/LvIwDXz2swAA+7I2IvcJxFj2/NuA9zejcvdcdprxL" +
+                "Jyy9J2vmva4kd73WS2G9tp5YPfTLfb0oPb08/CxHPc/5AbxqUIa9k3zKvFTkyb1pUF29lWV1PUEX" +
+                "zLyEuzE9shqWPaxTcTwxlIC9uKrGPC4Cw72TA0i+bDA3vY2Ar72c/Qe90MuRvEE3lL3I95a9dZqv" +
+                "PWy71r2WbTi6mY/2PLn+zbnqVxy9i0+pvYB7+jt8WFu9ETfKPWb7RD2MN/G8x9NqPKLph72wpTo9" +
+                "lKiOPTutY73SbHa7jJERPYX07DtA4OM8J9wBPmY8gD20ORa9cjOovSCt1z3rt/o7KIeFvERTx70L" +
+                "+5E98GttvO3kjjyEPUW8iVfpvJCxub0cOM49udQGPNXG5TyeR709vIxVPHLNtLyjRte76DuhvfKg" +
+                "hr3lpHu9QUfPPJbCnb0VKMg9FEcavbrCzjwZDqi8a9LjvRm6bb38HVc7duHFPf541jyFsQI8vMAm" +
+                "PLm58b2+NmG9unCevXseIDz8tjy9t6tyPdUwZ73SCwg9cq9hPMyHzTxjhmM9L8uJPR8fsjwwbOw9" +
+                "BnYjvaf+3bwUvEW7BuVgPfeSkb0pGNO8CD4RvDTgYjyU/hK8g2y3PXKjUDv/ly485rnZPQKiFjs0" +
+                "OaU8LHlYPGxL1Tu/Pro9NlgZPfUTqz2gcL29IHTgPST34L3IYFe95ATOPPuYcz089CC9kROePbwF" +
+                "lLxuIvW80/03vFy9xLyIA4696b/8vSTUsrz6fsm8EgTqPFxKRr0WHQA9dzKkPEVLqb2m1zM80bAQ" +
+                "vCny9zyg7Jg8Y1UgPrZnE717e3888jWru6uKKb6Cs5a9fbtdPTwVKT01mQ09peicPf8JHj3cEV08" +
+                "OW3lPFTNmr3HwH88mgDdPVyj/rtSV029j60dPVCiO7wmrMa9vd2rvRz+AjxCzLg9t+d5uwBQu71H" +
+                "ds69DpubPKwwgD080YQ9KsFIPcCqZL0HdWy9fTnDPeOxYL1emqc9+xUrvcMMiz1BdSE+1kSkvcYO" +
+                "mT2wPY+8LUuLvENjKr2LQca9OlBdvUUd9r3IJsc8zNjmPZLU7zz4xj88y9y8vE+SUj1Yx5s8xV7P" +
+                "PUA04zmlQ8I9IbubO+J58DuEvZK98fvPPKMWzbv5hpM5fJ90PRdT/btXe1w8a02KPR2XI72/iLs8" +
+                "W5PkvLezvb3Ee/W9qr0MvZHjgr0bPnA9d9RkPQK4eL0U7WQ9rY2CPIcMCT4jzDk96OcnPXcy9Lvj" +
+                "iA0+2w7vPfsHDz01LyQ8xY4QPnTAZLuLf3g9xGmXvJ5pvTwVqPy8dVmHvaR/DD0waog9xGSFPFFc" +
+                "Fb0ELJG8");
         users.add(sh0001);
         users.add(sh0002);
+        users.add(sh0003);
+        users.add(sh0004);
     }
 
     @Override
