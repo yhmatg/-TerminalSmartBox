@@ -42,7 +42,7 @@ public class PreferenceHelperImpl implements PreferenceHelper {
 
     @Override
     public String getHostUrl() {
-        return mPreferences.getString(Constants.HOSTURL, "http://117.34.118.157:20000/");
+        return mPreferences.getString(Constants.HOSTURL, "http://172.16.61.223:30000/");
     }
 
     @Override
@@ -52,7 +52,7 @@ public class PreferenceHelperImpl implements PreferenceHelper {
 
     @Override
     public int getMixTime() {
-        return mPreferences.getInt(Constants.MIX_TIME, 4);
+        return mPreferences.getInt(Constants.MIX_TIME, 3);
     }
 
     @Override
@@ -62,7 +62,7 @@ public class PreferenceHelperImpl implements PreferenceHelper {
 
     @Override
     public int getMixTimeUnchange() {
-        return mPreferences.getInt(Constants.MIX_TIME_UNCHANGE, 6);
+        return mPreferences.getInt(Constants.MIX_TIME_UNCHANGE, 3);
     }
 
     @Override
