@@ -141,7 +141,7 @@ public class MainActivity extends BaseActivity<MainPresenter> implements MainCon
         UhfManager.getInstance().confReadTagFilter(null);
         UhfManager.getInstance().setShowLog(true);
         ConfigUtil.setFtOrient(MainActivity.this, ASF_OP_0_ONLY);
-        mPresenter.terminalLogin(new TerminalLoginPara("banma008","123456"));
+        mPresenter.terminalLogin(new TerminalLoginPara("banma001","123456"));
     }
 
     @Override
