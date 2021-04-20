@@ -107,7 +107,7 @@ public class NewInvActivity extends BaseActivity<NewInvPresenter> implements New
         seeDetail.setVisibility(View.VISIBLE);
         detailLayout.setVisibility(View.GONE);
         editText.setVisibility(View.GONE);
-        mAdapter = new FileBeanAdapter(files, this, false);
+        mAdapter = new FileBeanAdapter(files, this, true);
         mRecycleView.setLayoutManager(new LinearLayoutManager(this));
         mRecycleView.setAdapter(mAdapter);
         editText.setOnEditorActionListener(new TextView.OnEditorActionListener() {

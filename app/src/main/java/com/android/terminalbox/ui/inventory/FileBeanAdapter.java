@@ -51,24 +51,22 @@ public class FileBeanAdapter extends RecyclerView.Adapter<FileBeanAdapter.ViewHo
         String locName = astItemInfo.getLoc_name() == null ? "" : astItemInfo.getLoc_name();
         viewHolder.location.setText(locName);
         int astStatus = astItemInfo.getAst_used_status();
+        String statusName = TextUtils.isEmpty(AssetsUseStatus.getName(astStatus)) ? "" : AssetsUseStatus.getName(astStatus);
         if (isManager) {
-            if (0 == astStatus) {
-                viewHolder.astStatus.setText("放入");
-                viewHolder.astStatus.setBackground(context.getDrawable(R.drawable.inuse_status_back));
-            } else if (6 == astStatus) {
-                viewHolder.astStatus.setText("移出");
+            if ("闲置".equals(statusName)) {
+                viewHolder.astStatus.setText("闲置");
                 viewHolder.astStatus.setBackground(context.getDrawable(R.drawable.free_status_back));
-            }else if( -1 == astStatus){
-                viewHolder.astStatus.setText("位置错误");
+            } else {
+                viewHolder.astStatus.setText("借用");
                 viewHolder.astStatus.setBackground(context.getDrawable(R.drawable.inuse_status_back));
             }
         } else {
-            String statusName = TextUtils.isEmpty(AssetsUseStatus.getName(astStatus)) ? "" : AssetsUseStatus.getName(astStatus);
-            viewHolder.astStatus.setText(statusName);
             if ("闲置".equals(statusName)) {
-                viewHolder.astStatus.setBackground(context.getDrawable(R.drawable.free_status_back));
-            } else {
+                viewHolder.astStatus.setText("借用");
                 viewHolder.astStatus.setBackground(context.getDrawable(R.drawable.inuse_status_back));
+            } else {
+                viewHolder.astStatus.setText("闲置");
+                viewHolder.astStatus.setBackground(context.getDrawable(R.drawable.free_status_back));
             }
         }
 
