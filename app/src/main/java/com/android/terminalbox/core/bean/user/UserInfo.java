@@ -29,7 +29,7 @@ public class UserInfo {
     private String user_password;
     private String user_mobile;
     private String faceFeature;
-    private int managerClient = 1;
+    private String managerClient = "13";
 
     public String getUser_name() {
         return user_name;
@@ -55,11 +55,11 @@ public class UserInfo {
         this.faceFeature = faceFeature;
     }
 
-    public int getManagerClient() {
+    public String getManagerClient() {
         return managerClient;
     }
 
-    public void setManagerClient(int managerClient) {
+    public void setManagerClient(String managerClient) {
         this.managerClient = managerClient;
     }
 
