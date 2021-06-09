@@ -30,6 +30,7 @@ import com.android.terminalbox.core.bean.user.EpcFile;
 import com.android.terminalbox.core.bean.user.FaceFeatureBody;
 import com.android.terminalbox.core.bean.user.OrderBody;
 import com.android.terminalbox.core.bean.user.UserInfo;
+import com.android.terminalbox.core.bean.user.UserLoginResponse;
 import com.android.terminalbox.core.room.BaseDb;
 import com.android.terminalbox.mqtt.MqttServer;
 import com.android.terminalbox.mqtt.RylaiMqttCallback;
@@ -38,6 +39,7 @@ import com.android.terminalbox.ui.SettingActivity;
 import com.android.terminalbox.ui.inventory.NewInvActivity;
 import com.android.terminalbox.ui.recognize.RecognizeActivity;
 import com.android.terminalbox.ui.unlock.NewUnlockActivity;
+import com.android.terminalbox.utils.Md5Util;
 import com.android.terminalbox.utils.ToastUtils;
 import com.android.terminalbox.utils.box.ConfigUtil;
 import com.arcsoft.face.ActiveFileInfo;
@@ -141,7 +143,11 @@ public class MainActivity extends BaseActivity<MainPresenter> implements MainCon
         UhfManager.getInstance().confReadTagFilter(null);
         UhfManager.getInstance().setShowLog(true);
         ConfigUtil.setFtOrient(MainActivity.this, ASF_OP_0_ONLY);
-        mPresenter.terminalLogin(new TerminalLoginPara("banma001","123456"));
+        //mPresenter.terminalLogin(new TerminalLoginPara("banma001","123456"));
+        UserInfo userInfo = new UserInfo();
+        userInfo.setUser_name("admin01");
+        userInfo.setUser_password(Md5Util.getMD5("123456"));
+        mPresenter.login(userInfo);
     }
 
     @Override
@@ -190,6 +196,14 @@ public class MainActivity extends BaseActivity<MainPresenter> implements MainCon
             }
         }
         fileNumber.setText(String.valueOf(i));
+    }
+
+    @Override
+    public void handleLogin(UserLoginResponse userLoginResponse) {
+        if(userLoginResponse != null){
+            DataManager.getInstance().setToken(userLoginResponse.getToken());
+            isLogin = true;
+        }
     }
 
     /**

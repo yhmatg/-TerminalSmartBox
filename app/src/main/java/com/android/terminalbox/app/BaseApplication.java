@@ -149,10 +149,130 @@ public class BaseApplication extends Application {
                 "W5PkvLezvb3Ee/W9qr0MvZHjgr0bPnA9d9RkPQK4eL0U7WQ9rY2CPIcMCT4jzDk96OcnPXcy9Lvj" +
                 "iA0+2w7vPfsHDz01LyQ8xY4QPnTAZLuLf3g9xGmXvJ5pvTwVqPy8dVmHvaR/DD0waog9xGSFPFFc" +
                 "Fb0ELJG8");
+        //丁捷安
+        UserInfo sh0005 = new UserInfo();
+        sh0005.setUser_name("dja0001");
+        sh0005.setUser_password("123456");
+        sh0005.setFaceFeature("AID6RAAAoEG+QBM+yMEBvgU3pD12cZw8ZeCqvcY6Kz3XreQ8gxQzPeWL4T0nLAg+h2ImPSfkgDwx" +
+                "Ho890Hq/vbT+Qb2u0DO9XQqrPeyznLz7byc9HjUkPE5AQD241GG90FfDvaSbAbyu+TS9Y+q3vA+l" +
+                "Lr5RIZo8UyvNPYJGOD2F3M69byzDPSqID71yNCu8N2MMPPph4DycQ6A9oSTSPNFjLz3aP+g8l+m+" +
+                "vOlSe70BQhm9vEQePcZfADyIy4o8gOA1vQXIZj2eaa88XcSTvLuqSbwK4sO8v6GaPfI31Dy/4IA9" +
+                "L1cHvuxOhbw2eu68W/aEvMoUgLxV6BK+cNweutQgaT3/KIY9ngyDPCH/Cr3H2Ay92XfEPUdKvz1l" +
+                "88Y9b73rPQWFKz166qo9Y87GPPUK7b3wuTQ9rNYevfKiYb0QNPc8vridPHP7mbxrJTe8OsI9veEK" +
+                "Hz0+fyK9xViLvUfyor28lmq8K3j9PJ+ooz0sgfq85tClvagUHz3WXjy9SdPjvXJC/L0iJxG++6uE" +
+                "vZSNgbxZQZE9Oyebu7Y8zDrzbHK9I+xOPL1n3L1g1Ck9nvf4vSUcDTvIsBo9Ykh2vfy/dLxmnEQ8" +
+                "E85DPQo/rzyS3Yc9Su7FvPrbOTsC/sm9m8YNPmqODb3+cQm6VIZMPeBosbrtupa9Ze4FPud1lT0A" +
+                "7ZQ7w7KlvQ60nz3RTys8HkAPvtIsqb1SpAQ95XZWPfNOVD0s5iW8+2FHvSLRVr1I8X69fvQRO7Av" +
+                "1L2O+vs8/6ZSvRInqrzxf7C9ziUKPeyWKb0JdvG88YkIvWPCbb1DKSo7qKYwvHKMBb2lEZq8Ks9M" +
+                "veUDRz2m3YE9+FupPclpCD0us4i9FdCWvU0b1L1A0ag94qirPRhYQzxTWVo9A1+ivXDPwDvFYqO9" +
+                "X9YIPZsv+Lzrhus8VAiJvTSYgL1J11I9afEpvoBiET69HhA9xTCCvcbAHT19DSk9TQMoPT40jroX" +
+                "toA931qjvOsq9D1EJZM80U8APuIo9LsT6xu9GTUFvs0JvTxf2AI8FJahPEp+Gr1foDi8OUAJvdqr" +
+                "Uj0GpwY+8scbPlHTeb0eYF87fMYtOn7HIzxmMly9DRpKO4i+Wr0zSVE9QMLxvQDAMj0Gjoo8sumJ" +
+                "vT0VFjt8Gz693ktOvEYJAT6bL3s9Qk4dPXsHnL2jk7m9SgR4u/G2Oj1zYNm9qvLYvWwgN7xF5sY9" +
+                "qwCnPdNnVb1Dj8y8QM8IuxTskTwBukQ9Cfl9PSBsUr3kcjM92CHRPVERVDzfeya97WkuvWREfTxG" +
+                "S2K9lsLUPCR3tL09R2w9pdxGvhdmfz0rHKK8XdAIPfGOGL1beKs9zqUlvIlyt71wLQg7ShkNvmZT" +
+                "sL07WK29");
+        //卢海朋
+        UserInfo sh0006 = new UserInfo();
+        sh0006.setUser_name("lhp0001");
+        sh0006.setUser_password("123456");
+        sh0006.setFaceFeature("AID6RAAAoEE1rxY81MTHPFQrwb3y5KO9Y+acPXl5Xr1MdRG+qYEtvB6l+LyIvRg96TKnvedtXz3P" +
+                "UuS8/nWRu70injzbfTO8S1zyPT4Df73A8i2+TprVvYMirb24yx+8vIsxPhIfwL1mWgy9i+xHPPMO" +
+                "9zzMy1S87O2xPK6z0rtdi1u9JGVNPUDc9byWcAW9JgqfvDx29zz4BTc9RfgyvU9csDyhvpE9FAWG" +
+                "PY922DoGFxw9UUO9vDganDyhcaq8KPbiPbv4qz1e8yI9MCKGPcaQ8rzIDPS8WE/HvBT0P72gHHg6" +
+                "adYIOe/4VLzABZc9hqMKvTrdLD1k/PC7WSg4vdIKLr2Yc1q9IW7UPMNIPb3mMfK8iClhPTeigz0Z" +
+                "Zwi+KmUKPY92v71nliK+6ne9PVirsLx+n3o8mEUmvHn5Fjy3lI88NqG/vRMW/rxqn6A8p1VjvGP8" +
+                "k7tRY/89tyjyPOSJwj3GnzE9R9wgvaoB4z2tbpq9t+xgvAO5Sj14wJq9FI1CPcrBa72e9i69T7lj" +
+                "vdcj+7zhWga+hdAAPU6ZcL1y2SM96tCuPYiCoD0+TBg9Ci0NvdW/Br065be9EhO8u/w+2L3VLva9" +
+                "HkWyvLbbCzyHkcI9eUVOvUuaRLzdYRQ9fHPGvBUWorwFX6m757GCvReNTTxbST+9shllPNlsU71+" +
+                "/qu8ZFNQvdYAkb0gMxy+t8h0PJcIaj0IBow9BB2bPYY8oDwZLCg9wuGNPd4fqj35Khg9UsHcvRWR" +
+                "qz2rYde7os8Nvdd0vTsj2ai9Nxx+vJnfmz3LM6Y8uD4RvIhWkzw41Tm9j+1svK0nGj3VUrO9tQVS" +
+                "vb6OXjvMFAa+HEUEvj7NEzwGJIa9xDsnPkDyoTwgL929wHkrPdOpoTsPvCg8x9dqvTgSjbwdYJ26" +
+                "mKAePdV23T3cn8A9UXWBPQpN0jy/QyW9l0YRPTgx870vf2w9BzDYPRjW17rbWwa9Q0mmOyhODzwq" +
+                "IdQ9/KFuvXdxM72qtgg9wOAKvqyIMb14ICg+4JClPKhewbzeMHg9Wsp8PUTKobsNn8C9pS0vvmhh" +
+                "Fb0C1Yo9zP1ZPHUmh71RPSU93O/1vLnRP7wYDIi8pRe6vCgvwz3xcO87mherPG9MkTukqfY8pnjy" +
+                "PGDQej2T6Ey9g0QhPbDZhr1sWLK9tTu8vQWyVL0Y/YK8caD+vDZakj1Y2468fFoSPXg3Fz2nFz+9" +
+                "KBGPPf7bdr1R8J87eG+4PI0qjr1W3+492SALvrvVIDxVNdo8pcOOPZ4ehr2obwm9yekNPVjqPD2E" +
+                "QgE9uMVTPMIixT1JC/U8PR9avJjpIj2efOy9TpTGO5ljvLz+1ly9L0d3PYh4Mjy42yC8Qn9RPAjn" +
+                "Lb01rgG8");
+        //王利
+        UserInfo sh0007 = new UserInfo();
+        sh0007.setUser_name("wl0001");
+        sh0007.setUser_password("123456");
+        sh0007.setFaceFeature("AID6RAAAoEHYiYu9DB8zPRgFDbxADs+9GH8mvbYO5j1M/Km9kLsSOw6Fnb1m9508wXhVPbIWczs7" +
+                "hvo9f/uAvGG87TzBQse8ZEjpPMfeNT2p2+i8miA8vXC/V73HyfY9K2g8PSkJrL18IlU9FWOQvEDk" +
+                "Fj7IqBE8yOwmPNziqL2oUxE+kUCFO8iUDj0W8mC9JsRFPfaFlr1R8yu94bNjPRo6KD52OoC8zK+A" +
+                "vc0dqT0Tp6k9k88vvVaVKb1qiYK9fzmivZjV3bt68bg9EWMEvn7HN71/63K9wq6LPWBTUb1vssO7" +
+                "KX5uvWwmFz057oS8TjFCPVWwAL1eJ4c9bJArPcHASr3Jfmk9O/7OOpYoAL3CXD6+7IAyvOgxFLxj" +
+                "cV89zlVsvQB2hD39YRA9TtflvYzRRzynylq9t63OuzrPfT0Qekq7w9ehPRHc0DtfYMc9ngL1O+Fg" +
+                "/jwzOLM9sWBKPcJGYz2Uyd+94RinPRo9jDoxpNk9qIwGvvwHVj34wp+9PsG0PSsYBj7UvpQ9PIFN" +
+                "PcrJUj2bn2W9Y2CRu7V7pDymcAm76IlYPMgOrL02sIY8XD7qO+/Uuj2ZADi8rdTpvRZv+7xuf4C9" +
+                "wfJHO1h1CT0FAYG9SztmvPg2HTx76re9JL7fvR9A5jyH7dA8Je5fPRErFr0SqzY9xG/nOu1ATj3s" +
+                "Nte7VZsZPdciR73AFlS62pVZvfsfeL2gg5M8XlKrvP3Mwjzt+Sm9ByesvelefL3LT+C8iSupve3S" +
+                "oL3vJbm6UwIuvZjPErsjZaO95SkJPtApCz1G+wM9097NPfLqjLqY9Dw9fnfZPfSIpL0B6Vs85/iG" +
+                "vBkuy7tx+u881ClMPWZQAjyDVpa8opuvvTuyzLzdT8m9jGmGPSDe1r3/t3g9bS9aPGcAQD28nwY8" +
+                "AltqvYr6Zj0arjq9EkLMOx6rZTw1kXw9JGH1PPCp/T2bVFe9YOEHPeOxgLyQNcE800GnPFfsnrs2" +
+                "cJu9VjB3vW6MPr2ib9y9+Rk2vjvVDbwuZHo9jEjIPCm3fD208oc9TpHNvAo/ubxq5xq8T8nQvL0T" +
+                "Qjzzp247mirWPTRh3j2oRDA9tkJFvSGqfDsaaRS92dMTvamMnD0WfAg9mYqHveM/GL3J20u9J9vE" +
+                "vWLT3b2F5Y46Y3OVvZBsvbwsKoq9KsoVPbLPRD0/VBS+0OOivEfcbr2EfAu+EDOlPR+/zLy6Br68" +
+                "012nvdwkorwBg8099kAQvtNVA72begG+YW/HPb02ljysN6A9YfuWPXnG7juDKRe+Tiq4PYc7iL11" +
+                "HKS7w9DwvbYSkLxNTVw9C8BJvXNqlr3rQu66CxfjO/L2sLztmoG9mil9POw2oD0OWB29S25gPSwk" +
+                "ojwTOEK9");
+        //严杰
+        UserInfo sh0008 = new UserInfo();
+        sh0008.setUser_name("yj0001");
+        sh0008.setUser_password("123456");
+        sh0008.setFaceFeature("AID6RAAAoEEj9cA9s45QPSJ2jj1jMpi9wNHlvPWYszxpLa+93bHPPEQYQL1hwdK9wu/KvGL/Xb28" +
+                "vh87lNOOPTLvSD3cDYM9pKmQvW9qirzwkfg9seM6vUXD/7zuiww8nXMSvZh4ED0pdpG9JVATPbec" +
+                "rb3II5+97C4BPl9rsb0RIa+8OUFxvVDLnD3AMZs83GsevIRMIL2Iu4Q9LGf5vUR3qr3p0uO7+7Ee" +
+                "vf+wxj0coYu8GidWPLsHJLxthZQ95PY3vUn0B74nLcW98KQVvqRNqzw2jgS++neCPQAh3ruziiC9" +
+                "CRsAvbBJcL2Bx4O8YSi5PUPfEr09nMs9DldlvfI3A71rO0O8eVDJvVvUaL3FaBa8bf6hPcbkuLsB" +
+                "Ndm8w/KkPM1LN72fjrQ9XHNMvR4UKT05dAG64HxTvdcQV71FECI+9BazvSZKxLyDhiy9rw6lvfja" +
+                "2rwH7i+9seVLvVkb8T236Vk54G3tPahmT709pYQ95+1ZPMeye71FQ+894xKuvNhrRD2acKu9KcNM" +
+                "vhIhTL2wMZy9YnlOPd9O2TvXzGY93k94vVWAILzDaxS9ddEwvE5W4T1zudG8a2x2vCvf873MV509" +
+                "c7syPQfzqT1Tj648LvhxPTHOv7tppv674TQdPCHonD1DIbA9mr2pvC7Sw7xME6A9dY2BvWWYvbzv" +
+                "zL28BltWPdAlaLyvesq9G/CkuwNWJD3ErhE9NG7GvEytkD2kQ8e9FQN7PaQ9Xr0wsha9EmKxvQFL" +
+                "PTyCWLY8wV+svePOSb2ubWq9erC0PDv3Bb5q3Jm9vyYIPodEB7787oM9KYeCPPCY4jri0fs8Wv7D" +
+                "vCyYVj21ORY8AqvpvbH0VL3+aL68H+KGu9z5CL57Mki9EpsBvbLHpbug09y8b6saPgXpnT2H8hQ8" +
+                "at0mPQaKFj1h66+8ZYeBPR29Wz1hrjy8QpT1O4NFBz2x2F+6wkMYPd08qj3Lx5Q87XhQvOgxRT3+" +
+                "gQQ83CePu0QkvbukVHK84I6rvC/2PL0DRBw828KevLFpLr3Kow49OePtvaeakj0JWxy+pMY7vOuk" +
+                "7LxnsiK9WT1pPaLxVzscmEo9vwVeO7unez2i8sg8FN86PM2sNDwfy8M9myi5vHBUtL2hCN49/CoH" +
+                "vVv+fztc3Ba9E+y8PZFOnj0+nGA9yA3LPbNNLr0Ozb28rG18uz4qaD0NrKm8CSxDvXjXBL4ht9i7" +
+                "jYw/vYLQAbo3Wfc8YrrZPEVycj2mNxE9ZfxmvBAvcr3OFD+9eRPwu8CjBT3soic7Dd+hPe6zZb1V" +
+                "owY99FT7vHU+fDwahYI9Aj2LvYIco7y8MQa+NE6wvapkFz0cUa27PZisvUcKHr3XDuW75I5aPbcX" +
+                "5z30Wus8");
+        //张强胜
+        UserInfo sh0009 = new UserInfo();
+        sh0009.setUser_name("zqs0001");
+        sh0009.setUser_password("123456");
+        sh0009.setFaceFeature("AID6RAAAoEE1bHk8UCI1PC9oE75WCyq9iUc4vLW6/LwPPwg8AmxRuxuFGj4Kym0959OEvQfxWjy7" +
+                "V7w8KTn2PKU5wDyBYVq9CVmcPK50gLxkxg6970FlPfUIUL3C4qm89BIkvQhvQj24bC88nuUPvME2" +
+                "Jj2A0ys9IKCGuuOqmD0gazg91r/JPQtKXb3Ius+8TeuGO98M1b3ebSG8ecw6PP8gI70N6gm+dMJE" +
+                "vEuIIz607ac8MxmKvA3q0z1A2iY9Dli5PGfdAz0yZwY9LssHPjfqA77Idxg9+hjkvMCbzr1dSLQ8" +
+                "wz6XvOXXnrxksvs77qbgPAjCMzzjpgC+Kap3ve+kTL6tF9W9gjEBvRTOEr0zNCI94aObOwCM5Ti8" +
+                "aF+8XPSJvRzGSzycUc+9JrmRvbkF5D3QpxK96YKTvVn/vz2kQNs8reM6vK/HCL6uObi9nMfVu000" +
+                "gbxVv7a921tAvUGmRT3gsUS9o+ODO1ovyr2eayy97gQPvS8JLbvbkJ+8qM1YvVpz8bz3hfu82ezX" +
+                "PE/t27wbaFw9cA3KvRjsbr0dQTS95F1+vSajwz0oRhq+QBabPdNss7y+7y89EPoPvVO+qbzpTrG9" +
+                "M6DQvK8aQL28ZY08HA0gPjmnoDvr5nY8xME1PMTPdTxqvDk9rdEwvbcw9Lux2nG5nQ0OO8hJjz2b" +
+                "gZc9Y3saPVGI/LwAkhs776C+PYdYQD24wco8mbxLPNf3dz23Xry80CU8PZi/jj0FQxE9Hk8MPp9e" +
+                "pj3TG0U+d7qqvPgFMzvKGCI9pAwMPRMQIznxkw29EYGjvQhSeD31f389CYfHvPjEWzsAXaC97jij" +
+                "PMUFbj2osri8JaelvDr1FT7W5Yg9Zhl+PcFFjT2r1Hm967AhvJMLqbxd3yK9KV2DPSk1rb22WBG9" +
+                "v2afvCfbVj07KeM84FIvvZjl/DyuLs68YW6HPRi3ljoiWRc+Iy6wPOstTz1YR3c70ZiAPJ59AT7G" +
+                "Axs9SvIjPPcUlr3p5O89DFKqPfYRTz3CvyA9cRZmPHkGGD2ADsa7yalzvLRXnb31SPU8NGW5vQgL" +
+                "IT2ZnOA8qJ8zvRXayzz4tkO8BryZuqPxLT3Gz0K9lj0UvQ6NCrxD8uK8a67KPVWnej1omYw9yOYW" +
+                "PTRkijzIcqU544dNvZFguT2Rx7K9/susvVp8cL2K3Fg938CqPPVC2zyr+0i9nZW2vcyQhT3sFhc+" +
+                "3DT0PCDZ0z2MNGO8NsHiPd6t1r2oAbs7kMEaPWrgIDzeX8g9ALojvUdjMb3jwuy7WASTPTWgED2v" +
+                "EJe9wAdCvLiwNbxM0Gu8fWSgPX/6Er30PIo94lIyvsjfbL1C9QE+k7cSveKSVzy3gac9G0DEPaFe" +
+                "tL3mPzO9");
         users.add(sh0001);
         users.add(sh0002);
         users.add(sh0003);
         users.add(sh0004);
+        users.add(sh0005);
+        users.add(sh0006);
+        users.add(sh0007);
+        users.add(sh0008);
+        users.add(sh0009);
     }
 
     @Override

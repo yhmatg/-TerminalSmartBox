@@ -1,5 +1,7 @@
 package com.android.terminalbox.presenter;
 
+import android.util.Log;
+
 import com.android.terminalbox.base.presenter.BasePresenter;
 import com.android.terminalbox.contract.MainContract;
 import com.android.terminalbox.contract.RecognizeContract;
@@ -10,6 +12,7 @@ import com.android.terminalbox.core.bean.cmb.TerminalInfo;
 import com.android.terminalbox.core.bean.cmb.TerminalLoginPara;
 import com.android.terminalbox.core.bean.user.FaceFeatureBody;
 import com.android.terminalbox.core.bean.user.UserInfo;
+import com.android.terminalbox.core.bean.user.UserLoginResponse;
 import com.android.terminalbox.core.http.widget.BaseObserver;
 import com.android.terminalbox.core.room.BaseDb;
 import com.android.terminalbox.utils.CommonUtils;
@@ -53,6 +56,25 @@ public class MainPresenter extends BasePresenter<MainContract.View> implements M
                         } else {
                             mView.handleFetchPageAssetsList(new ArrayList<>());
                         }
+                    }
+                }));
+    }
+
+    @Override
+    public void login(UserInfo userInfo) {
+        addSubscribe(DataManager.getInstance().login(userInfo)
+                .compose(RxUtils.handleResult())
+                .compose(RxUtils.rxSchedulerHelper())
+                .subscribeWith(new BaseObserver<UserLoginResponse>(mView, false) {
+                    @Override
+                    public void onNext(UserLoginResponse userLoginResponse) {
+                        mView.handleLogin(userLoginResponse);
+                    }
+
+                    @Override
+                    public void onError(Throwable e) {
+                        super.onError(e);
+                        Log.e("Throwable",e.toString());
                     }
                 }));
     }

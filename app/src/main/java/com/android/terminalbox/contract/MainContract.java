@@ -8,6 +8,7 @@ import com.android.terminalbox.core.bean.cmb.TerminalInfo;
 import com.android.terminalbox.core.bean.cmb.TerminalLoginPara;
 import com.android.terminalbox.core.bean.user.FaceFeatureBody;
 import com.android.terminalbox.core.bean.user.UserInfo;
+import com.android.terminalbox.core.bean.user.UserLoginResponse;
 
 import java.util.List;
 
@@ -22,6 +23,8 @@ public interface MainContract {
         void handleTerminalLogin(BaseResponse<TerminalInfo> terminalInfo);
 
         void handleFetchPageAssetsList(List<AssetsListItemInfo> assetsInfos);
+
+        void handleLogin(UserLoginResponse userLoginResponse);
     }
 
     interface Presenter extends AbstractPresenter<View> {
@@ -29,5 +32,7 @@ public interface MainContract {
         void terminalLogin( TerminalLoginPara terminalLoginPara);
 
         void fetchPageAssetsList(Integer size, Integer page, String patternName, String userRealName, String conditions);
+
+        void login(UserInfo userInfo);
     }
 }

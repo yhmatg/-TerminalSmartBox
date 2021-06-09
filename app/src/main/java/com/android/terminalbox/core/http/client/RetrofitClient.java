@@ -61,7 +61,7 @@ public class RetrofitClient {
         return SingletonHolder.INSTANCE;
     }
     private RetrofitClient() {
-        retrofit = createRetrofit(provideClient(), "http://172.16.61.223:30000/");
+        retrofit = createRetrofit(provideClient(), "https://cloud.assettag.vip");
 
     }
 

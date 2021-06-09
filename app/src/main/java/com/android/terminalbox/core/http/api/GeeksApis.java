@@ -28,7 +28,7 @@ import retrofit2.http.Query;
 public interface GeeksApis {
 
     //登录
-    /*@POST("user-server/userauth/loginwithinfo")
+  /*  @POST("user-server/userauth/loginwithinfo")
     Observable<BaseResponse<UserLoginResponse>> login(@Body UserInfo userInfo);*/
 
     //获取所有用户信息
