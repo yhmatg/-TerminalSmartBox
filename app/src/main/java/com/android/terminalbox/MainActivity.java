@@ -34,6 +34,7 @@ import com.android.terminalbox.core.bean.user.UserLoginResponse;
 import com.android.terminalbox.core.room.BaseDb;
 import com.android.terminalbox.mqtt.MqttServer;
 import com.android.terminalbox.mqtt.RylaiMqttCallback;
+import com.android.terminalbox.old.EkeyManager;
 import com.android.terminalbox.presenter.MainPresenter;
 import com.android.terminalbox.ui.SettingActivity;
 import com.android.terminalbox.ui.inventory.NewInvActivity;
@@ -53,7 +54,6 @@ import com.arcsoft.imageutil.ArcSoftImageFormat;
 import com.arcsoft.imageutil.ArcSoftImageUtil;
 import com.arcsoft.imageutil.ArcSoftImageUtilError;
 import com.bumptech.glide.Glide;
-import com.esim.rylai.smartbox.ekey.EkeyManager;
 import com.esim.rylai.smartbox.uhf.UhfManager;
 import com.esim.rylai.smartbox.uhf.UhfReader;
 import com.google.gson.Gson;
@@ -283,5 +283,11 @@ public class MainActivity extends BaseActivity<MainPresenter> implements MainCon
             mHits = null;	//这里说明一下，我们在进来以后需要还原状态，否则如果点击过快，第六次，第七次 都会不断进来触发该效果。重新开始计数即可
             JumpToActivity(SettingActivity.class);
         }
+    }
+
+    @Override
+    protected void onDestroy() {
+        super.onDestroy();
+        EkeyManager.getInstance().deInit();
     }
 }
