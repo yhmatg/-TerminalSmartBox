@@ -58,6 +58,7 @@ import com.esim.rylai.smartbox.uhf.UhfManager;
 import com.esim.rylai.smartbox.uhf.UhfReader;
 import com.google.gson.Gson;
 import com.multilevel.treelist.Node;
+import com.xuexiang.xlog.XLog;
 
 import org.eclipse.paho.client.mqttv3.IMqttDeliveryToken;
 import org.eclipse.paho.client.mqttv3.IMqttToken;
@@ -98,7 +99,7 @@ public class MainActivity extends BaseActivity<MainPresenter> implements MainCon
     String locName;
     private List<UserInfo> users = new ArrayList<>();
     private int currentPage = 1;
-    private int pageSize = 100;
+    private int pageSize = 600;
     private AssetFilterParameter conditions = new AssetFilterParameter();
     private boolean isLogin;
 
@@ -191,13 +192,16 @@ public class MainActivity extends BaseActivity<MainPresenter> implements MainCon
     @Override
     public void handleFetchPageAssetsList(List<AssetsListItemInfo> assetsInfos) {
         int i = 0;
+        ArrayList<String> epcs = new ArrayList<>();
         for (AssetsListItemInfo tool : assetsInfos) {
             if (locName.equals(tool.getLoc_name())) {
+                epcs.add(tool.getAst_epc_code());
                 if (tool.getAst_used_status() == 0) {
                     i++;
                 }
             }
         }
+        XLog.get().e(epcs.toString());
         fileNumber.setText(String.valueOf(i));
     }
 

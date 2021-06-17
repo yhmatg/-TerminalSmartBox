@@ -77,7 +77,7 @@ public class NewInvActivity extends BaseActivity<NewInvPresenter> implements New
     private Handler mHandler = new Handler();
     private boolean isDestroy;
     private int currentPage = 1;
-    private int pageSize = 100;
+    private int pageSize = 600;
     private AssetFilterParameter conditions = new AssetFilterParameter();
     //闲置的工具
     private HashMap<String, AssetsListItemInfo> epcToolMap = new HashMap<>();

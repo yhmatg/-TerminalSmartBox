@@ -85,7 +85,7 @@ public class NewUnlockActivity extends BaseActivity<UnlockPresenter> implements 
     private UserInfo currentUser;
     private boolean isDestroy;
     private int currentPage = 1;
-    private int pageSize = 100;
+    private int pageSize = 600;
     private AssetFilterParameter conditions = new AssetFilterParameter();
     private HashMap<String, AssetsListItemInfo> epcToolMap = new HashMap<>();
     private List<AssetsListItemInfo> toolList = new ArrayList<>();
