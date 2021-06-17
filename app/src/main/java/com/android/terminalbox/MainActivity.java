@@ -126,16 +126,16 @@ public class MainActivity extends BaseActivity<MainPresenter> implements MainCon
         activeEngine();
         weekText.setFormat24Hour("EEEE");
         timeText.setFormat24Hour("MM/dd HH:mm");
-        EkeyManager.getInstance().init(this, "/dev/ttyXRUSB1", 9600).config( null, 2000, true,1, 2);
+        EkeyManager.getInstance().init(this, "/dev/ttyXRUSB1", 9600).config(null, 2000, true, 1, 2);
         EkeyManager.getInstance().setShowLog(true);
-        Set<UhfReader> uhfReaders=new HashSet<>();
-        int[] ants=new int[]{1,2,3,4};
+        Set<UhfReader> uhfReaders = new HashSet<>();
+        int[] ants = new int[]{1, 2, 3, 4};
         String ipOne = DataManager.getInstance().getIpOne();
         String ipTwo = DataManager.getInstance().getIpTwo();
-        ToastUtils.showShort("ipOne===" + ipOne +"      ipTwo===" + ipTwo);
-        UhfReader reader1=new UhfReader(ipOne);
+        ToastUtils.showShort("ipOne===" + ipOne + "      ipTwo===" + ipTwo);
+        UhfReader reader1 = new UhfReader(ipOne);
         reader1.setAnts(ants);
-        UhfReader reader2=new UhfReader(ipTwo);
+        UhfReader reader2 = new UhfReader(ipTwo);
         reader2.setAnts(ants);
         uhfReaders.add(reader1);
         uhfReaders.add(reader2);
@@ -153,15 +153,18 @@ public class MainActivity extends BaseActivity<MainPresenter> implements MainCon
     @Override
     protected void onResume() {
         super.onResume();
-        mPresenter.fetchPageAssetsList(pageSize, currentPage, "", "", conditions.toString());
+        if (isLogin) {
+            mPresenter.fetchPageAssetsList(pageSize, currentPage, "", "", conditions.toString());
+        }
+
     }
 
-    @OnClick({R.id.btn_inv, R.id.btn_access, R.id.bt_change_org,R.id.iv_title})
+    @OnClick({R.id.btn_inv, R.id.btn_access, R.id.bt_change_org, R.id.iv_title})
     public void onClick(View view) {
         Bundle bundle = new Bundle();
         switch (view.getId()) {
             case R.id.btn_inv:
-                if(isLogin){
+                if (isLogin) {
                     JumpToActivity(NewInvActivity.class);
                 }
                 break;
@@ -172,7 +175,7 @@ public class MainActivity extends BaseActivity<MainPresenter> implements MainCon
                 ConfigUtil.setFtOrient(MainActivity.this, ASF_OP_0_ONLY);
                 break;
             case R.id.iv_title:
-               intoSettings();
+                intoSettings();
                 break;
         }
     }
@@ -191,7 +194,7 @@ public class MainActivity extends BaseActivity<MainPresenter> implements MainCon
         for (AssetsListItemInfo tool : assetsInfos) {
             if (locName.equals(tool.getLoc_name())) {
                 if (tool.getAst_used_status() == 0) {
-                    i ++;
+                    i++;
                 }
             }
         }
@@ -200,9 +203,10 @@ public class MainActivity extends BaseActivity<MainPresenter> implements MainCon
 
     @Override
     public void handleLogin(UserLoginResponse userLoginResponse) {
-        if(userLoginResponse != null){
+        if (userLoginResponse != null) {
             DataManager.getInstance().setToken(userLoginResponse.getToken());
             isLogin = true;
+            mPresenter.fetchPageAssetsList(pageSize, currentPage, "", "", conditions.toString());
         }
     }
 
@@ -215,6 +219,7 @@ public class MainActivity extends BaseActivity<MainPresenter> implements MainCon
 
     };
     private static final int ACTION_REQUEST_PERMISSIONS = 0x001;
+
     public void activeEngine() {
         if (!checkPermissions(NEEDED_PERMISSIONS)) {
             ActivityCompat.requestPermissions(this, NEEDED_PERMISSIONS, ACTION_REQUEST_PERMISSIONS);
@@ -271,7 +276,7 @@ public class MainActivity extends BaseActivity<MainPresenter> implements MainCon
     }
 
     // 需要点击几次 就设置几
-    long [] mHits = null;
+    long[] mHits = null;
 
     public void intoSettings() {
         if (mHits == null) {
@@ -280,7 +285,7 @@ public class MainActivity extends BaseActivity<MainPresenter> implements MainCon
         System.arraycopy(mHits, 1, mHits, 0, mHits.length - 1);//把从第二位至最后一位之间的数字复制到第一位至倒数第一位
         mHits[mHits.length - 1] = SystemClock.uptimeMillis();//记录一个时间
         if (SystemClock.uptimeMillis() - mHits[0] <= 1000) {//一秒内连续点击。
-            mHits = null;	//这里说明一下，我们在进来以后需要还原状态，否则如果点击过快，第六次，第七次 都会不断进来触发该效果。重新开始计数即可
+            mHits = null;    //这里说明一下，我们在进来以后需要还原状态，否则如果点击过快，第六次，第七次 都会不断进来触发该效果。重新开始计数即可
             JumpToActivity(SettingActivity.class);
         }
     }

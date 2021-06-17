@@ -135,7 +135,7 @@ public class NewInvActivity extends BaseActivity<NewInvPresenter> implements New
         });
         initAnim();
         //开始盘点
-        int maxTime = DataManager.getInstance().getMixTime();
+        /*int maxTime = DataManager.getInstance().getMixTime();
         int maxUnchange = DataManager.getInstance().getMixTimeUnchange();
         ToastUtils.showShort("maxTime===" + maxTime + "      maxUnchange===" + maxUnchange);
         roundImg.startAnimation(mRadarAnim);
@@ -144,7 +144,7 @@ public class NewInvActivity extends BaseActivity<NewInvPresenter> implements New
         inventoryStrategy.setMaxTimesOfInv(maxTime);
         inventoryStrategy.setMaxTimesOfUnChange(maxUnchange);
         UhfManager.getInstance().confInventoryStrategy(inventoryStrategy);
-        UhfManager.getInstance().startReadTags();
+        UhfManager.getInstance().startReadTags();*/
         Log.e("Thread======", Thread.currentThread().toString());
         mPresenter.fetchPageAssetsList(pageSize, currentPage, "", "", conditions.toString());
     }
@@ -261,5 +261,17 @@ public class NewInvActivity extends BaseActivity<NewInvPresenter> implements New
                 }
             }
         }
+        //开始盘点
+        int maxTime = DataManager.getInstance().getMixTime();
+        int maxUnchange = DataManager.getInstance().getMixTimeUnchange();
+        ToastUtils.showShort("maxTime===" + maxTime + "      maxUnchange===" + maxUnchange);
+        roundImg.startAnimation(mRadarAnim);
+        UhfManager.getInstance().confReadListener(uhfListener);
+        InventoryStrategy inventoryStrategy = new InventoryStrategy();
+        inventoryStrategy.setMaxTimesOfInv(maxTime);
+        inventoryStrategy.setMaxTimesOfUnChange(maxUnchange);
+        UhfManager.getInstance().confInventoryStrategy(inventoryStrategy);
+        UhfManager.getInstance().startReadTags();
+        Log.e("Thread======", Thread.currentThread().toString());
     }
 }
