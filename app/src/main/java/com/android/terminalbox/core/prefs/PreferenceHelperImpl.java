@@ -86,6 +86,16 @@ public class PreferenceHelperImpl implements PreferenceHelper {
     }
 
     @Override
+    public void saveIpThree(String ipThree) {
+        mPreferences.edit().putString(Constants.IP_THREE, ipThree).apply();
+    }
+
+    @Override
+    public String getIpThree() {
+        return mPreferences.getString(Constants.IP_THREE, "http://10.20.169.219");
+    }
+
+    @Override
     public void setToken(String token) {
         mPreferences.edit().putString(Constants.TOKEN, token).apply();
     }

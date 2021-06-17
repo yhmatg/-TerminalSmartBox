@@ -30,5 +30,9 @@ public interface PreferenceHelper {
 
     String getIpTwo();
 
+    void saveIpThree(String ipThree);
+
+    String getIpThree();
+
 }
 

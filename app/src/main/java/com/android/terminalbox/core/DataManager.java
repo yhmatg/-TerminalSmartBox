@@ -101,6 +101,16 @@ public class DataManager implements HttpHelper, PreferenceHelper {
     }
 
     @Override
+    public void saveIpThree(String ipThree) {
+        mPreferenceHelper.saveIpThree(ipThree);
+    }
+
+    @Override
+    public String getIpThree() {
+        return mPreferenceHelper.getIpThree();
+    }
+
+    @Override
     public void setToken(String token) {
         mPreferenceHelper.setToken(token);
     }

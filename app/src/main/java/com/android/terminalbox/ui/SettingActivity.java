@@ -44,7 +44,10 @@ public class SettingActivity extends BaseActivity {
     EditText ipOne;
     @BindView(R.id.et_ip_two)
     EditText ipTwo;
+    @BindView(R.id.et_ip_three)
+    EditText ipThree;
     private String ipRegex = "((2(5[0-5]|[0-4]\\d))|[0-1]?\\d{1,2})(\\.((2(5[0-5]|[0-4]\\d))|[0-1]?\\d{1,2})){3}";
+    private String serviceIpRegex = "^([hH][tT]{2}[pP]://|[hH][tT]{2}[pP][sS]://)(([A-Za-z0-9-~]+).)+([A-Za-z0-9-~\\\\\\\\\\\\\\\\/])+$";
 
     @Override
     public AbstractPresenter initPresenter() {
@@ -66,7 +69,7 @@ public class SettingActivity extends BaseActivity {
 
     }
 
-    @OnClick({R.id.title_back, R.id.import_data, R.id.bt_mixtime, R.id.bt_mixtime_unchange, R.id.bt_ip_one, R.id.bt_ip_two})
+    @OnClick({R.id.title_back, R.id.import_data, R.id.bt_mixtime, R.id.bt_mixtime_unchange, R.id.bt_ip_one, R.id.bt_ip_two, R.id.bt_ip_three})
     public void onClick(View view) {
         switch (view.getId()) {
             case R.id.title_back:
@@ -112,6 +115,15 @@ public class SettingActivity extends BaseActivity {
                     ToastUtils.showShort("设置ip2成功,退出重启app生效");
                 } else {
                     ToastUtils.showShort("请输入正确的ip地址");
+                }
+                break;
+            case R.id.bt_ip_three:
+                String ipThreeStr = ipThree.getText().toString();
+                if (!StringUtils.isEmpty(ipThreeStr) && Pattern.matches(serviceIpRegex, ipThreeStr)) {
+                    DataManager.getInstance().saveIpThree(ipThreeStr);
+                    ToastUtils.showShort("设置服务器ip地址成功,退出重启app生效");
+                } else {
+                    ToastUtils.showShort("请输入正确的服务器ip地址");
                 }
                 break;
         }
