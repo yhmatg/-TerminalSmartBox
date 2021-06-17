@@ -11,6 +11,7 @@ import android.view.animation.RotateAnimation;
 import android.widget.ImageView;
 import android.widget.RelativeLayout;
 import android.widget.TextView;
+import android.widget.Toast;
 
 import com.android.terminalbox.R;
 import com.android.terminalbox.app.BaseApplication;
@@ -68,6 +69,8 @@ public class NewUnlockActivity extends BaseActivity<UnlockPresenter> implements 
     RelativeLayout closeLayout;
     @BindView(R.id.inout_layout)
     RelativeLayout inOutLayout;
+    @BindView(R.id.tv_borrow_error)
+    TextView tvBorrowError;
     @BindString(R.string.loc_id)
     String locId;
     @BindString(R.string.loc_name)
@@ -110,18 +113,18 @@ public class NewUnlockActivity extends BaseActivity<UnlockPresenter> implements 
         openLayout.setVisibility(View.VISIBLE);
         closeLayout.setVisibility(View.GONE);
         inOutLayout.setVisibility(View.GONE);
-        mOutAdapter = new FileBeanAdapter(inOutFiles, this,false);
+        mOutAdapter = new FileBeanAdapter(inOutFiles, this, false);
         mOutRecycleView.setLayoutManager(new LinearLayoutManager(this));
         mOutRecycleView.setAdapter(mOutAdapter);
         int maxTime = DataManager.getInstance().getMixTime();
         int maxUnchange = DataManager.getInstance().getMixTimeUnchange();
-        ToastUtils.showShort("maxTime===" + maxTime +"      maxUnchange===" + maxUnchange);
+        ToastUtils.showShort("maxTime===" + maxTime + "      maxUnchange===" + maxUnchange);
         UhfManager.getInstance().confReadListener(uhfListener);
         InventoryStrategy inventoryStrategy = new InventoryStrategy();
         inventoryStrategy.setMaxTimesOfInv(maxTime);
         inventoryStrategy.setMaxTimesOfUnChange(maxUnchange);
         UhfManager.getInstance().confInventoryStrategy(inventoryStrategy);
-        EkeyManager.getInstance().openEkey(1,ekeyListener);
+        EkeyManager.getInstance().openEkey(1, ekeyListener);
         initAnim();
         mPresenter.fetchPageAssetsList(pageSize, currentPage, "", "", conditions.toString());
 
@@ -144,7 +147,7 @@ public class NewUnlockActivity extends BaseActivity<UnlockPresenter> implements 
             mHandler.post(new Runnable() {
                 @Override
                 public void run() {
-                    if (isDestroy){
+                    if (isDestroy) {
                         return;
                     }
                     switch (ekeyStatusChange) {
@@ -155,7 +158,7 @@ public class NewUnlockActivity extends BaseActivity<UnlockPresenter> implements 
                             break;
                         case OPENED_TO_CLOSED:
                             Log.e(TAG, "=========ekey close============: " + Thread.currentThread().toString());
-                            if(openLayout == null || closeLayout == null || inOutLayout == null){
+                            if (openLayout == null || closeLayout == null || inOutLayout == null) {
                                 return;
                             }
                             openLayout.setVisibility(View.GONE);
@@ -196,7 +199,7 @@ public class NewUnlockActivity extends BaseActivity<UnlockPresenter> implements 
             mHandler.post(new Runnable() {
                 @Override
                 public void run() {
-                    if (isDestroy){
+                    if (isDestroy) {
                         return;
                     }
                     if (allNumbers != null) {
@@ -212,14 +215,14 @@ public class NewUnlockActivity extends BaseActivity<UnlockPresenter> implements 
             Log.e("Thread======", Thread.currentThread().toString());
             for (UhfTag tag : tags) {
                 AssetsListItemInfo assetsListItemInfo = epcToolMap.get(tag.getEpc());
-                if(assetsListItemInfo != null && !files.contains(assetsListItemInfo)){
+                if (assetsListItemInfo != null && !files.contains(assetsListItemInfo)) {
                     files.add(assetsListItemInfo);
                 }
             }
             mHandler.post(new Runnable() {
                 @Override
                 public void run() {
-                    if (isDestroy){
+                    if (isDestroy) {
                         return;
                     }
                     ArrayList<AssetsListItemInfo> tempLocal = new ArrayList<>();
@@ -235,6 +238,11 @@ public class NewUnlockActivity extends BaseActivity<UnlockPresenter> implements 
                     }
                     if (outNumbers != null) {
                         outNumbers.setText(String.valueOf(tempLocal.size()));
+                    }
+                    if (tempLocal.size() > 5) {
+                        tvBorrowError.setVisibility(View.VISIBLE);
+                    } else {
+                        tvBorrowError.setVisibility(View.GONE);
                     }
                     /*inFiles.addAll(tempInvFiles);
                     outFiles.addAll(tempLocal);*/

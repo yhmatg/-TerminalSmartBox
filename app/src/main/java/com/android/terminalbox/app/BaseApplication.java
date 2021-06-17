@@ -16,7 +16,10 @@ import com.orhanobut.logger.DiskLogAdapter;
 import com.orhanobut.logger.Logger;
 import com.orhanobut.logger.PrettyFormatStrategy;
 import com.xuexiang.xlog.XLog;
+import com.xuexiang.xlog.annotation.LogLevel;
 import com.xuexiang.xlog.crash.CrashHandler;
+import com.xuexiang.xlog.logger.LoggerFactory;
+import com.xuexiang.xlog.strategy.log.DiskLogStrategy;
 
 import java.util.ArrayList;
 import java.util.List;
@@ -57,6 +60,10 @@ public class BaseApplication extends Application {
         XLog.init(this);
         Utils.init(this);
         CrashHandler.getInstance().setOnCrashListener(new MyCrashListener());
+        DiskLogStrategy diskLogStrategy = LoggerFactory.getDiskLogStrategy(
+                "xlogTool", "xlog", LogLevel.ERROR, LogLevel.DEBUG
+        );
+        LoggerFactory.getSimpleDiskLogger("DiskLogger", diskLogStrategy, 0);
         //殷浩淼
         UserInfo sh0001 = new UserInfo();
         sh0001.setUser_name("yhm0001");
