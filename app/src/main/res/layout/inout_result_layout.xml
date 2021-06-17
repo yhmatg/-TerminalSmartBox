@@ -113,7 +113,7 @@
         android:id="@+id/out_relative"
         android:layout_width="match_parent"
         android:layout_height="match_parent"
-        android:layout_below="@+id/out_number_layout"
+        android:layout_below="@+id/tv_borrow_error"
         android:padding="@dimen/dp_12">
 
         <android.support.v7.widget.RecyclerView
