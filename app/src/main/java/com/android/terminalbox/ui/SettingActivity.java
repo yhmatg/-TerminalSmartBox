@@ -17,23 +17,27 @@ import android.widget.Toast;
 
 import com.android.terminalbox.R;
 import com.android.terminalbox.base.activity.BaseActivity;
-import com.android.terminalbox.base.presenter.AbstractPresenter;
+import com.android.terminalbox.contract.SettingsContract;
 import com.android.terminalbox.core.DataManager;
+import com.android.terminalbox.core.bean.cmb.AssetFilterParameter;
 import com.android.terminalbox.core.bean.user.EpcFile;
 import com.android.terminalbox.core.room.BaseDb;
+import com.android.terminalbox.presenter.SettingsPresenter;
 import com.android.terminalbox.utils.StringUtils;
 import com.android.terminalbox.utils.ToastUtils;
 import com.android.terminalbox.utils.box.ExcelUtils;
+import com.multilevel.treelist.Node;
 
 import java.io.File;
 import java.util.ArrayList;
 import java.util.List;
 import java.util.regex.Pattern;
 
+import butterknife.BindString;
 import butterknife.BindView;
 import butterknife.OnClick;
 
-public class SettingActivity extends BaseActivity {
+public class SettingActivity extends BaseActivity<SettingsPresenter> implements SettingsContract.View {
     @BindView(R.id.title_content)
     TextView titleContent;
     @BindView(R.id.et_mixtime)
@@ -44,16 +48,27 @@ public class SettingActivity extends BaseActivity {
     EditText ipOne;
     @BindView(R.id.et_ip_two)
     EditText ipTwo;
+    @BindString(R.string.loc_id)
+    String locId;
+    @BindString(R.string.loc_name)
+    String locName;
     private String ipRegex = "((2(5[0-5]|[0-4]\\d))|[0-1]?\\d{1,2})(\\.((2(5[0-5]|[0-4]\\d))|[0-1]?\\d{1,2})){3}";
+    private int currentPage = 1;
+    private int pageSize = 600;
+    private AssetFilterParameter conditions = new AssetFilterParameter();
 
     @Override
-    public AbstractPresenter initPresenter() {
-        return null;
+    public SettingsPresenter initPresenter() {
+        return new SettingsPresenter();
     }
 
     @Override
     protected void initEventAndData() {
         titleContent.setText("设置");
+        List<Node> mSelectAssetsLocations = new ArrayList<>();
+        mSelectAssetsLocations.add(new Node(locId, "-1", locName));
+        conditions.setmSelectAssetsLocations(mSelectAssetsLocations);
+
     }
 
     @Override
@@ -66,7 +81,7 @@ public class SettingActivity extends BaseActivity {
 
     }
 
-    @OnClick({R.id.title_back, R.id.import_data, R.id.bt_mixtime, R.id.bt_mixtime_unchange, R.id.bt_ip_one, R.id.bt_ip_two})
+    @OnClick({R.id.title_back, R.id.import_data, R.id.bt_mixtime, R.id.bt_mixtime_unchange, R.id.bt_ip_one, R.id.bt_ip_two, R.id.import_remote_data})
     public void onClick(View view) {
         switch (view.getId()) {
             case R.id.title_back:
@@ -113,6 +128,9 @@ public class SettingActivity extends BaseActivity {
                 } else {
                     ToastUtils.showShort("请输入正确的ip地址");
                 }
+                break;
+            case R.id.import_remote_data:
+                mPresenter.fetchPageAssetsList(pageSize, currentPage, "", "", conditions.toString());
                 break;
         }
     }
@@ -261,5 +279,10 @@ public class SettingActivity extends BaseActivity {
 
     public boolean isMediaDocument(Uri uri) {
         return "com.android.providers.media.documents".equals(uri.getAuthority());
+    }
+
+    @Override
+    public void handleFetchPageAssetsList(int resultSize) {
+        ToastUtils.showShort("导入 " + resultSize + "  条数据！");
     }
 }

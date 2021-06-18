@@ -5,22 +5,13 @@
 
     <include layout="@layout/title_layout" />
 
-    <Button
-        android:id="@+id/import_data"
-        android:layout_width="match_parent"
-        android:layout_height="wrap_content"
-        android:layout_below="@id/title_layout"
-        android:layout_margin="@dimen/dp_20"
-        android:background="@color/titele_color"
-        android:text="导入数据"
-        android:textColor="@color/white" />
-
     <EditText
         android:id="@+id/et_mixtime"
         android:layout_width="@dimen/dp_100"
         android:layout_height="@dimen/dp_40"
-        android:layout_below="@+id/import_data"
         android:layout_marginStart="@dimen/dp_20"
+        android:layout_marginTop="@dimen/dp_20"
+        android:layout_below="@id/title_layout"
         android:gravity="center"
         android:hint="盘点次数"
         android:inputType="number"
@@ -106,5 +97,25 @@
         android:layout_toEndOf="@+id/et_ip_two"
         android:background="@color/titele_color"
         android:text="确定"
+        android:textColor="@color/white" />
+
+    <Button
+        android:id="@+id/import_data"
+        android:layout_width="match_parent"
+        android:layout_height="wrap_content"
+        android:layout_below="@id/et_ip_two"
+        android:layout_margin="@dimen/dp_20"
+        android:background="@color/titele_color"
+        android:text="导入本地数据"
+        android:textColor="@color/white" />
+
+    <Button
+        android:id="@+id/import_remote_data"
+        android:layout_width="match_parent"
+        android:layout_height="wrap_content"
+        android:layout_below="@id/import_data"
+        android:layout_margin="@dimen/dp_20"
+        android:background="@color/titele_color"
+        android:text="导入远程数据"
         android:textColor="@color/white" />
 </RelativeLayout>

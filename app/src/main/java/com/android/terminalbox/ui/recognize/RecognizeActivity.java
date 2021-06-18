@@ -20,14 +20,11 @@ import android.widget.ImageView;
 import com.android.terminalbox.R;
 import com.android.terminalbox.app.BaseApplication;
 import com.android.terminalbox.base.activity.BaseActivity;
-import com.android.terminalbox.contract.RecognizeContract;
-import com.android.terminalbox.core.DataManager;
+import com.android.terminalbox.base.presenter.BasePresenter;
 import com.android.terminalbox.core.bean.user.UserInfo;
-import com.android.terminalbox.core.bean.user.UserLoginResponse;
 import com.android.terminalbox.faceserver.FaceServer;
 import com.android.terminalbox.model.DrawInfo;
 import com.android.terminalbox.model.FacePreviewInfo;
-import com.android.terminalbox.presenter.RecognizePresenter;
 import com.android.terminalbox.ui.unlock.NewUnlockActivity;
 import com.android.terminalbox.utils.box.ConfigUtil;
 import com.android.terminalbox.utils.box.DrawHelper;
@@ -164,7 +161,7 @@ public class RecognizeActivity extends BaseActivity implements ViewTreeObserver.
 
     //yhm end 1105
     @Override
-    public RecognizePresenter initPresenter() {
+    public BasePresenter initPresenter() {
         return null;
     }
 

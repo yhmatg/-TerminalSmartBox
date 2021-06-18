@@ -13,19 +13,14 @@ import com.android.terminalbox.base.activity.BaseActivity;
 import com.android.terminalbox.common.Constants;
 import com.android.terminalbox.contract.MainContract;
 import com.android.terminalbox.core.DataManager;
-import com.android.terminalbox.core.bean.BaseResponse;
 import com.android.terminalbox.core.bean.cmb.AssetFilterParameter;
 import com.android.terminalbox.core.bean.cmb.AssetsListItemInfo;
-import com.android.terminalbox.core.bean.cmb.TerminalInfo;
 import com.android.terminalbox.core.bean.user.UserInfo;
-import com.android.terminalbox.core.bean.user.UserLoginResponse;
-import com.android.terminalbox.core.room.BaseDb;
 import com.android.terminalbox.old.EkeyManager;
 import com.android.terminalbox.presenter.MainPresenter;
 import com.android.terminalbox.ui.SettingActivity;
 import com.android.terminalbox.ui.inventory.NewInvActivity;
 import com.android.terminalbox.ui.recognize.RecognizeActivity;
-import com.android.terminalbox.utils.Md5Util;
 import com.android.terminalbox.utils.ToastUtils;
 import com.android.terminalbox.utils.box.ConfigUtil;
 import com.arcsoft.face.ActiveFileInfo;
@@ -126,9 +121,7 @@ public class MainActivity extends BaseActivity<MainPresenter> implements MainCon
         Bundle bundle = new Bundle();
         switch (view.getId()) {
             case R.id.btn_inv:
-                if (isLogin) {
-                    JumpToActivity(NewInvActivity.class);
-                }
+                JumpToActivity(NewInvActivity.class);
                 break;
             case R.id.btn_access:
                 JumpToActivity(RecognizeActivity.class);
