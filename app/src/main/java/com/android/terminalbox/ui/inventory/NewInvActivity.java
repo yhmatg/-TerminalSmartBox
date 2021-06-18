@@ -21,18 +21,13 @@ import android.widget.TextView;
 import com.android.terminalbox.R;
 import com.android.terminalbox.base.activity.BaseActivity;
 import com.android.terminalbox.contract.MainContract;
-import com.android.terminalbox.contract.NewInvContract;
 import com.android.terminalbox.core.DataManager;
 import com.android.terminalbox.core.bean.cmb.AssetFilterParameter;
 import com.android.terminalbox.core.bean.cmb.AssetsListItemInfo;
-import com.android.terminalbox.core.bean.user.EpcFile;
-import com.android.terminalbox.core.room.BaseDb;
 import com.android.terminalbox.presenter.MainPresenter;
-import com.android.terminalbox.presenter.NewInvPresenter;
 import com.android.terminalbox.utils.ToastUtils;
 import com.annimon.stream.Collectors;
 import com.annimon.stream.Stream;
-import com.annimon.stream.function.Function;
 import com.annimon.stream.function.Predicate;
 import com.esim.rylai.smartbox.uhf.InventoryStrategy;
 import com.esim.rylai.smartbox.uhf.ReaderResult;
@@ -45,6 +40,7 @@ import java.util.Collection;
 import java.util.HashMap;
 import java.util.List;
 
+import butterknife.BindBool;
 import butterknife.BindString;
 import butterknife.BindView;
 import butterknife.OnClick;
@@ -71,6 +67,8 @@ public class NewInvActivity extends BaseActivity<MainPresenter> implements MainC
     String locId;
     @BindString(R.string.loc_name)
     String locName;
+    @BindBool(R.bool.is_test)
+    boolean isTest;
     private List<AssetsListItemInfo> files = new ArrayList<>();
     //存储一次盘点的数据
     private List<AssetsListItemInfo> allFiles = new ArrayList<>();
@@ -216,7 +214,11 @@ public class NewInvActivity extends BaseActivity<MainPresenter> implements MainC
     void performClick(View v) {
         switch (v.getId()) {
             case R.id.titleLeft:
-                finish();
+                if (isTest) {
+                    testInv();
+                } else {
+                    finish();
+                }
                 break;
             case R.id.tv_see_detail:
                 numberLayout.setVisibility(View.GONE);
@@ -259,5 +261,33 @@ public class NewInvActivity extends BaseActivity<MainPresenter> implements MainC
         inventoryStrategy.setMaxTimesOfUnChange(maxUnchange);
         UhfManager.getInstance().confInventoryStrategy(inventoryStrategy);
         UhfManager.getInstance().startReadTags();
+    }
+
+    private void testInv() {
+        ArrayList<String> invEpcs = new ArrayList<>();
+        invEpcs.add("E20162381216798143600202");
+        invEpcs.add("E20162381216797995170202");
+        invEpcs.add("E20162381216797780280202");
+        invEpcs.add("E20162381216797456810202");
+        invEpcs.add("E20162381216797153350202");
+        for (String invEpc : invEpcs) {
+            AssetsListItemInfo assetsListItemInfo = epcToolMap.get(invEpc);
+            if (assetsListItemInfo != null && !files.contains(assetsListItemInfo)) {
+                files.add(assetsListItemInfo);
+            }
+        }
+        Log.e(TAG, files.size() + "====" + files.toString());
+        if (isDestroy) {
+            return;
+        }
+        if (numberText != null) {
+            numberText.setText("" + files.size());
+            invStatus.setText("盘点完成");
+            mAdapter.notifyDataSetChanged();
+            allFiles.addAll(files);
+            if (roundImg != null) {
+                roundImg.clearAnimation();
+            }
+        }
     }
 }

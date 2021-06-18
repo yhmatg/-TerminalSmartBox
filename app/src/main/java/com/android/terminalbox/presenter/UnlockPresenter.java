@@ -2,19 +2,11 @@ package com.android.terminalbox.presenter;
 
 
 import com.android.terminalbox.base.presenter.BasePresenter;
-import com.android.terminalbox.core.bean.cmb.AssetsListItemInfo;
-import com.android.terminalbox.core.bean.cmb.AssetsListPage;
-import com.android.terminalbox.core.bean.cmb.NewBorrowBackPara;
-import com.android.terminalbox.core.bean.user.NewOrderBody;
-import com.android.terminalbox.core.bean.user.OrderResponse;
 import com.android.terminalbox.contract.UnlockContract;
-import com.android.terminalbox.core.DataManager;
-import com.android.terminalbox.core.bean.BaseResponse;
+import com.android.terminalbox.core.bean.cmb.AssetsListItemInfo;
 import com.android.terminalbox.core.http.widget.BaseObserver;
 import com.android.terminalbox.core.room.BaseDb;
 import com.android.terminalbox.utils.RxUtils;
-
-import org.xutils.db.table.DbBase;
 
 import java.util.ArrayList;
 import java.util.List;
@@ -61,20 +53,20 @@ public class UnlockPresenter extends BasePresenter<UnlockContract.View> implemen
     public void updateAssetsStatus(List<AssetsListItemInfo> assets) {
         addSubscribe(updateLocalAssetStatus(assets)
         .compose(RxUtils.rxSchedulerHelper())
-        .subscribeWith(new BaseObserver<Boolean>(mView, false) {
+        .subscribeWith(new BaseObserver<Integer>(mView, false) {
             @Override
-            public void onNext(Boolean aBoolean) {
-                mView.handleUpdateAssetsStatus(aBoolean);
+            public void onNext(Integer size) {
+                mView.handleUpdateAssetsStatus(size);
             }
         }));
     }
 
-    Observable<Boolean> updateLocalAssetStatus(List<AssetsListItemInfo> freeAssets){
-        return Observable.create(new ObservableOnSubscribe<Boolean>() {
+    Observable<Integer> updateLocalAssetStatus(List<AssetsListItemInfo> freeAssets){
+        return Observable.create(new ObservableOnSubscribe<Integer>() {
             @Override
-            public void subscribe(ObservableEmitter<Boolean> emitter) throws Exception {
+            public void subscribe(ObservableEmitter<Integer> emitter) throws Exception {
                 BaseDb.getInstance().getAssetDao().updateItems(freeAssets);
-                emitter.onNext(true);
+                emitter.onNext(freeAssets.size());
             }
         });
     }

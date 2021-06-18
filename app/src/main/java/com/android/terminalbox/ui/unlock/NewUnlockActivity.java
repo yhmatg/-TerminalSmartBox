@@ -17,14 +17,9 @@ import com.android.terminalbox.app.BaseApplication;
 import com.android.terminalbox.base.activity.BaseActivity;
 import com.android.terminalbox.contract.UnlockContract;
 import com.android.terminalbox.core.DataManager;
-import com.android.terminalbox.core.bean.BaseResponse;
-import com.android.terminalbox.core.bean.cmb.AssetBackPara;
-import com.android.terminalbox.core.bean.cmb.AssetBorrowPara;
 import com.android.terminalbox.core.bean.cmb.AssetFilterParameter;
 import com.android.terminalbox.core.bean.cmb.AssetsListItemInfo;
-import com.android.terminalbox.core.bean.cmb.NewBorrowBackPara;
 import com.android.terminalbox.core.bean.user.UserInfo;
-import com.android.terminalbox.core.room.BaseDb;
 import com.android.terminalbox.old.EkeyManager;
 import com.android.terminalbox.presenter.UnlockPresenter;
 import com.android.terminalbox.uhf.EsimUhfHelper;
@@ -40,10 +35,10 @@ import com.multilevel.treelist.Node;
 
 import java.util.ArrayList;
 import java.util.Collection;
-import java.util.Date;
 import java.util.HashMap;
 import java.util.List;
 
+import butterknife.BindBool;
 import butterknife.BindString;
 import butterknife.BindView;
 import butterknife.OnClick;
@@ -73,6 +68,8 @@ public class NewUnlockActivity extends BaseActivity<UnlockPresenter> implements 
     String locId;
     @BindString(R.string.loc_name)
     String locName;
+    @BindBool(R.bool.is_test)
+    boolean isTest;
     private Handler mHandler = new Handler();
     private List<AssetsListItemInfo> files = new ArrayList<>();
     private List<AssetsListItemInfo> inOutFiles = new ArrayList<>();
@@ -106,9 +103,15 @@ public class NewUnlockActivity extends BaseActivity<UnlockPresenter> implements 
         mSelectAssetsLocations.add(new Node(locId, "-1", locName));
         conditions.setmSelectAssetsLocations(mSelectAssetsLocations);
         currentUser = BaseApplication.getInstance().getCurrentUer();
-        openLayout.setVisibility(View.VISIBLE);
-        closeLayout.setVisibility(View.GONE);
-        inOutLayout.setVisibility(View.GONE);
+        if(isTest){
+            openLayout.setVisibility(View.GONE);
+            closeLayout.setVisibility(View.GONE);
+            inOutLayout.setVisibility(View.VISIBLE);
+        }else {
+            openLayout.setVisibility(View.VISIBLE);
+            closeLayout.setVisibility(View.GONE);
+            inOutLayout.setVisibility(View.GONE);
+        }
         mOutAdapter = new FileBeanAdapter(inOutFiles, this, false);
         mOutRecycleView.setLayoutManager(new LinearLayoutManager(this));
         mOutRecycleView.setAdapter(mOutAdapter);
@@ -124,23 +127,8 @@ public class NewUnlockActivity extends BaseActivity<UnlockPresenter> implements 
         initAnim();
         //获取本地数据
         mPresenter.fetchLocalAssets(-1);
-    }
 
-    private void getLocalAsset() {
-        List<AssetsListItemInfo> allAssets = BaseDb.getInstance().getAssetDao().findAllAssets();
-        Log.e(TAG, "page资产数量是=====" + allAssets.size());
-        epcToolMap.clear();
-        toolList.clear();
-        for (AssetsListItemInfo tool : allAssets) {
-            if (locName.equals(tool.getLoc_name())) {
-                epcToolMap.put(tool.getAst_epc_code(), tool);
-                if (tool.getAst_used_status() == 0) {
-                    toolList.add(tool);
-                }
-            }
-        }
     }
-
 
     @Override
     protected int getLayoutId() {
@@ -286,7 +274,11 @@ public class NewUnlockActivity extends BaseActivity<UnlockPresenter> implements 
     void performClick(View v) {
         switch (v.getId()) {
             case R.id.titleLeft:
-                finish();
+                if (isTest) {
+                    testInv();
+                } else {
+                    finish();
+                }
                 break;
         }
     }
@@ -307,11 +299,9 @@ public class NewUnlockActivity extends BaseActivity<UnlockPresenter> implements 
     }
 
     @Override
-    public void handleUpdateAssetsStatus(boolean result) {
-        if (result) {
+    public void handleUpdateAssetsStatus(int size) {
+        if (size > 0) {
             ToastUtils.showShort("存取档案成功");
-        } else {
-            ToastUtils.showShort("存取档案失败");
         }
     }
 
@@ -329,5 +319,57 @@ public class NewUnlockActivity extends BaseActivity<UnlockPresenter> implements 
         if (EsimUhfHelper.getInstance().isInvStart()) {
             EsimUhfHelper.getInstance().stopRead();
         }
+    }
+
+    private void testInv() {
+        ArrayList<String> invEpcs = new ArrayList<>();
+        invEpcs.add("E20162381216798143600202");
+        invEpcs.add("E20162381216797995170202");
+        invEpcs.add("E20162381216797780280202");
+        invEpcs.add("E20162381216797456810202");
+        invEpcs.add("E20162381216797153350202");
+       /* invEpcs.add("E20162381216796972100202");
+        invEpcs.add("E20162381216796760610202");
+        invEpcs.add("E20162381216796557230202");
+        invEpcs.add("E20162381216796315310202");
+        invEpcs.add("E20162381216796120020202");*/
+        for (String invEpc : invEpcs) {
+            AssetsListItemInfo assetsListItemInfo = epcToolMap.get(invEpc);
+            if (assetsListItemInfo != null && !files.contains(assetsListItemInfo)) {
+                files.add(assetsListItemInfo);
+            }
+        }
+        if (isDestroy) {
+            return;
+        }
+        ArrayList<AssetsListItemInfo> tempLocal = new ArrayList<>();
+        ArrayList<AssetsListItemInfo> tempInvFiles = new ArrayList<>();
+        tempInvFiles.addAll(files);
+        tempLocal.addAll(toolList);
+        //存件
+        tempInvFiles.removeAll(tempLocal);
+        //取件
+        tempLocal.removeAll(files);
+        if (inNumbers != null) {
+            inNumbers.setText(String.valueOf(tempInvFiles.size()));
+        }
+        if (outNumbers != null) {
+            outNumbers.setText(String.valueOf(tempLocal.size()));
+        }
+        allNumbers.setText(String.valueOf(invEpcs.size()));
+        //存件取件更新资产状态和使用人
+        for (AssetsListItemInfo tempInvFile : tempInvFiles) {
+            tempInvFile.setUser_name("");
+            tempInvFile.setAst_used_status(0);
+        }
+        for (AssetsListItemInfo assetsListItemInfo : tempLocal) {
+            assetsListItemInfo.setUser_name(BaseApplication.getInstance().getCurrentUer().getUser_name());
+            assetsListItemInfo.setAst_used_status(6);
+        }
+        inOutFiles.addAll(tempInvFiles);
+        inOutFiles.addAll(tempLocal);
+        mOutAdapter.notifyDataSetChanged();
+        //更新本地数据库借用归还状态
+        mPresenter.updateAssetsStatus(inOutFiles);
     }
 }

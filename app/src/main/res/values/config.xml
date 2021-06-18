@@ -2,4 +2,5 @@
 <resources>
     <string name="loc_id">499af3cc445548d586a6f177532c2d13</string>
     <string name="loc_name">档案柜</string>
+    <bool name="is_test">false</bool>
 </resources>

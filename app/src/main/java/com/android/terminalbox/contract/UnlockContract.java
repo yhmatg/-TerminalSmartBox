@@ -4,10 +4,6 @@ package com.android.terminalbox.contract;
 import com.android.terminalbox.base.presenter.AbstractPresenter;
 import com.android.terminalbox.base.view.AbstractView;
 import com.android.terminalbox.core.bean.cmb.AssetsListItemInfo;
-import com.android.terminalbox.core.bean.cmb.NewBorrowBackPara;
-import com.android.terminalbox.core.bean.user.NewOrderBody;
-import com.android.terminalbox.core.bean.user.OrderResponse;
-import com.android.terminalbox.core.bean.BaseResponse;
 
 import java.util.List;
 
@@ -21,7 +17,7 @@ public interface UnlockContract {
 
         void handleFetchLocalAssets(List<AssetsListItemInfo> freeAssets);
 
-        void handleUpdateAssetsStatus(boolean result);
+        void handleUpdateAssetsStatus(int size);
     }
 
     interface Presenter extends AbstractPresenter<View> {
