@@ -24,6 +24,7 @@ import com.android.terminalbox.core.bean.cmb.AssetFilterParameter;
 import com.android.terminalbox.core.bean.cmb.AssetsListItemInfo;
 import com.android.terminalbox.core.bean.cmb.NewBorrowBackPara;
 import com.android.terminalbox.core.bean.user.UserInfo;
+import com.android.terminalbox.core.room.BaseDb;
 import com.android.terminalbox.old.EkeyManager;
 import com.android.terminalbox.presenter.UnlockPresenter;
 import com.android.terminalbox.uhf.EsimUhfHelper;
@@ -74,8 +75,6 @@ public class NewUnlockActivity extends BaseActivity<UnlockPresenter> implements 
     String locName;
     private Handler mHandler = new Handler();
     private List<AssetsListItemInfo> files = new ArrayList<>();
-    //private List<AssetsListItemInfo> inFiles = new ArrayList<>();
-    //private List<AssetsListItemInfo> outFiles = new ArrayList<>();
     private List<AssetsListItemInfo> inOutFiles = new ArrayList<>();
     private FileBeanAdapter mOutAdapter;
     private Animation mRadarAnim;
@@ -110,22 +109,38 @@ public class NewUnlockActivity extends BaseActivity<UnlockPresenter> implements 
         openLayout.setVisibility(View.VISIBLE);
         closeLayout.setVisibility(View.GONE);
         inOutLayout.setVisibility(View.GONE);
-        mOutAdapter = new FileBeanAdapter(inOutFiles, this,false);
+        mOutAdapter = new FileBeanAdapter(inOutFiles, this, false);
         mOutRecycleView.setLayoutManager(new LinearLayoutManager(this));
         mOutRecycleView.setAdapter(mOutAdapter);
         int maxTime = DataManager.getInstance().getMixTime();
         int maxUnchange = DataManager.getInstance().getMixTimeUnchange();
-        ToastUtils.showShort("maxTime===" + maxTime +"      maxUnchange===" + maxUnchange);
+        ToastUtils.showShort("maxTime===" + maxTime + "      maxUnchange===" + maxUnchange);
         UhfManager.getInstance().confReadListener(uhfListener);
         InventoryStrategy inventoryStrategy = new InventoryStrategy();
         inventoryStrategy.setMaxTimesOfInv(maxTime);
         inventoryStrategy.setMaxTimesOfUnChange(maxUnchange);
         UhfManager.getInstance().confInventoryStrategy(inventoryStrategy);
-        EkeyManager.getInstance().openEkey(1,ekeyListener);
+        EkeyManager.getInstance().openEkey(1, ekeyListener);
         initAnim();
-        mPresenter.fetchPageAssetsList(pageSize, currentPage, "", "", conditions.toString());
-
+        //获取本地数据
+        mPresenter.fetchLocalAssets(-1);
     }
+
+    private void getLocalAsset() {
+        List<AssetsListItemInfo> allAssets = BaseDb.getInstance().getAssetDao().findAllAssets();
+        Log.e(TAG, "page资产数量是=====" + allAssets.size());
+        epcToolMap.clear();
+        toolList.clear();
+        for (AssetsListItemInfo tool : allAssets) {
+            if (locName.equals(tool.getLoc_name())) {
+                epcToolMap.put(tool.getAst_epc_code(), tool);
+                if (tool.getAst_used_status() == 0) {
+                    toolList.add(tool);
+                }
+            }
+        }
+    }
+
 
     @Override
     protected int getLayoutId() {
@@ -144,7 +159,7 @@ public class NewUnlockActivity extends BaseActivity<UnlockPresenter> implements 
             mHandler.post(new Runnable() {
                 @Override
                 public void run() {
-                    if (isDestroy){
+                    if (isDestroy) {
                         return;
                     }
                     switch (ekeyStatusChange) {
@@ -155,7 +170,7 @@ public class NewUnlockActivity extends BaseActivity<UnlockPresenter> implements 
                             break;
                         case OPENED_TO_CLOSED:
                             Log.e(TAG, "=========ekey close============: " + Thread.currentThread().toString());
-                            if(openLayout == null || closeLayout == null || inOutLayout == null){
+                            if (openLayout == null || closeLayout == null || inOutLayout == null) {
                                 return;
                             }
                             openLayout.setVisibility(View.GONE);
@@ -196,7 +211,7 @@ public class NewUnlockActivity extends BaseActivity<UnlockPresenter> implements 
             mHandler.post(new Runnable() {
                 @Override
                 public void run() {
-                    if (isDestroy){
+                    if (isDestroy) {
                         return;
                     }
                     if (allNumbers != null) {
@@ -212,14 +227,14 @@ public class NewUnlockActivity extends BaseActivity<UnlockPresenter> implements 
             Log.e("Thread======", Thread.currentThread().toString());
             for (UhfTag tag : tags) {
                 AssetsListItemInfo assetsListItemInfo = epcToolMap.get(tag.getEpc());
-                if(assetsListItemInfo != null && !files.contains(assetsListItemInfo)){
+                if (assetsListItemInfo != null && !files.contains(assetsListItemInfo)) {
                     files.add(assetsListItemInfo);
                 }
             }
             mHandler.post(new Runnable() {
                 @Override
                 public void run() {
-                    if (isDestroy){
+                    if (isDestroy) {
                         return;
                     }
                     ArrayList<AssetsListItemInfo> tempLocal = new ArrayList<>();
@@ -236,11 +251,20 @@ public class NewUnlockActivity extends BaseActivity<UnlockPresenter> implements 
                     if (outNumbers != null) {
                         outNumbers.setText(String.valueOf(tempLocal.size()));
                     }
-                    /*inFiles.addAll(tempInvFiles);
-                    outFiles.addAll(tempLocal);*/
+                    //存件取件更新资产状态和使用人
+                    for (AssetsListItemInfo tempInvFile : tempInvFiles) {
+                        tempInvFile.setUser_name("");
+                        tempInvFile.setAst_used_status(0);
+                    }
+                    for (AssetsListItemInfo assetsListItemInfo : tempLocal) {
+                        assetsListItemInfo.setUser_name(BaseApplication.getInstance().getCurrentUer().getUser_name());
+                        assetsListItemInfo.setAst_used_status(6);
+                    }
                     inOutFiles.addAll(tempInvFiles);
                     inOutFiles.addAll(tempLocal);
                     mOutAdapter.notifyDataSetChanged();
+                    //更新本地数据库借用归还状态
+                    mPresenter.updateAssetsStatus(inOutFiles);
                     if (openLayout != null) {
                         openLayout.setVisibility(View.GONE);
                     }
@@ -252,38 +276,6 @@ public class NewUnlockActivity extends BaseActivity<UnlockPresenter> implements 
                     }
                     if (roundImg != null) {
                         roundImg.clearAnimation();
-                    }
-                    Date today = new Date();
-                    AssetBorrowPara assetBorrowPara = new AssetBorrowPara();
-                    assetBorrowPara.setOdr_transactor_id(currentUser.getId());
-                    assetBorrowPara.setBor_user_id(currentUser.getId());
-                    assetBorrowPara.setExpect_rever_date(new Date(today.getTime() + 604800000));
-                    assetBorrowPara.setBor_date(today);
-                    assetBorrowPara.setOdr_remark("");
-                    assetBorrowPara.setUser_mobile(currentUser.getUser_mobile());
-                    assetBorrowPara.setTra_user_name(currentUser.getUser_real_name());
-                    assetBorrowPara.setBor_user_name(currentUser.getUser_real_name());
-
-                    AssetBackPara assetBackPara = new AssetBackPara();
-                    assetBackPara.setRev_user_id(currentUser.getId());
-                    assetBackPara.setRev_user_name(currentUser.getUser_real_name());
-                    assetBackPara.setActual_rever_date(today);
-                    assetBackPara.setOdr_remark("back");
-                    for (AssetsListItemInfo assetsListItemInfo : tempLocal) {
-                        assetBorrowPara.getAstids().add(assetsListItemInfo.getId());
-                    }
-                    for (AssetsListItemInfo tempInvFile : tempInvFiles) {
-                        assetBackPara.getAst_ids().add(tempInvFile.getId());
-                    }
-                    if (assetBackPara.getAst_ids().size() > 0) {
-                        String formData = assetBackPara.toString();
-                        String title = currentUser.getUser_real_name() + "提交的归还申请";
-                        mPresenter.backTools(new NewBorrowBackPara(formData, "[]", title));
-                    }
-                    if (assetBorrowPara.getAstids().size() > 0) {
-                        String formData = assetBorrowPara.toString();
-                        String title = currentUser.getUser_real_name() + "提交的借用申请";
-                        mPresenter.borrowTools(new NewBorrowBackPara(formData, "[]", title));
                     }
                 }
             });
@@ -300,11 +292,11 @@ public class NewUnlockActivity extends BaseActivity<UnlockPresenter> implements 
     }
 
     @Override
-    public void handleFetchPageAssetsList(List<AssetsListItemInfo> assetsInfos) {
-        Log.e(TAG, "page资产数量是=====" + assetsInfos.size());
+    public void handleFetchLocalAssets(List<AssetsListItemInfo> assets) {
+        Log.e(TAG, "page资产数量是=====" + assets.size());
         epcToolMap.clear();
         toolList.clear();
-        for (AssetsListItemInfo tool : assetsInfos) {
+        for (AssetsListItemInfo tool : assets) {
             if (locName.equals(tool.getLoc_name())) {
                 epcToolMap.put(tool.getAst_epc_code(), tool);
                 if (tool.getAst_used_status() == 0) {
@@ -312,34 +304,17 @@ public class NewUnlockActivity extends BaseActivity<UnlockPresenter> implements 
                 }
             }
         }
-        /*openLayout.setVisibility(View.GONE);
-        closeLayout.setVisibility(View.VISIBLE);
-        inOutLayout.setVisibility(View.GONE);
-        roundImg.startAnimation(mRadarAnim);
-        UhfManager.getInstance().startReadTags();*/
     }
 
     @Override
-    public void handleBorrowTools(BaseResponse borrowToolsResponse) {
-        if ("200000".equals(borrowToolsResponse.getCode())) {
-            ToastUtils.showShort("借用工具成功");
-        } else if ("200002".equals(borrowToolsResponse.getCode())) {
-            ToastUtils.showShort("请求参数异常");
+    public void handleUpdateAssetsStatus(boolean result) {
+        if (result) {
+            ToastUtils.showShort("存取档案成功");
         } else {
-            ToastUtils.showShort("借用失败:" + borrowToolsResponse.getMessage() + borrowToolsResponse.getCode());
+            ToastUtils.showShort("存取档案失败");
         }
     }
 
-    @Override
-    public void handleBackTools(BaseResponse backToolsResponse) {
-        if ("200000".equals(backToolsResponse.getCode())) {
-            ToastUtils.showShort("归还工具成功");
-        } else if ("200002".equals(backToolsResponse.getCode())) {
-            ToastUtils.showShort("请求参数异常");
-        } else {
-            ToastUtils.showShort("归还失败:" + backToolsResponse.getMessage() + backToolsResponse.getCode());
-        }
-    }
 
     @Override
     protected void onDestroy() {

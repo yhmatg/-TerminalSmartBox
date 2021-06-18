@@ -9,6 +9,7 @@
         android:layout_width="@dimen/dp_80"
         android:layout_height="@dimen/dp_40"
         android:layout_marginStart="35dp"
+        android:visibility="invisible"
         android:layout_marginTop="28dp"
         android:src="@drawable/logo" />
 

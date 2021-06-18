@@ -2,6 +2,7 @@ package com.android.terminalbox.presenter;
 
 
 import com.android.terminalbox.base.presenter.BasePresenter;
+import com.android.terminalbox.core.bean.cmb.AssetsListItemInfo;
 import com.android.terminalbox.core.bean.cmb.AssetsListPage;
 import com.android.terminalbox.core.bean.cmb.NewBorrowBackPara;
 import com.android.terminalbox.core.bean.user.NewOrderBody;
@@ -10,9 +11,17 @@ import com.android.terminalbox.contract.UnlockContract;
 import com.android.terminalbox.core.DataManager;
 import com.android.terminalbox.core.bean.BaseResponse;
 import com.android.terminalbox.core.http.widget.BaseObserver;
+import com.android.terminalbox.core.room.BaseDb;
 import com.android.terminalbox.utils.RxUtils;
 
+import org.xutils.db.table.DbBase;
+
 import java.util.ArrayList;
+import java.util.List;
+
+import io.reactivex.Observable;
+import io.reactivex.ObservableEmitter;
+import io.reactivex.ObservableOnSubscribe;
 
 
 /**
@@ -21,47 +30,54 @@ import java.util.ArrayList;
  */
 public class UnlockPresenter extends BasePresenter<UnlockContract.View> implements UnlockContract.Presenter {
 
-    private static String deviceId = "15aa68f3183311ebb7260242ac120004_uniqueCode002";
-
     @Override
-    public void fetchPageAssetsList(Integer size, Integer page, String patternName, String userRealName, String conditions) {
-        addSubscribe(DataManager.getInstance().fetchPageAssetsList(size, page, patternName, userRealName, conditions)
-                .compose(RxUtils.rxSchedulerHelper())
-                .compose(RxUtils.handleResult())
-                .subscribeWith(new BaseObserver<AssetsListPage>(mView, false) {
-                    @Override
-                    public void onNext(AssetsListPage assetsListPage) {
-                        if (page <= assetsListPage.getPages()) {
-                            mView.handleFetchPageAssetsList(assetsListPage.getList());
-                        } else {
-                            mView.handleFetchPageAssetsList(new ArrayList<>());
-                        }
-                    }
-                }));
+    public void fetchLocalAssets(int status) {
+        addSubscribe(getLocalAssets(status)
+        .compose(RxUtils.rxSchedulerHelper())
+        .subscribeWith(new BaseObserver<List<AssetsListItemInfo>>(mView, false) {
+            @Override
+            public void onNext(List<AssetsListItemInfo> assetsListItemInfos) {
+                mView.handleFetchLocalAssets(assetsListItemInfos);
+            }
+        }));
+    }
+
+    Observable<List<AssetsListItemInfo>> getLocalAssets(int status) {
+        return Observable.create(new ObservableOnSubscribe<List<AssetsListItemInfo>>() {
+            @Override
+            public void subscribe(ObservableEmitter<List<AssetsListItemInfo>> emitter) throws Exception {
+                List<AssetsListItemInfo> localAssets = new ArrayList<>();
+                if (status == -1) {
+                    localAssets = BaseDb.getInstance().getAssetDao().findAllAssets();
+                } else {
+                    localAssets = BaseDb.getInstance().getAssetDao().findAssetsByStatus(status);
+                }
+                emitter.onNext(localAssets);
+            }
+        });
     }
 
     @Override
-    public void borrowTools(NewBorrowBackPara borrowPara) {
-        addSubscribe(DataManager.getInstance().borrowTools(borrowPara)
-                .compose(RxUtils.rxSchedulerHelper())
-                .subscribeWith(new BaseObserver<BaseResponse>(mView, false) {
-                    @Override
-                    public void onNext(BaseResponse baseResponse) {
-                        mView.handleBorrowTools(baseResponse);
-                    }
-                }));
+    public void updateAssetsStatus(List<AssetsListItemInfo> assets) {
+        addSubscribe(updateLocalAssetStatus(assets)
+        .compose(RxUtils.rxSchedulerHelper())
+        .subscribeWith(new BaseObserver<Boolean>(mView, false) {
+            @Override
+            public void onNext(Boolean aBoolean) {
+                mView.handleUpdateAssetsStatus(aBoolean);
+            }
+        }));
     }
 
-    @Override
-    public void backTools(NewBorrowBackPara backPara) {
-        addSubscribe(DataManager.getInstance().backTools(backPara)
-                .compose(RxUtils.rxSchedulerHelper())
-                .subscribeWith(new BaseObserver<BaseResponse>(mView, false) {
-                    @Override
-                    public void onNext(BaseResponse baseResponse) {
-                        mView.handleBackTools(baseResponse);
-                    }
-                }));
+    Observable<Boolean> updateLocalAssetStatus(List<AssetsListItemInfo> freeAssets){
+        return Observable.create(new ObservableOnSubscribe<Boolean>() {
+            @Override
+            public void subscribe(ObservableEmitter<Boolean> emitter) throws Exception {
+                BaseDb.getInstance().getAssetDao().updateItems(freeAssets);
+                emitter.onNext(true);
+            }
+        });
     }
+
 
 }

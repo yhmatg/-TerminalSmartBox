@@ -20,12 +20,14 @@ import android.widget.TextView;
 
 import com.android.terminalbox.R;
 import com.android.terminalbox.base.activity.BaseActivity;
+import com.android.terminalbox.contract.MainContract;
 import com.android.terminalbox.contract.NewInvContract;
 import com.android.terminalbox.core.DataManager;
 import com.android.terminalbox.core.bean.cmb.AssetFilterParameter;
 import com.android.terminalbox.core.bean.cmb.AssetsListItemInfo;
 import com.android.terminalbox.core.bean.user.EpcFile;
 import com.android.terminalbox.core.room.BaseDb;
+import com.android.terminalbox.presenter.MainPresenter;
 import com.android.terminalbox.presenter.NewInvPresenter;
 import com.android.terminalbox.utils.ToastUtils;
 import com.annimon.stream.Collectors;
@@ -47,7 +49,7 @@ import butterknife.BindString;
 import butterknife.BindView;
 import butterknife.OnClick;
 
-public class NewInvActivity extends BaseActivity<NewInvPresenter> implements NewInvContract.View {
+public class NewInvActivity extends BaseActivity<MainPresenter> implements MainContract.View {
     String TAG = "InventoryActivity";
     @BindView(R.id.tv_number)
     TextView numberText;
@@ -93,8 +95,8 @@ public class NewInvActivity extends BaseActivity<NewInvPresenter> implements New
     }
 
     @Override
-    public NewInvPresenter initPresenter() {
-        return new NewInvPresenter();
+    public MainPresenter initPresenter() {
+        return new MainPresenter();
     }
 
     @Override
@@ -134,19 +136,9 @@ public class NewInvActivity extends BaseActivity<NewInvPresenter> implements New
             }
         });
         initAnim();
-        //开始盘点
-        int maxTime = DataManager.getInstance().getMixTime();
-        int maxUnchange = DataManager.getInstance().getMixTimeUnchange();
-        ToastUtils.showShort("maxTime===" + maxTime + "      maxUnchange===" + maxUnchange);
         roundImg.startAnimation(mRadarAnim);
-        UhfManager.getInstance().confReadListener(uhfListener);
-        InventoryStrategy inventoryStrategy = new InventoryStrategy();
-        inventoryStrategy.setMaxTimesOfInv(maxTime);
-        inventoryStrategy.setMaxTimesOfUnChange(maxUnchange);
-        UhfManager.getInstance().confInventoryStrategy(inventoryStrategy);
-        UhfManager.getInstance().startReadTags();
         Log.e("Thread======", Thread.currentThread().toString());
-        mPresenter.fetchPageAssetsList(pageSize, currentPage, "", "", conditions.toString());
+        mPresenter.fetchLocalFreeAssets(-1);
     }
 
     private final UhfManager.EsimUhfReadListener uhfListener = new UhfManager.EsimUhfReadListener() {
@@ -249,17 +241,23 @@ public class NewInvActivity extends BaseActivity<NewInvPresenter> implements New
     }
 
     @Override
-    public void handleFetchPageAssetsList(List<AssetsListItemInfo> assetsInfos) {
-        Log.e(TAG, "page资产数量是=====" + assetsInfos.size());
+    public void handleFetchLocalFreeAssets(List<AssetsListItemInfo> freeAssets) {
+        Log.e(TAG, "page资产数量是=====" + freeAssets.size());
         epcToolMap.clear();
         epcList.clear();
-        for (AssetsListItemInfo tool : assetsInfos) {
-            if (locName.equals(tool.getLoc_name())) {
-                epcToolMap.put(tool.getAst_epc_code(), tool);
-                if (tool.getAst_used_status() == 0) {
-                    epcList.add(tool.getAst_epc_code());
-                }
-            }
+        for (AssetsListItemInfo tool : freeAssets) {
+            epcToolMap.put(tool.getAst_epc_code(), tool);
+            epcList.add(tool.getAst_epc_code());
         }
+        //开始盘点
+        int maxTime = DataManager.getInstance().getMixTime();
+        int maxUnchange = DataManager.getInstance().getMixTimeUnchange();
+        ToastUtils.showShort("maxTime===" + maxTime + "      maxUnchange===" + maxUnchange);
+        UhfManager.getInstance().confReadListener(uhfListener);
+        InventoryStrategy inventoryStrategy = new InventoryStrategy();
+        inventoryStrategy.setMaxTimesOfInv(maxTime);
+        inventoryStrategy.setMaxTimesOfUnChange(maxUnchange);
+        UhfManager.getInstance().confInventoryStrategy(inventoryStrategy);
+        UhfManager.getInstance().startReadTags();
     }
 }

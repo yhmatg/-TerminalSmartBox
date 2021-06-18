@@ -8,13 +8,14 @@ import android.arch.persistence.room.TypeConverters;
 import android.support.annotation.NonNull;
 
 import com.android.terminalbox.app.BaseApplication;
+import com.android.terminalbox.core.bean.cmb.AssetsListItemInfo;
 import com.android.terminalbox.core.bean.user.EpcFile;
-import com.android.terminalbox.core.bean.user.UserInfo;
+import com.android.terminalbox.core.dao.AssetDao;
 import com.android.terminalbox.core.dao.EpcFileDao;
-import com.android.terminalbox.core.dao.UserDao;
 
 @Database(entities = {
-        EpcFile.class
+        EpcFile.class,
+        AssetsListItemInfo.class
 }
         , version = 2)
 @TypeConverters(DateConverter.class)
@@ -52,4 +53,6 @@ public abstract class BaseDb extends RoomDatabase {
     }
 
     public abstract EpcFileDao getEpcFileDao();
+
+    public abstract AssetDao getAssetDao();
 }

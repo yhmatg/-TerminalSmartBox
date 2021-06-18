@@ -19,24 +19,16 @@ import java.util.List;
 public interface UnlockContract {
     interface View extends AbstractView {
 
-        void handleFetchPageAssetsList(List<AssetsListItemInfo> assetsInfos);
+        void handleFetchLocalAssets(List<AssetsListItemInfo> freeAssets);
 
-        void handleBorrowTools(BaseResponse borrowToolsResponse);
-
-        void handleBackTools(BaseResponse backToolsResponse);
-
-
+        void handleUpdateAssetsStatus(boolean result);
     }
 
     interface Presenter extends AbstractPresenter<View> {
 
-        void fetchPageAssetsList(Integer size, Integer page, String patternName, String userRealName, String conditions);
+        void fetchLocalAssets(int status);
 
-        void borrowTools(NewBorrowBackPara borrowPara);
-
-        void backTools(NewBorrowBackPara backPara);
-
-
+        void updateAssetsStatus(List<AssetsListItemInfo> freeAssets);
 
     }
 }

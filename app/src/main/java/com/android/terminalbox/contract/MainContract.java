@@ -20,19 +20,10 @@ import java.util.List;
 public interface MainContract {
 
     interface View extends AbstractView {
-        void handleTerminalLogin(BaseResponse<TerminalInfo> terminalInfo);
-
-        void handleFetchPageAssetsList(List<AssetsListItemInfo> assetsInfos);
-
-        void handleLogin(UserLoginResponse userLoginResponse);
+        void handleFetchLocalFreeAssets(List<AssetsListItemInfo> freeAssets);
     }
 
     interface Presenter extends AbstractPresenter<View> {
-
-        void terminalLogin( TerminalLoginPara terminalLoginPara);
-
-        void fetchPageAssetsList(Integer size, Integer page, String patternName, String userRealName, String conditions);
-
-        void login(UserInfo userInfo);
+        void fetchLocalFreeAssets(int status);
     }
 }

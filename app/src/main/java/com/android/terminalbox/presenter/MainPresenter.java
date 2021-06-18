@@ -7,6 +7,7 @@ import com.android.terminalbox.contract.MainContract;
 import com.android.terminalbox.contract.RecognizeContract;
 import com.android.terminalbox.core.DataManager;
 import com.android.terminalbox.core.bean.BaseResponse;
+import com.android.terminalbox.core.bean.cmb.AssetsListItemInfo;
 import com.android.terminalbox.core.bean.cmb.AssetsListPage;
 import com.android.terminalbox.core.bean.cmb.TerminalInfo;
 import com.android.terminalbox.core.bean.cmb.TerminalLoginPara;
@@ -32,50 +33,26 @@ public class MainPresenter extends BasePresenter<MainContract.View> implements M
     }
 
     @Override
-    public void terminalLogin(TerminalLoginPara terminalLoginPara) {
-        addSubscribe(DataManager.getInstance().terminalLogin(terminalLoginPara)
+    public void fetchLocalFreeAssets(int status) {
+        addSubscribe(getLocalFreeAssets(status)
                 .compose(RxUtils.rxSchedulerHelper())
-                .subscribeWith(new BaseObserver<BaseResponse<TerminalInfo>>(mView, false) {
+                .subscribeWith(new BaseObserver<List<AssetsListItemInfo>>(mView, false) {
                     @Override
-                    public void onNext(BaseResponse<TerminalInfo> terminalInfoBaseResponse) {
-                        mView.handleTerminalLogin(terminalInfoBaseResponse);
+                    public void onNext(List<AssetsListItemInfo> assetsListItemInfos) {
+                        mView.handleFetchLocalFreeAssets(assetsListItemInfos);
                     }
                 }));
     }
 
-    @Override
-    public void fetchPageAssetsList(Integer size, Integer page, String patternName, String userRealName, String conditions) {
-        addSubscribe(DataManager.getInstance().fetchPageAssetsList(size, page, patternName, userRealName, conditions)
-                .compose(RxUtils.rxSchedulerHelper())
-                .compose(RxUtils.handleResult())
-                .subscribeWith(new BaseObserver<AssetsListPage>(mView, false) {
-                    @Override
-                    public void onNext(AssetsListPage assetsListPage) {
-                        if (page <= assetsListPage.getPages()) {
-                            mView.handleFetchPageAssetsList(assetsListPage.getList());
-                        } else {
-                            mView.handleFetchPageAssetsList(new ArrayList<>());
-                        }
-                    }
-                }));
-    }
-
-    @Override
-    public void login(UserInfo userInfo) {
-        addSubscribe(DataManager.getInstance().login(userInfo)
-                .compose(RxUtils.handleResult())
-                .compose(RxUtils.rxSchedulerHelper())
-                .subscribeWith(new BaseObserver<UserLoginResponse>(mView, false) {
-                    @Override
-                    public void onNext(UserLoginResponse userLoginResponse) {
-                        mView.handleLogin(userLoginResponse);
-                    }
-
-                    @Override
-                    public void onError(Throwable e) {
-                        super.onError(e);
-                        Log.e("Throwable",e.toString());
-                    }
-                }));
+    private Observable<List<AssetsListItemInfo>> getLocalFreeAssets(int status) {
+        return Observable.create(emitter -> {
+            List<AssetsListItemInfo> freeAssets = new ArrayList<>();
+            if (status == -1) {
+                freeAssets = BaseDb.getInstance().getAssetDao().findAllAssets();
+            } else {
+                freeAssets = BaseDb.getInstance().getAssetDao().findAssetsByStatus(status);
+            }
+            emitter.onNext(freeAssets);
+        });
     }
 }

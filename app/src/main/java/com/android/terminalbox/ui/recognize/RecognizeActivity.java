@@ -29,7 +29,6 @@ import com.android.terminalbox.model.DrawInfo;
 import com.android.terminalbox.model.FacePreviewInfo;
 import com.android.terminalbox.presenter.RecognizePresenter;
 import com.android.terminalbox.ui.unlock.NewUnlockActivity;
-import com.android.terminalbox.utils.Md5Util;
 import com.android.terminalbox.utils.box.ConfigUtil;
 import com.android.terminalbox.utils.box.DrawHelper;
 import com.android.terminalbox.utils.camera.CameraHelper;
@@ -68,7 +67,7 @@ import io.reactivex.disposables.CompositeDisposable;
 import io.reactivex.disposables.Disposable;
 import io.reactivex.schedulers.Schedulers;
 
-public class RecognizeActivity extends BaseActivity<RecognizePresenter> implements ViewTreeObserver.OnGlobalLayoutListener, RecognizeContract.View {
+public class RecognizeActivity extends BaseActivity implements ViewTreeObserver.OnGlobalLayoutListener {
     private static final String TAG = "RegisterAndRecognize";
     private static final int MAX_DETECT_NUM = 10;
     /**
@@ -166,7 +165,7 @@ public class RecognizeActivity extends BaseActivity<RecognizePresenter> implemen
     //yhm end 1105
     @Override
     public RecognizePresenter initPresenter() {
-        return new RecognizePresenter();
+        return null;
     }
 
     private void initAnim() {
@@ -603,11 +602,12 @@ public class RecognizeActivity extends BaseActivity<RecognizePresenter> implemen
                         if (compareResult != null && compareResult.getSimilar() > SIMILAR_THRESHOLD) {
                             UserInfo currentUser = compareResult.getUser();
                             Log.d(TAG, "人脸识别成功");
-                            UserInfo userInfo = new UserInfo();
-                            userInfo.setUser_name(currentUser.getUser_name());
-                            userInfo.setUser_password(Md5Util.getMD5(currentUser.getUser_password()));
-                            mPresenter.login(userInfo);
                             outerImg.clearAnimation();
+                            //离线保存当前用户 start
+                            BaseApplication.getInstance().setCurrentUer(currentUser);
+                            startActivity(new Intent(RecognizeActivity.this, NewUnlockActivity.class));
+                            finish();
+                            //离线保存当前用户 start
                         } else {
                             if (faceHelper != null) {
                                 faceHelper.setName(requestId, "人员未识别");
@@ -757,16 +757,5 @@ public class RecognizeActivity extends BaseActivity<RecognizePresenter> implemen
                 finish();
                 break;
         }
-    }
-
-    @Override
-    public void handleLogin(UserLoginResponse userLoginResponse) {
-        if(userLoginResponse != null){
-            DataManager.getInstance().setToken(userLoginResponse.getToken());
-            BaseApplication.getInstance().setCurrentUer(userLoginResponse.getUserinfo());
-            startActivity(new Intent(RecognizeActivity.this, NewUnlockActivity.class));
-            finish();
-        }
-
     }
 }

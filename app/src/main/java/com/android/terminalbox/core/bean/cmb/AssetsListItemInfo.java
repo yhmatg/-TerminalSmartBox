@@ -1,17 +1,24 @@
 package com.android.terminalbox.core.bean.cmb;
 
+import android.arch.persistence.room.Entity;
+import android.arch.persistence.room.PrimaryKey;
+import android.support.annotation.NonNull;
+
 import java.util.Objects;
 
+@Entity
 public class AssetsListItemInfo {
 
+    @PrimaryKey
+    @NonNull
+    private String id;
     private String ast_barcode;
     private String ast_name;
-    private String id;
     private String loc_name;
     private String user_name;
     private double ast_price;
-    //0 闲置 6 使用中 -1归还错误
-    private int ast_used_status;
+    //0 闲置 6 借中 -1归还错误
+    private int ast_used_status = 0;
     private long ast_buy_date;
     private String type_name;
     private String ast_model;
