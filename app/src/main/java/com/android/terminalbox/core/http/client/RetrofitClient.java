@@ -63,7 +63,7 @@ public class RetrofitClient {
     private RetrofitClient() {
         url = PreferenceHelperImpl.getInstance().getIpThree();
         if(StringUtils.isEmpty(url)){
-            url =  "http://10.20.169.219";
+            url =  "http://10.20.82.62";
         }
         retrofit = createRetrofit(provideClient(), url);
 
