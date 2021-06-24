@@ -257,9 +257,10 @@ public class NewInvActivity extends BaseActivity<NewInvPresenter> implements New
         for (AssetsListItemInfo tool : assetsInfos) {
             if (locName.equals(tool.getLoc_name())) {
                 epcToolMap.put(tool.getAst_epc_code(), tool);
-                if (tool.getAst_used_status() == 0) {
+                epcList.add(tool.getAst_epc_code());
+              /*  if (tool.getAst_used_status() == 0) {
                     epcList.add(tool.getAst_epc_code());
-                }
+                }*/
             }
         }
         //开始盘点

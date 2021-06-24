@@ -11,7 +11,6 @@ import android.view.animation.RotateAnimation;
 import android.widget.ImageView;
 import android.widget.RelativeLayout;
 import android.widget.TextView;
-import android.widget.Toast;
 
 import com.android.terminalbox.R;
 import com.android.terminalbox.app.BaseApplication;
@@ -90,7 +89,7 @@ public class NewUnlockActivity extends BaseActivity<UnlockPresenter> implements 
     private AssetFilterParameter conditions = new AssetFilterParameter();
     private HashMap<String, AssetsListItemInfo> epcToolMap = new HashMap<>();
     private List<AssetsListItemInfo> toolList = new ArrayList<>();
-    private List<String> localEpcs = new ArrayList<>();
+    private List<String> epcList = new ArrayList<>();
 
     private void initAnim() {
         mRadarAnim = new RotateAnimation(0f, 360f, Animation.RELATIVE_TO_SELF, 0.5f, Animation.RELATIVE_TO_SELF, 0.5f);
@@ -205,7 +204,7 @@ public class NewUnlockActivity extends BaseActivity<UnlockPresenter> implements 
                         return;
                     }
                     if (allNumbers != null) {
-                        epcs.retainAll(localEpcs);
+                        epcs.retainAll(epcList);
                         allNumbers.setText(String.valueOf(epcs.size()));
                     }
                 }
@@ -315,12 +314,13 @@ public class NewUnlockActivity extends BaseActivity<UnlockPresenter> implements 
         XLog.get().e(TAG + "存取资产数量=====" + assetsInfos.size());
         epcToolMap.clear();
         toolList.clear();
+        epcList.clear();
         for (AssetsListItemInfo tool : assetsInfos) {
             if (locName.equals(tool.getLoc_name())) {
                 epcToolMap.put(tool.getAst_epc_code(), tool);
-                localEpcs.add(tool.getAst_epc_code());
                 if (tool.getAst_used_status() == 0) {
                     toolList.add(tool);
+                    epcList.add(tool.getAst_epc_code());
                 }
             }
         }
