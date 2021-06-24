@@ -297,7 +297,6 @@ public class NewUnlockActivity extends BaseActivity<UnlockPresenter> implements 
                 epcList.add(tool.getAst_epc_code());
                 if (tool.getAst_used_status() == 0) {
                     toolList.add(tool);
-                    epcList.add(tool.getAst_epc_code());
                 }
             }
         }
