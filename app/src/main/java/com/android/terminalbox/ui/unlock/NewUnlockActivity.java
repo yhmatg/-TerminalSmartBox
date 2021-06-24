@@ -82,6 +82,7 @@ public class NewUnlockActivity extends BaseActivity<UnlockPresenter> implements 
     private AssetFilterParameter conditions = new AssetFilterParameter();
     private HashMap<String, AssetsListItemInfo> epcToolMap = new HashMap<>();
     private List<AssetsListItemInfo> toolList = new ArrayList<>();
+    private List<String> epcList = new ArrayList<>();
 
     private void initAnim() {
         mRadarAnim = new RotateAnimation(0f, 360f, Animation.RELATIVE_TO_SELF, 0.5f, Animation.RELATIVE_TO_SELF, 0.5f);
@@ -203,6 +204,7 @@ public class NewUnlockActivity extends BaseActivity<UnlockPresenter> implements 
                         return;
                     }
                     if (allNumbers != null) {
+                        epcs.retainAll(epcList);
                         allNumbers.setText(String.valueOf(epcs.size()));
                     }
                 }
@@ -288,11 +290,13 @@ public class NewUnlockActivity extends BaseActivity<UnlockPresenter> implements 
         Log.e(TAG, "page资产数量是=====" + assets.size());
         epcToolMap.clear();
         toolList.clear();
+        epcList.clear();
         for (AssetsListItemInfo tool : assets) {
             if (locName.equals(tool.getLoc_name())) {
                 epcToolMap.put(tool.getAst_epc_code(), tool);
                 if (tool.getAst_used_status() == 0) {
                     toolList.add(tool);
+                    epcList.add(tool.getAst_epc_code());
                 }
             }
         }
