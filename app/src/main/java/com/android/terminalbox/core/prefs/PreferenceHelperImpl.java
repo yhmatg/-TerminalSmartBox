@@ -92,7 +92,7 @@ public class PreferenceHelperImpl implements PreferenceHelper {
 
     @Override
     public String getIpThree() {
-        return mPreferences.getString(Constants.IP_THREE, "http://10.20.82.62");
+        return mPreferences.getString(Constants.IP_THREE, "https://cloud.assettag.vip");
     }
 
     @Override
