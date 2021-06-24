@@ -318,9 +318,9 @@ public class NewUnlockActivity extends BaseActivity<UnlockPresenter> implements 
         for (AssetsListItemInfo tool : assetsInfos) {
             if (locName.equals(tool.getLoc_name())) {
                 epcToolMap.put(tool.getAst_epc_code(), tool);
+                epcList.add(tool.getAst_epc_code());
                 if (tool.getAst_used_status() == 0) {
                     toolList.add(tool);
-                    epcList.add(tool.getAst_epc_code());
                 }
             }
         }
