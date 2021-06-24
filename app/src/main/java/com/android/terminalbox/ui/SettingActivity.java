@@ -21,8 +21,11 @@ import com.android.terminalbox.contract.SettingsContract;
 import com.android.terminalbox.core.DataManager;
 import com.android.terminalbox.core.bean.cmb.AssetFilterParameter;
 import com.android.terminalbox.core.bean.user.EpcFile;
+import com.android.terminalbox.core.bean.user.UserInfo;
+import com.android.terminalbox.core.bean.user.UserLoginResponse;
 import com.android.terminalbox.core.room.BaseDb;
 import com.android.terminalbox.presenter.SettingsPresenter;
+import com.android.terminalbox.utils.Md5Util;
 import com.android.terminalbox.utils.StringUtils;
 import com.android.terminalbox.utils.ToastUtils;
 import com.android.terminalbox.utils.box.ExcelUtils;
@@ -56,6 +59,7 @@ public class SettingActivity extends BaseActivity<SettingsPresenter> implements 
     private int currentPage = 1;
     private int pageSize = 600;
     private AssetFilterParameter conditions = new AssetFilterParameter();
+    private boolean isLogin;
 
     @Override
     public SettingsPresenter initPresenter() {
@@ -64,11 +68,26 @@ public class SettingActivity extends BaseActivity<SettingsPresenter> implements 
 
     @Override
     protected void initEventAndData() {
+        initLocalData();
         titleContent.setText("设置");
         List<Node> mSelectAssetsLocations = new ArrayList<>();
         mSelectAssetsLocations.add(new Node(locId, "-1", locName));
         conditions.setmSelectAssetsLocations(mSelectAssetsLocations);
+        UserInfo userInfo = new UserInfo();
+        userInfo.setUser_name("admin01");
+        userInfo.setUser_password(Md5Util.getMD5("123456"));
+        mPresenter.login(userInfo);
+    }
 
+    private void initLocalData() {
+        int localMixTime = DataManager.getInstance().getMixTime();
+        int  localMixTimeUnchange = DataManager.getInstance().getMixTimeUnchange();
+        String localIpOne = DataManager.getInstance().getIpOne();
+        String localIpTwo = DataManager.getInstance().getIpTwo();
+        mixTime.setHint(String.valueOf(localMixTime));
+        mixTimeUnchange.setHint(String.valueOf(localMixTimeUnchange));
+        ipOne.setHint(localIpOne);
+        ipTwo.setHint(localIpTwo);
     }
 
     @Override
@@ -78,7 +97,6 @@ public class SettingActivity extends BaseActivity<SettingsPresenter> implements 
 
     @Override
     protected void initToolbar() {
-
     }
 
     @OnClick({R.id.title_back, R.id.import_data, R.id.bt_mixtime, R.id.bt_mixtime_unchange, R.id.bt_ip_one, R.id.bt_ip_two, R.id.import_remote_data})
@@ -130,7 +148,9 @@ public class SettingActivity extends BaseActivity<SettingsPresenter> implements 
                 }
                 break;
             case R.id.import_remote_data:
-                mPresenter.fetchPageAssetsList(pageSize, currentPage, "", "", conditions.toString());
+                if (isLogin) {
+                    mPresenter.fetchPageAssetsList(pageSize, currentPage, "", "", conditions.toString());
+                }
                 break;
         }
     }
@@ -284,5 +304,13 @@ public class SettingActivity extends BaseActivity<SettingsPresenter> implements 
     @Override
     public void handleFetchPageAssetsList(int resultSize) {
         ToastUtils.showShort("导入 " + resultSize + "  条数据！");
+    }
+
+    @Override
+    public void handleLogin(UserLoginResponse userLoginResponse) {
+        if (userLoginResponse != null) {
+            isLogin = true;
+            DataManager.getInstance().setToken(userLoginResponse.getToken());
+        }
     }
 }
