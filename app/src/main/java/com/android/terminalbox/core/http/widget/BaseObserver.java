@@ -10,6 +10,8 @@ import com.android.terminalbox.core.http.exception.ServerException;
 import com.android.terminalbox.core.http.exception.TokenException;
 import com.android.terminalbox.utils.LogHelper;
 import com.android.terminalbox.utils.ToastUtils;
+import com.xuexiang.xlog.XLog;
+
 import java.net.SocketTimeoutException;
 import io.reactivex.observers.ResourceObserver;
 import retrofit2.HttpException;
@@ -53,6 +55,7 @@ public abstract class BaseObserver<T> extends ResourceObserver<T> {
 
     @Override
     public void onError(Throwable e) {
+        XLog.get().e( "异常信息=====" + e);
         if (mView == null) {
             return;
         }

@@ -37,6 +37,7 @@ import com.esim.rylai.smartbox.uhf.ReaderResult;
 import com.esim.rylai.smartbox.uhf.UhfManager;
 import com.esim.rylai.smartbox.uhf.UhfTag;
 import com.multilevel.treelist.Node;
+import com.xuexiang.xlog.XLog;
 
 import java.util.ArrayList;
 import java.util.Collection;
@@ -89,6 +90,7 @@ public class NewUnlockActivity extends BaseActivity<UnlockPresenter> implements 
     private AssetFilterParameter conditions = new AssetFilterParameter();
     private HashMap<String, AssetsListItemInfo> epcToolMap = new HashMap<>();
     private List<AssetsListItemInfo> toolList = new ArrayList<>();
+    private List<String> localEpcs = new ArrayList<>();
 
     private void initAnim() {
         mRadarAnim = new RotateAnimation(0f, 360f, Animation.RELATIVE_TO_SELF, 0.5f, Animation.RELATIVE_TO_SELF, 0.5f);
@@ -203,6 +205,7 @@ public class NewUnlockActivity extends BaseActivity<UnlockPresenter> implements 
                         return;
                     }
                     if (allNumbers != null) {
+                        epcs.retainAll(localEpcs);
                         allNumbers.setText(String.valueOf(epcs.size()));
                     }
                 }
@@ -239,11 +242,11 @@ public class NewUnlockActivity extends BaseActivity<UnlockPresenter> implements 
                     if (outNumbers != null) {
                         outNumbers.setText(String.valueOf(tempLocal.size()));
                     }
-                    if (tempLocal.size() > 5) {
+                  /*  if (tempLocal.size() > 5) {
                         tvBorrowError.setVisibility(View.VISIBLE);
                     } else {
                         tvBorrowError.setVisibility(View.GONE);
-                    }
+                    }*/
                     /*inFiles.addAll(tempInvFiles);
                     outFiles.addAll(tempLocal);*/
                     inOutFiles.addAll(tempInvFiles);
@@ -309,12 +312,13 @@ public class NewUnlockActivity extends BaseActivity<UnlockPresenter> implements 
 
     @Override
     public void handleFetchPageAssetsList(List<AssetsListItemInfo> assetsInfos) {
-        Log.e(TAG, "page资产数量是=====" + assetsInfos.size());
+        XLog.get().e(TAG + "存取资产数量=====" + assetsInfos.size());
         epcToolMap.clear();
         toolList.clear();
         for (AssetsListItemInfo tool : assetsInfos) {
             if (locName.equals(tool.getLoc_name())) {
                 epcToolMap.put(tool.getAst_epc_code(), tool);
+                localEpcs.add(tool.getAst_epc_code());
                 if (tool.getAst_used_status() == 0) {
                     toolList.add(tool);
                 }

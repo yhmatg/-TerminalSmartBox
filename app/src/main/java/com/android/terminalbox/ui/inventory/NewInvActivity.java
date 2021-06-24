@@ -37,6 +37,7 @@ import com.esim.rylai.smartbox.uhf.ReaderResult;
 import com.esim.rylai.smartbox.uhf.UhfManager;
 import com.esim.rylai.smartbox.uhf.UhfTag;
 import com.multilevel.treelist.Node;
+import com.xuexiang.xlog.XLog;
 
 import java.util.ArrayList;
 import java.util.Collection;
@@ -250,7 +251,7 @@ public class NewInvActivity extends BaseActivity<NewInvPresenter> implements New
 
     @Override
     public void handleFetchPageAssetsList(List<AssetsListItemInfo> assetsInfos) {
-        Log.e(TAG, "page资产数量是=====" + assetsInfos.size());
+        XLog.get().e(TAG + "存取资产数量=====" + assetsInfos.size());
         epcToolMap.clear();
         epcList.clear();
         for (AssetsListItemInfo tool : assetsInfos) {
@@ -272,6 +273,5 @@ public class NewInvActivity extends BaseActivity<NewInvPresenter> implements New
         inventoryStrategy.setMaxTimesOfUnChange(maxUnchange);
         UhfManager.getInstance().confInventoryStrategy(inventoryStrategy);
         UhfManager.getInstance().startReadTags();
-        Log.e("Thread======", Thread.currentThread().toString());
     }
 }

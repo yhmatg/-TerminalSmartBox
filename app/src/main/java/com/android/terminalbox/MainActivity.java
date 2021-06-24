@@ -191,6 +191,7 @@ public class MainActivity extends BaseActivity<MainPresenter> implements MainCon
 
     @Override
     public void handleFetchPageAssetsList(List<AssetsListItemInfo> assetsInfos) {
+        XLog.get().e(TAG + "资产数量=====" + assetsInfos.size());
         int i = 0;
         ArrayList<String> epcs = new ArrayList<>();
         for (AssetsListItemInfo tool : assetsInfos) {
