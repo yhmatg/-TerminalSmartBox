@@ -47,7 +47,7 @@ public class SettingActivity extends BaseActivity {
     @BindView(R.id.et_ip_three)
     EditText ipThree;
     private String ipRegex = "((2(5[0-5]|[0-4]\\d))|[0-1]?\\d{1,2})(\\.((2(5[0-5]|[0-4]\\d))|[0-1]?\\d{1,2})){3}";
-    private String serviceIpRegex = "^([hH][tT]{2}[pP]://|[hH][tT]{2}[pP][sS]://)(([A-Za-z0-9-~]+).)+([A-Za-z0-9-~\\\\\\\\\\\\\\\\/])+$";
+    private String serviceIpRegex = "^([hH][tT]{2}[pP]://|[hH][tT]{2}[pP][sS]://)(([A-Za-z0-9-~]+).)+([A-Za-z0-9-~\\\\\\\\/])+$";
 
     @Override
     public AbstractPresenter initPresenter() {
